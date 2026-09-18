@@ -1,0 +1,27 @@
+# Dados brutos — 93 MB, refeitos por `python3 dados/baixar.py`.
+# Não versionar: são grandes, públicos e idempotentes.
+dados/bruto/
+
+# Gerados. `painel/dados/` é exceção deliberada e VAI para o repositório:
+# são 1 MB e é o que faz o painel abrir sem baixar nada.
+painel/deploy/publico/
+painel/publicar.html
+painel/_dbg.html
+coletor/_dbg.html
+
+# Ambiente
+.venv/
+__pycache__/
+*.pyc
+*.part
+
+# Pacote da sessão paralela — tudo que era relevante foi promovido para a árvore
+# (ver analise/25-merge-sessao-zcode.md §1). Fica fora por ser cópia.
+tmp/
+
+# Credencial nunca entra aqui. Ela mora em ~/.cerurb-cf.env, fora do repositório.
+*.env
+!.env.exemplo
+graphify-out/.graphify_*
+graphify-out/cost.json
+graphify-out/cache/

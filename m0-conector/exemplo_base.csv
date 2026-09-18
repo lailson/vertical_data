@@ -1,0 +1,6 @@
+inscricao;tipo_imovel;area_terreno;area_construida;valor_venal;logradouro;tipo_logradouro;bairro;cep;numero;cpf_cnpj_titular;nome_titular;perc_titularidade;latitude;longitude
+12345;1;450,2;120,0;89000;Av. Getúlio Vargas;Avenida;Centro;64200000;100;12345678901;Maria de Sousa;100;-5.0872;-42.7920
+12346;1;300;80;45000;Rua Santa Luzia;Rua;Centro;64200-010;55;;;João Silva;;;;
+12346;2;;60;30000;Rua Nova;Rua;São José;64200010;S/N;11122233333;João Silva;50;;
+12347;1;500,5;0;70000;Rua do Mercado;Rua;Centro;6420;12;98765432000199;Empresa LTDA;100;;
+12348;1;420;90;52000;Travessa São Pedro;Travessa;;64.200-000;30;12345678901;Maria de Sousa;100;-5.09;-42.80

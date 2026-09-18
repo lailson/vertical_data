@@ -1,0 +1,650 @@
+{
+  "dados/baixar.py": {
+    "mtime": 1789620672.133987,
+    "seen": 1789745944.289162,
+    "ast_hash": "552aaed72424bf4b6e286de178b3c8d7",
+    "semantic_hash": "552aaed72424bf4b6e286de178b3c8d7"
+  },
+  "entregaveis/dominios_cadurb.json": {
+    "mtime": 1789647947.4320538,
+    "seen": 1789745944.2891672,
+    "ast_hash": "693344c0001ef22fc1a46dc89de71557",
+    "semantic_hash": "693344c0001ef22fc1a46dc89de71557"
+  },
+  "entregaveis/regras_semanticas.py": {
+    "mtime": 1789647565.1350515,
+    "seen": 1789745944.2891693,
+    "ast_hash": "f161c997510891d4bc87af77e2972fc7",
+    "semantic_hash": "f161c997510891d4bc87af77e2972fc7"
+  },
+  "m0-conector/cadurb_client.py": {
+    "mtime": 1789614484.2002504,
+    "seen": 1789745944.2891707,
+    "ast_hash": "0f4192ae9fb37fd48f5117a9df3b73f8",
+    "semantic_hash": "0f4192ae9fb37fd48f5117a9df3b73f8"
+  },
+  "m0-conector/spec/dominios.json": {
+    "mtime": 1789648051.4322913,
+    "seen": 1789745944.289172,
+    "ast_hash": "f56c50776492b23ba396aa2687f97880",
+    "semantic_hash": "f56c50776492b23ba396aa2687f97880"
+  },
+  "m0-conector/spec/openapi-homologacao.json": {
+    "mtime": 1789614484.2013104,
+    "seen": 1789745944.289173,
+    "ast_hash": "93e6d2965c5f3cecb5d068572bbc8898",
+    "semantic_hash": "93e6d2965c5f3cecb5d068572bbc8898"
+  },
+  "m0-conector/validador_completude.py": {
+    "mtime": 1789648051.432847,
+    "seen": 1789745944.2891743,
+    "ast_hash": "d310f26477240f4ebaef4b54e1a639d9",
+    "semantic_hash": "d310f26477240f4ebaef4b54e1a639d9"
+  },
+  "painel/build_cnefe.py": {
+    "mtime": 1789647565.1352942,
+    "seen": 1789745944.2891753,
+    "ast_hash": "ea36b29f447e84792bf1f2e49cd707ac",
+    "semantic_hash": "ea36b29f447e84792bf1f2e49cd707ac"
+  },
+  "painel/build_dados.py": {
+    "mtime": 1789620818.286313,
+    "seen": 1789745944.2891762,
+    "ast_hash": "1250003eb67234488e433476135cd5d6",
+    "semantic_hash": "1250003eb67234488e433476135cd5d6"
+  },
+  "painel/deploy/functions/_middleware.js": {
+    "mtime": 1789620818.2866614,
+    "seen": 1789745944.2891774,
+    "ast_hash": "6c1f9fe024d060d5593680b7b212d9a2",
+    "semantic_hash": "6c1f9fe024d060d5593680b7b212d9a2"
+  },
+  "painel/deploy/montar.sh": {
+    "mtime": 1789646890.6957135,
+    "seen": 1789745944.2891784,
+    "ast_hash": "b4514594c1a5aa33fdd898e9d7225944",
+    "semantic_hash": "b4514594c1a5aa33fdd898e9d7225944"
+  },
+  "painel/deploy/publicar-cf.sh": {
+    "mtime": 1789640975.2661874,
+    "seen": 1789745944.2891796,
+    "ast_hash": "1b85d1efbfad73255b06888d3fb49f37",
+    "semantic_hash": "1b85d1efbfad73255b06888d3fb49f37"
+  },
+  "painel/publicar.py": {
+    "mtime": 1789620836.970679,
+    "seen": 1789745944.2891808,
+    "ast_hash": "638bd5c8b8788e3f6a0b2ea8c2636571",
+    "semantic_hash": "638bd5c8b8788e3f6a0b2ea8c2636571"
+  },
+  ".orca/drops/analise-viabilidade-dashboard-gestao-municipal.md": {
+    "mtime": 1789567208.460593,
+    "seen": 1789745944.2891817,
+    "ast_hash": "72ff60490eb085722bf1163c6f48c4c2",
+    "semantic_hash": "72ff60490eb085722bf1163c6f48c4c2"
+  },
+  ".orca/drops/esic-textos.md": {
+    "mtime": 1789567161.1827052,
+    "seen": 1789745944.2891827,
+    "ast_hash": "5de9008cf40ff3dda15eac1e4222afed",
+    "semantic_hash": "5de9008cf40ff3dda15eac1e4222afed"
+  },
+  ".orca/drops/index.html": {
+    "mtime": 1789559736.8493683,
+    "seen": 1789745944.2891839,
+    "ast_hash": "1143a1f4668e4533bdf2706d2efff9d0",
+    "semantic_hash": "1143a1f4668e4533bdf2706d2efff9d0"
+  },
+  ".orca/drops/matriz-responsabilidade-fontes-dados.md": {
+    "mtime": 1789494032.526365,
+    "seen": 1789745944.2891848,
+    "ast_hash": "b706494815e3eff03c66b96807303795",
+    "semantic_hash": "b706494815e3eff03c66b96807303795"
+  },
+  ".orca/drops/metodologia-iv.md": {
+    "mtime": 1789567171.6689725,
+    "seen": 1789745944.2891858,
+    "ast_hash": "a7bae3482811792051b2fd710fc46824",
+    "semantic_hash": "a7bae3482811792051b2fd710fc46824"
+  },
+  ".orca/drops/painel-gestao-municipal (1).html": {
+    "mtime": 1789493996.8539536,
+    "seen": 1789745944.2891867,
+    "ast_hash": "765976d7ddbdde6865b494a8d325e8af",
+    "semantic_hash": "765976d7ddbdde6865b494a8d325e8af"
+  },
+  "README.md": {
+    "mtime": 1789745648.254749,
+    "seen": 1789745944.2891881,
+    "ast_hash": "a9dff2b79854d8177f5c639e6cf77fb8",
+    "semantic_hash": "a9dff2b79854d8177f5c639e6cf77fb8"
+  },
+  "analise/00-dossie-contexto.md": {
+    "mtime": 1789495322.9564693,
+    "seen": 1789745944.289189,
+    "ast_hash": "3c227fd65a4c5594554c59897a064ce1",
+    "semantic_hash": "3c227fd65a4c5594554c59897a064ce1"
+  },
+  "analise/01-adendo-achados-r15.md": {
+    "mtime": 1789495479.7343729,
+    "seen": 1789745944.28919,
+    "ast_hash": "e3df74e01a2bbb38d0d3081150413bf5",
+    "semantic_hash": "e3df74e01a2bbb38d0d3081150413bf5"
+  },
+  "analise/02-adendo-reforma-tributaria.md": {
+    "mtime": 1789495769.9231517,
+    "seen": 1789745944.2891915,
+    "ast_hash": "56a02ead2820c30ef92ee18f7669f475",
+    "semantic_hash": "56a02ead2820c30ef92ee18f7669f475"
+  },
+  "analise/03-prova-de-conceito.md": {
+    "mtime": 1789495678.694308,
+    "seen": 1789745944.2891924,
+    "ast_hash": "9e153aaae35f89cce94767046df81a00",
+    "semantic_hash": "9e153aaae35f89cce94767046df81a00"
+  },
+  "analise/04-prova-defasagem-valor-venal.md": {
+    "mtime": 1789495849.5175252,
+    "seen": 1789745944.2891934,
+    "ast_hash": "e925888efebfc82708ece928418a7749",
+    "semantic_hash": "e925888efebfc82708ece928418a7749"
+  },
+  "analise/05-recorte-piaui.md": {
+    "mtime": 1789496110.3336425,
+    "seen": 1789745944.2891946,
+    "ast_hash": "1029f891a313284cefa5db9683749a4a",
+    "semantic_hash": "1029f891a313284cefa5db9683749a4a"
+  },
+  "analise/06-comparacao-duas-analises.md": {
+    "mtime": 1789496758.9852648,
+    "seen": 1789745944.2891955,
+    "ast_hash": "fc0111631a70031648a231273138bafc",
+    "semantic_hash": "fc0111631a70031648a231273138bafc"
+  },
+  "analise/07-auditoria-prototipo.md": {
+    "mtime": 1789500857.8623335,
+    "seen": 1789745944.2891965,
+    "ast_hash": "ed301e93a28163e0b09bd31afbfb6e33",
+    "semantic_hash": "ed301e93a28163e0b09bd31afbfb6e33"
+  },
+  "analise/08-achados-outra-sessao.md": {
+    "mtime": 1789500870.239773,
+    "seen": 1789745944.2891977,
+    "ast_hash": "55ad3801586304bc507a601d6b21621e",
+    "semantic_hash": "55ad3801586304bc507a601d6b21621e"
+  },
+  "analise/09-iv-calculado-teresina.md": {
+    "mtime": 1789500996.1690707,
+    "seen": 1789745944.2891986,
+    "ast_hash": "11b4afcf7f46fce8e4725d05b28e8beb",
+    "semantic_hash": "11b4afcf7f46fce8e4725d05b28e8beb"
+  },
+  "analise/10-arbitragem-rodada2.md": {
+    "mtime": 1789501534.7016857,
+    "seen": 1789745944.2891996,
+    "ast_hash": "35d69dc0fa3a89743758e0c45154806e",
+    "semantic_hash": "35d69dc0fa3a89743758e0c45154806e"
+  },
+  "analise/11-cadurb-api.md": {
+    "mtime": 1789501571.04804,
+    "seen": 1789745944.2892005,
+    "ast_hash": "04e137a9a91941c7cd35f7ea4436ad5a",
+    "semantic_hash": "04e137a9a91941c7cd35f7ea4436ad5a"
+  },
+  "analise/12-ponte-b-para-a.md": {
+    "mtime": 1789501677.1832354,
+    "seen": 1789745944.2892015,
+    "ast_hash": "82ef223e69b02d7eb10ab43292540e95",
+    "semantic_hash": "82ef223e69b02d7eb10ab43292540e95"
+  },
+  "analise/13-lista-qualificada-pi.md": {
+    "mtime": 1789554492.631136,
+    "seen": 1789745944.2892025,
+    "ast_hash": "592fa05be926572f779b851585577188",
+    "semantic_hash": "592fa05be926572f779b851585577188"
+  },
+  "analise/14-arbitragem-rodada6.md": {
+    "mtime": 1789556043.9977396,
+    "seen": 1789745944.2892036,
+    "ast_hash": "fea0544f2b299114e160c1cfc8196208",
+    "semantic_hash": "fea0544f2b299114e160c1cfc8196208"
+  },
+  "analise/15-revisao-execucao.md": {
+    "mtime": 1789559818.3582687,
+    "seen": 1789745944.2892048,
+    "ast_hash": "3c30b89ce9d65aabc8ecf94c0afec121",
+    "semantic_hash": "3c30b89ce9d65aabc8ecf94c0afec121"
+  },
+  "analise/16-cadurb-spec-verificada.md": {
+    "mtime": 1789559972.010427,
+    "seen": 1789745944.2892056,
+    "ast_hash": "57be89c77ee3116249a0d1dac9d0b3e3",
+    "semantic_hash": "57be89c77ee3116249a0d1dac9d0b3e3"
+  },
+  "analise/17-revisao-m0-outra-sessao.md": {
+    "mtime": 1789567437.1483772,
+    "seen": 1789745944.2892067,
+    "ast_hash": "b01c22b02bffecce8444686eb044a377",
+    "semantic_hash": "b01c22b02bffecce8444686eb044a377"
+  },
+  "analise/18-spec-validador.md": {
+    "mtime": 1789567587.0306833,
+    "seen": 1789745944.2892077,
+    "ast_hash": "74b4b62e53bfc8816c26764a917dc45c",
+    "semantic_hash": "74b4b62e53bfc8816c26764a917dc45c"
+  },
+  "analise/19-itbi-linha-do-deck.md": {
+    "mtime": 1789567926.0085669,
+    "seen": 1789745944.289209,
+    "ast_hash": "9662c485720c6c62a8717c41c56d15c2",
+    "semantic_hash": "9662c485720c6c62a8717c41c56d15c2"
+  },
+  "analise/20-revisao-credencial-dossie.md": {
+    "mtime": 1789576417.2705662,
+    "seen": 1789745944.2892096,
+    "ast_hash": "62c2c5ad016eba617816981446a022ff",
+    "semantic_hash": "62c2c5ad016eba617816981446a022ff"
+  },
+  "analise/21-correcoes-credencial.md": {
+    "mtime": 1789576523.2658763,
+    "seen": 1789745944.2892106,
+    "ast_hash": "11cfd8891122dab8942b6f1551c38b9b",
+    "semantic_hash": "11cfd8891122dab8942b6f1551c38b9b"
+  },
+  "analise/22-revisao-tr-v2.md": {
+    "mtime": 1789578048.1610923,
+    "seen": 1789745944.289212,
+    "ast_hash": "cf1ebaf648289c86f62d50b7a88899fe",
+    "semantic_hash": "cf1ebaf648289c86f62d50b7a88899fe"
+  },
+  "analise/23-qualificacao-e-segmento-novo.md": {
+    "mtime": 1789584623.3212523,
+    "seen": 1789745944.2892137,
+    "ast_hash": "1e45db8bd0d8bc3f736f11371cf163bf",
+    "semantic_hash": "1e45db8bd0d8bc3f736f11371cf163bf"
+  },
+  "analise/24-indice-pesos-declarados.md": {
+    "mtime": 1789584639.2485135,
+    "seen": 1789745944.2892146,
+    "ast_hash": "67b1f01f9b9519615a68343c64f4cf2f",
+    "semantic_hash": "67b1f01f9b9519615a68343c64f4cf2f"
+  },
+  "analise/25-merge-sessao-zcode.md": {
+    "mtime": 1789648120.9061038,
+    "seen": 1789745944.2892156,
+    "ast_hash": "7a56f61b24a4de0a5c77aaf2dc28d45a",
+    "semantic_hash": "7a56f61b24a4de0a5c77aaf2dc28d45a"
+  },
+  "analise/26-relatorio-sessao-zcode.md": {
+    "mtime": 1789614484.2123199,
+    "seen": 1789745944.2892168,
+    "ast_hash": "aff29a99d51aa931257597973e440750",
+    "semantic_hash": "aff29a99d51aa931257597973e440750"
+  },
+  "analise/PLANO-APRESENTACAO.md": {
+    "mtime": 1789553073.8265991,
+    "seen": 1789745944.2892177,
+    "ast_hash": "ca9b3fd3dbdb1a8ff6379f6bc4389b0d",
+    "semantic_hash": "ca9b3fd3dbdb1a8ff6379f6bc4389b0d"
+  },
+  "analise/PLANO.md": {
+    "mtime": 1789576868.9095836,
+    "seen": 1789745944.289219,
+    "ast_hash": "387b4f0818abf0e237a6aa2fccac3bb3",
+    "semantic_hash": "387b4f0818abf0e237a6aa2fccac3bb3"
+  },
+  "analise/pacote-r1-deepseek.md": {
+    "mtime": 1789495292.8148253,
+    "seen": 1789745944.2892199,
+    "ast_hash": "80e176873f0d9b85eed3dd9582c16f95",
+    "semantic_hash": "80e176873f0d9b85eed3dd9582c16f95"
+  },
+  "analise/pacote-r1-glm.md": {
+    "mtime": 1789495292.822825,
+    "seen": 1789745944.2892206,
+    "ast_hash": "344f39cd5bd0b9a777e283d574ec1543",
+    "semantic_hash": "344f39cd5bd0b9a777e283d574ec1543"
+  },
+  "analise/pacote-r2-deepseek.md": {
+    "mtime": 1789495491.0248585,
+    "seen": 1789745944.2892215,
+    "ast_hash": "7172dccf3ceb6b8c4cce1bc788ae148a",
+    "semantic_hash": "7172dccf3ceb6b8c4cce1bc788ae148a"
+  },
+  "analise/pacote-r2-glm.md": {
+    "mtime": 1789495491.0428576,
+    "seen": 1789745944.2892227,
+    "ast_hash": "ed3cc8552066ac2b8d2534af20d755ff",
+    "semantic_hash": "ed3cc8552066ac2b8d2534af20d755ff"
+  },
+  "analise/pacote-r3-deepseek.md": {
+    "mtime": 1789495730.8829303,
+    "seen": 1789745944.2892237,
+    "ast_hash": "091f14e47094c0d6c5796c492f0ed158",
+    "semantic_hash": "091f14e47094c0d6c5796c492f0ed158"
+  },
+  "analise/pacote-r3-glm.md": {
+    "mtime": 1789495730.8479319,
+    "seen": 1789745944.2892246,
+    "ast_hash": "c482224f016fdcad533159b6728f223b",
+    "semantic_hash": "c482224f016fdcad533159b6728f223b"
+  },
+  "analise/pacote-r4-deepseek.md": {
+    "mtime": 1789500885.129099,
+    "seen": 1789745944.2892258,
+    "ast_hash": "f5ac0762f70a08675ceee325e7b649a4",
+    "semantic_hash": "f5ac0762f70a08675ceee325e7b649a4"
+  },
+  "analise/pacote-r4-glm.md": {
+    "mtime": 1789500885.1610973,
+    "seen": 1789745944.2892265,
+    "ast_hash": "5fddaf1818012c18e14f9577bd399ce2",
+    "semantic_hash": "5fddaf1818012c18e14f9577bd399ce2"
+  },
+  "analise/pacote-r5-deepseek.md": {
+    "mtime": 1789501583.5314746,
+    "seen": 1789745944.2892277,
+    "ast_hash": "f78ae0a5999846186b074db7067f3522",
+    "semantic_hash": "f78ae0a5999846186b074db7067f3522"
+  },
+  "analise/pacote-r5-glm.md": {
+    "mtime": 1789501583.5574734,
+    "seen": 1789745944.289229,
+    "ast_hash": "59ead26a42f7053aba7eaa299f1143c2",
+    "semantic_hash": "59ead26a42f7053aba7eaa299f1143c2"
+  },
+  "analise/pacote-r6-deepseek.md": {
+    "mtime": 1789559831.0597034,
+    "seen": 1789745944.2892299,
+    "ast_hash": "9999fbb81320ef78ea873ea6cbef8d79",
+    "semantic_hash": "9999fbb81320ef78ea873ea6cbef8d79"
+  },
+  "analise/pacote-r6-glm.md": {
+    "mtime": 1789559831.0807023,
+    "seen": 1789745944.2892308,
+    "ast_hash": "179789ee4289a5499f805a2b55612e65",
+    "semantic_hash": "179789ee4289a5499f805a2b55612e65"
+  },
+  "analise/pacote-r7-deepseek.md": {
+    "mtime": 1789567449.3562622,
+    "seen": 1789745944.2892318,
+    "ast_hash": "8d7fbdab909d696aa678d34f2c22f6e0",
+    "semantic_hash": "8d7fbdab909d696aa678d34f2c22f6e0"
+  },
+  "analise/pacote-r7-glm.md": {
+    "mtime": 1789567449.3751833,
+    "seen": 1789745944.289233,
+    "ast_hash": "9fcc49aebcfe77a6eaf17c381f407c28",
+    "semantic_hash": "9fcc49aebcfe77a6eaf17c381f407c28"
+  },
+  "analise/pacote-r8-deepseek.md": {
+    "mtime": 1789576435.0517795,
+    "seen": 1789745944.289234,
+    "ast_hash": "4682b6e2cf8eabc44e9067344e7653e7",
+    "semantic_hash": "4682b6e2cf8eabc44e9067344e7653e7"
+  },
+  "analise/pacote-r8-glm.md": {
+    "mtime": 1789576435.0307803,
+    "seen": 1789745944.2892349,
+    "ast_hash": "cb1f08500247a3d68de3c5fdd063a23e",
+    "semantic_hash": "cb1f08500247a3d68de3c5fdd063a23e"
+  },
+  "analise/parecer-r1-deepseek.md": {
+    "mtime": 1789495336.299869,
+    "seen": 1789745944.289236,
+    "ast_hash": "1120d4e86d4bec98406eae442bc1316f",
+    "semantic_hash": "1120d4e86d4bec98406eae442bc1316f"
+  },
+  "analise/parecer-r1-glm.md": {
+    "mtime": 1789495419.2095447,
+    "seen": 1789745944.289237,
+    "ast_hash": "a4897c602470788776fbb1079ad47dbc",
+    "semantic_hash": "a4897c602470788776fbb1079ad47dbc"
+  },
+  "analise/parecer-r2-deepseek.md": {
+    "mtime": 1789495593.9691682,
+    "seen": 1789745944.289238,
+    "ast_hash": "978e8398348f29aeda8c44321f412e46",
+    "semantic_hash": "978e8398348f29aeda8c44321f412e46"
+  },
+  "analise/parecer-r2-glm.md": {
+    "mtime": 1789495708.1706557,
+    "seen": 1789745944.289239,
+    "ast_hash": "e18efe3622811e997b7e876879fb4a63",
+    "semantic_hash": "e18efe3622811e997b7e876879fb4a63"
+  },
+  "analise/parecer-r3-deepseek.md": {
+    "mtime": 1789495790.6742063,
+    "seen": 1789745944.2892401,
+    "ast_hash": "32d8362befc1c32f731d1fdddd529526",
+    "semantic_hash": "32d8362befc1c32f731d1fdddd529526"
+  },
+  "analise/parecer-r3-glm.md": {
+    "mtime": 1789496027.5296435,
+    "seen": 1789745944.289241,
+    "ast_hash": "493429192f75486cf79c48bc78af0de7",
+    "semantic_hash": "493429192f75486cf79c48bc78af0de7"
+  },
+  "analise/parecer-r4-deepseek.md": {
+    "mtime": 1789500940.556589,
+    "seen": 1789745944.289242,
+    "ast_hash": "5f2b539d846f54f0fe83de3c0cac253b",
+    "semantic_hash": "5f2b539d846f54f0fe83de3c0cac253b"
+  },
+  "analise/parecer-r4-glm.md": {
+    "mtime": 1789501180.611371,
+    "seen": 1789745944.2892432,
+    "ast_hash": "1be1335ed74c4ab332231a90dcc8c7d5",
+    "semantic_hash": "1be1335ed74c4ab332231a90dcc8c7d5"
+  },
+  "analise/parecer-r5-deepseek.md": {
+    "mtime": 1789501654.0872805,
+    "seen": 1789745944.2892442,
+    "ast_hash": "df29a0d7fb77492188abeb9e29b3935f",
+    "semantic_hash": "df29a0d7fb77492188abeb9e29b3935f"
+  },
+  "analise/parecer-r5-glm.md": {
+    "mtime": 1789501855.871148,
+    "seen": 1789745944.2892451,
+    "ast_hash": "cd2a50027f1e348e7616a8032618e8ba",
+    "semantic_hash": "cd2a50027f1e348e7616a8032618e8ba"
+  },
+  "analise/parecer-r6-deepseek.md": {
+    "mtime": 1789559919.9907434,
+    "seen": 1789745944.2892463,
+    "ast_hash": "8a59aed13c2f98df73ae614811837f48",
+    "semantic_hash": "8a59aed13c2f98df73ae614811837f48"
+  },
+  "analise/parecer-r6-glm.md": {
+    "mtime": 1789560061.5650425,
+    "seen": 1789745944.2892473,
+    "ast_hash": "a8e5638f2f534c43bf511b8a6ce9ee8b",
+    "semantic_hash": "a8e5638f2f534c43bf511b8a6ce9ee8b"
+  },
+  "analise/parecer-r7-deepseek.md": {
+    "mtime": 1789567548.8483875,
+    "seen": 1789745944.2892482,
+    "ast_hash": "8ab7588aa7f6e12e13bdd85e8f2b2533",
+    "semantic_hash": "8ab7588aa7f6e12e13bdd85e8f2b2533"
+  },
+  "analise/parecer-r7-glm.md": {
+    "mtime": 1789567885.1879358,
+    "seen": 1789745944.2892492,
+    "ast_hash": "8539b7ac681d5cb58448d71358652f30",
+    "semantic_hash": "8539b7ac681d5cb58448d71358652f30"
+  },
+  "analise/parecer-r8-deepseek.md": {
+    "mtime": 1789576504.4177103,
+    "seen": 1789745944.2892504,
+    "ast_hash": "40d17ec79740a995085039d3a3d6cd3a",
+    "semantic_hash": "40d17ec79740a995085039d3a3d6cd3a"
+  },
+  "analise/parecer-r8-glm.md": {
+    "mtime": 1789576842.1511605,
+    "seen": 1789745944.2892513,
+    "ast_hash": "dc3bd80f9e6b3e2ea5d963244a16ce96",
+    "semantic_hash": "dc3bd80f9e6b3e2ea5d963244a16ce96"
+  },
+  "coletor/index.html": {
+    "mtime": 1789650704.885911,
+    "seen": 1789745944.289252,
+    "ast_hash": "b872684c152d509d29e34c4e73990d0f",
+    "semantic_hash": "b872684c152d509d29e34c4e73990d0f"
+  },
+  "docs/credencial-tecnica.md": {
+    "mtime": 1789614484.19606,
+    "seen": 1789745944.2892532,
+    "ast_hash": "4c95bc2a1b02f71651fff4cfac8b20ca",
+    "semantic_hash": "4c95bc2a1b02f71651fff4cfac8b20ca"
+  },
+  "docs/esic-textos.md": {
+    "mtime": 1789614484.1967928,
+    "seen": 1789745944.2892542,
+    "ast_hash": "65c78ebd509ef4ab68134a0c53c1eee3",
+    "semantic_hash": "65c78ebd509ef4ab68134a0c53c1eee3"
+  },
+  "docs/metodo-fiscal-itbi-iptu.md": {
+    "mtime": 1789614484.1969738,
+    "seen": 1789745944.2892551,
+    "ast_hash": "3537cfb619cd9a634f7c50492541452f",
+    "semantic_hash": "3537cfb619cd9a634f7c50492541452f"
+  },
+  "docs/metodologia-iv.md": {
+    "mtime": 1789620109.0375392,
+    "seen": 1789745944.289256,
+    "ast_hash": "60008be7c088268723381b1978537630",
+    "semantic_hash": "60008be7c088268723381b1978537630"
+  },
+  "dossie-dispensa/00-processo-passo-a-passo.md": {
+    "mtime": 1789614484.2040105,
+    "seen": 1789745944.2892582,
+    "ast_hash": "1fbfdc955a27ebd30c39870bab980ae6",
+    "semantic_hash": "1fbfdc955a27ebd30c39870bab980ae6"
+  },
+  "dossie-dispensa/01-fichas-8-municipios.md": {
+    "mtime": 1789614484.2052028,
+    "seen": 1789745944.2892592,
+    "ast_hash": "019cf4e7c93801b129dd933928ba3819",
+    "semantic_hash": "019cf4e7c93801b129dd933928ba3819"
+  },
+  "dossie-dispensa/02-termo-referencia-modelo.md": {
+    "mtime": 1789614484.2037823,
+    "seen": 1789745944.2892604,
+    "ast_hash": "0c3b7cdcd6f0dd1ed529ec7189c2553e",
+    "semantic_hash": "0c3b7cdcd6f0dd1ed529ec7189c2553e"
+  },
+  "dossie-dispensa/03-minuta-decisao-dispensa.md": {
+    "mtime": 1789614484.20467,
+    "seen": 1789745944.2892613,
+    "ast_hash": "c78865bd3d3908984696de22cd2ca9e6",
+    "semantic_hash": "c78865bd3d3908984696de22cd2ca9e6"
+  },
+  "dossie-dispensa/04-declaracao-necessidade.md": {
+    "mtime": 1789614484.2044613,
+    "seen": 1789745944.2892623,
+    "ast_hash": "9ec416f0a82e557ff06e0fd2707f6c71",
+    "semantic_hash": "9ec416f0a82e557ff06e0fd2707f6c71"
+  },
+  "dossie-dispensa/05-aviso-intencao-dispensa.md": {
+    "mtime": 1789614484.2042005,
+    "seen": 1789745944.289263,
+    "ast_hash": "63212b097136d52a25d85dbdadee43f2",
+    "semantic_hash": "63212b097136d52a25d85dbdadee43f2"
+  },
+  "entregaveis/README.md": {
+    "mtime": 1789584079.4534774,
+    "seen": 1789745944.2892642,
+    "ast_hash": "def0ba7d7463027e798794fa3c904fb0",
+    "semantic_hash": "def0ba7d7463027e798794fa3c904fb0"
+  },
+  "entregaveis/esic-1-SEAD-prourbe.md": {
+    "mtime": 1789584016.0374002,
+    "seen": 1789745944.2892652,
+    "ast_hash": "1ace92b476998e08a0df8516d716bee4",
+    "semantic_hash": "1ace92b476998e08a0df8516d716bee4"
+  },
+  "entregaveis/esic-2-RFB-sinter.md": {
+    "mtime": 1789584016.0414,
+    "seen": 1789745944.2892663,
+    "ast_hash": "744dbb367510d1567c20a37722898e0b",
+    "semantic_hash": "744dbb367510d1567c20a37722898e0b"
+  },
+  "entregaveis/esic-3-SEFAZ-pi.md": {
+    "mtime": 1789584016.0443997,
+    "seen": 1789745944.2892675,
+    "ast_hash": "2f14a82d4750d0f43c754d4cee951249",
+    "semantic_hash": "2f14a82d4750d0f43c754d4cee951249"
+  },
+  "entregaveis/esic-4-TCE-pi.md": {
+    "mtime": 1789584016.0483997,
+    "seen": 1789745944.2892685,
+    "ast_hash": "9724b213e7144f56133baa5d2556592b",
+    "semantic_hash": "9724b213e7144f56133baa5d2556592b"
+  },
+  "m0-conector/LAUDO-completude.html": {
+    "mtime": 1789648075.191806,
+    "seen": 1789745944.2892694,
+    "ast_hash": "1bf627e05b3bc1caa4f85d662ad38823",
+    "semantic_hash": "1bf627e05b3bc1caa4f85d662ad38823"
+  },
+  "m0-conector/LAUDO-completude.md": {
+    "mtime": 1789648075.1913118,
+    "seen": 1789745944.2892706,
+    "ast_hash": "5dd0c6dd0c06974c07194cdca5219edc",
+    "semantic_hash": "5dd0c6dd0c06974c07194cdca5219edc"
+  },
+  "m0-conector/LEIAME.md": {
+    "mtime": 1789614484.202154,
+    "seen": 1789745944.2892716,
+    "ast_hash": "272510d178281f90e5e5d8f3082607a8",
+    "semantic_hash": "272510d178281f90e5e5d8f3082607a8"
+  },
+  "m0-conector/spec/PIN.md": {
+    "mtime": 1789614484.2015362,
+    "seen": 1789745944.2892725,
+    "ast_hash": "0f05d1482553ea86a157a0ae484b965f",
+    "semantic_hash": "0f05d1482553ea86a157a0ae484b965f"
+  },
+  "painel/LEIAME.md": {
+    "mtime": 1789620131.0830646,
+    "seen": 1789745944.2892735,
+    "ast_hash": "64e2373161f7dd25e31e5159289a883f",
+    "semantic_hash": "64e2373161f7dd25e31e5159289a883f"
+  },
+  "painel/conversa.html": {
+    "mtime": 1789614484.210492,
+    "seen": 1789745944.2892747,
+    "ast_hash": "0fad3748efb6be071bf0ef06e8f60593",
+    "semantic_hash": "0fad3748efb6be071bf0ef06e8f60593"
+  },
+  "painel/deploy/LEIAME.md": {
+    "mtime": 1789620883.7118406,
+    "seen": 1789745944.2892756,
+    "ast_hash": "ab594ae8b4b76809035eed99d52ffc25",
+    "semantic_hash": "ab594ae8b4b76809035eed99d52ffc25"
+  },
+  "painel/index.html": {
+    "mtime": 1789622076.4083495,
+    "seen": 1789745944.2892766,
+    "ast_hash": "a0d815aaec67bef2f536b5184eba3af8",
+    "semantic_hash": "a0d815aaec67bef2f536b5184eba3af8"
+  },
+  ".orca/drops/Vertical-Data-Logomarcas.pdf": {
+    "mtime": 1789745570.5302546,
+    "seen": 1789745944.2892778,
+    "ast_hash": "b5554660eb7c2f3e625c08103a3b1c50",
+    "semantic_hash": "b5554660eb7c2f3e625c08103a3b1c50"
+  },
+  "apresentacao/dash_hero.png": {
+    "mtime": 1789640379.0083492,
+    "seen": 1789745944.2892787,
+    "ast_hash": "cfdd0042a4c691e3c08fd0bca75a180d",
+    "semantic_hash": "cfdd0042a4c691e3c08fd0bca75a180d"
+  },
+  "apresentacao/dash_scatter.png": {
+    "mtime": 1789640391.441788,
+    "seen": 1789745944.2892797,
+    "ast_hash": "73f2f41a554e53ab95fc564cd52493d7",
+    "semantic_hash": "73f2f41a554e53ab95fc564cd52493d7"
+  }
+}

@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel CERURB · Piauí</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Leaflet vendorizado: o painel roda sem internet (demonstração em prefeitura não depende de wifi) -->
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<script src="vendor/leaflet/leaflet.js"></script>
+<style>
+/* Tema CLARO na raiz; o escuro é redefinido nos dois blocos abaixo. Toda cor
+   usada pelo mapa e pelos gráficos também é token — o JS lê daqui, para não
+   existir uma paleta de CSS e outra de JavaScript. */
+:root{
+ --bg:#F7F5F0;--panel:#FFFFFF;--panel2:#F1EEE7;--line:rgba(26,46,40,.12);--line2:rgba(26,46,40,.22);
+ --ink:#12241E;--mut:#4A6A5F;--dim:#5A756B;
+ /* medido sobre o painel branco: 5,0:1 no --dim, 4,6:1 no teal e 4,7:1 no âmbar.
+    Os tons do tema escuro não servem no claro — leem como cinza sobre papel. */
+ --teal:#04785A;--amber:#8F5A02;--red:#C8412B;--blue:#1D6FB8;--violet:#5B3FB5;
+ --trilho:rgba(26,46,40,.09);        /* fundo de barra e de trilho */
+ --vinheta:rgba(120,130,125,.16);    /* sombra interna do mapa */
+ --veu:rgba(30,40,36,.5);            /* fundo do modal */
+ --borda-mapa:rgba(255,255,255,.85); /* contorno dos polígonos */
+ --eixo:#5A756B;                     /* texto de eixo em SVG */
+ --grade:rgba(26,46,40,.10);         /* linhas de grade em SVG */
+ --grade-forte:rgba(26,46,40,.22);
+ --sel:#12241E;                      /* realce do selecionado */
+ --semdado:#C9CFCB;
+ --car-1:#C8412B;--car-2:#D08A1E;--car-3:#8AA64A;--car-4:#3FA582;--car-5:#0E9E77;
+ --mag-1:#CFE8DE;--mag-2:#9BD2C0;--mag-3:#5FB89D;--mag-4:#2E9B7C;--mag-5:#0E6B54;
+ --f-disp:'Bricolage Grotesque',sans-serif;--f-body:'IBM Plex Sans',sans-serif;--f-mono:'IBM Plex Mono',monospace;
+}
+@media (prefers-color-scheme:dark){
+ :root:not([data-theme="light"]){
+  --bg:#0A1310;--panel:#0F1D18;--panel2:#132520;--line:rgba(232,242,236,.09);--line2:rgba(232,242,236,.16);
+  --ink:#E9F4ED;--mut:#7FA396;--dim:#54726A;
+  --teal:#2FE6B0;--amber:#F5B841;--red:#FF6B57;--blue:#5CB8FF;--violet:#B79CFF;
+  --trilho:rgba(232,242,236,.08);--vinheta:rgba(10,19,16,.8);--veu:rgba(10,19,16,.82);
+  --borda-mapa:rgba(10,19,16,.85);--eixo:#54726A;--grade:rgba(232,242,236,.07);
+  --grade-forte:rgba(232,242,236,.18);--sel:#E9F4ED;--semdado:#39414A;
+  --car-1:#FF6B57;--car-2:#F5B841;--car-3:#8FB06E;--car-4:#57C9A2;--car-5:#2FE6B0;
+  --mag-1:#144036;--mag-2:#1A6353;--mag-3:#218A70;--mag-4:#28B48E;--mag-5:#2FE6B0;
+ }
+}
+:root[data-theme="dark"]{
+ --bg:#0A1310;--panel:#0F1D18;--panel2:#132520;--line:rgba(232,242,236,.09);--line2:rgba(232,242,236,.16);
+ --ink:#E9F4ED;--mut:#7FA396;--dim:#54726A;
+ --teal:#2FE6B0;--amber:#F5B841;--red:#FF6B57;--blue:#5CB8FF;--violet:#B79CFF;
+ --trilho:rgba(232,242,236,.08);--vinheta:rgba(10,19,16,.8);--veu:rgba(10,19,16,.82);
+ --borda-mapa:rgba(10,19,16,.85);--eixo:#54726A;--grade:rgba(232,242,236,.07);
+ --grade-forte:rgba(232,242,236,.18);--sel:#E9F4ED;--semdado:#39414A;
+ --car-1:#FF6B57;--car-2:#F5B841;--car-3:#8FB06E;--car-4:#57C9A2;--car-5:#2FE6B0;
+ --mag-1:#144036;--mag-2:#1A6353;--mag-3:#218A70;--mag-4:#28B48E;--mag-5:#2FE6B0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden;
+ background-image:linear-gradient(var(--grade) 1px,transparent 1px),linear-gradient(90deg,var(--grade) 1px,transparent 1px);
+ background-size:44px 44px}
+.app{display:grid;grid-template-columns:246px 1fr;grid-template-rows:62px 1fr 32px;height:100vh}
+a{color:var(--teal)}
+/* header */
+header{grid-column:1/3;display:flex;align-items:center;gap:18px;padding:0 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .sig{width:34px;height:34px;border:1.5px solid var(--teal);border-radius:8px;display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;color:var(--teal);font-size:13px;box-shadow:0 0 18px transparent inset}
+.logo h1{font-family:var(--f-disp);font-size:18px;font-weight:800}
+.logo .sub{font-size:10px;color:var(--mut);font-family:var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.munpick{display:flex;align-items:center;gap:8px;margin-left:12px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+.munpick label{font-size:9.5px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.munpick select{background:transparent;border:none;color:var(--ink);font-family:var(--f-body);font-size:13px;outline:none;max-width:230px}
+.munpick select option{background:#0F1D18}
+.hk{display:flex;gap:22px;margin-left:auto}
+.hk .i{text-align:right}
+.hk .l{font-size:9px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.hk .v{font-family:var(--f-mono);font-size:16px;font-weight:600;margin-top:2px}
+/* nav */
+nav{border-right:1px solid var(--line);padding:14px 12px;overflow-y:auto;background:var(--panel)}
+.nav-l{font-size:9px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.16em;text-transform:uppercase;margin:16px 6px 7px}
+.nav-l:first-child{margin-top:2px}
+nav button{all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--mut);border:1px solid transparent;transition:.14s;margin-bottom:3px}
+nav button:hover{color:var(--ink);background:color-mix(in srgb,var(--teal) 10%,transparent)}
+nav button.on{color:var(--ink);background:color-mix(in srgb,var(--teal) 16%,transparent);border-color:color-mix(in srgb,var(--teal) 45%,transparent)}
+nav button .c{font-family:var(--f-mono);font-size:10.5px;color:var(--dim)}
+nav button.on .c{color:var(--teal)}
+nav button.frozen{color:var(--dim)}
+.navfoot{margin-top:18px;padding:10px 8px;border-top:1px solid var(--line);font-size:10px;color:var(--dim);font-family:var(--f-mono);line-height:1.7}
+/* main */
+main{overflow-y:auto;position:relative}
+.page{display:none;padding:20px 24px 40px}
+.page.on{display:block}
+.page.full{padding:0;height:100%}
+.topbar{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.topbar h2{font-family:var(--f-disp);font-size:22px;font-weight:800}
+.topbar .meta{font-size:12px;color:var(--mut);margin-top:3px;max-width:820px;line-height:1.55}
+.chip{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;padding:6px 11px;border-radius:999px;border:1px solid}
+.chip .d{width:7px;height:7px;border-radius:2px}
+.chip.real{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 50%,transparent);background:color-mix(in srgb,var(--teal) 11%,transparent)}
+.chip.real .d{background:var(--teal)}
+.chip.hip{color:var(--amber);border-color:rgba(245,184,65,.35);background:rgba(245,184,65,.07)}
+.chip.hip .d{background:var(--amber)}
+.chip.frz{color:var(--red);border-color:rgba(255,107,87,.3);background:rgba(255,107,87,.06)}
+.chip.frz .d{background:var(--red)}
+/* cards / grids */
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+.card h3{font-family:var(--f-disp);font-size:14.5px;font-weight:700;display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+.card h3 span{font-size:10px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.07em;font-weight:400;text-align:right}
+.card p.desc{font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:10px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.kpi .l{font-size:9.5px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.11em;text-transform:uppercase}
+.kpi .v{font-family:var(--f-mono);font-size:23px;font-weight:600;margin-top:4px}
+.kpi .x{font-size:11px;color:var(--mut);margin-top:3px;line-height:1.45}
+.kpi.warn .v{color:var(--amber)}.kpi.bad .v{color:var(--red)}.kpi.good .v{color:var(--teal)}
+/* tabelas */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);padding:8px 8px;border-bottom:1px solid var(--line2);cursor:pointer;white-space:nowrap;position:sticky;top:0;background:var(--panel)}
+th:hover{color:var(--mut)}
+th.num,td.num{text-align:right;font-family:var(--f-mono);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:color-mix(in srgb,var(--teal) 8%,transparent)}
+tbody tr.sel{background:rgba(47,230,176,.11)}
+.tw{max-height:calc(100vh - 330px);overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+/* controles */
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.ctl select,.ctl input{background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:var(--f-body);font-size:12.5px;padding:7px 10px;outline:none}
+.ctl select:focus,.ctl input:focus{border-color:color-mix(in srgb,var(--teal) 55%,transparent)}
+.btn{all:unset;cursor:pointer;background:color-mix(in srgb,var(--teal) 16%,transparent);border:1px solid color-mix(in srgb,var(--teal) 45%,transparent);color:var(--teal);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:500}
+.btn:hover{background:rgba(47,230,176,.18)}
+.btn.ghost{background:transparent;border-color:var(--line2);color:var(--mut)}
+.btn.ghost.on{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 50%,transparent);background:color-mix(in srgb,var(--teal) 12%,transparent)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+/* barras / listas */
+.bar{height:6px;border-radius:3px;background:var(--trilho);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.rrow{display:grid;grid-template-columns:22px 1fr 86px;align-items:center;gap:9px;padding:7px 2px;border-radius:6px;cursor:pointer}
+.rrow:hover{background:color-mix(in srgb,var(--teal) 9%,transparent)}
+.rrow.sel{background:color-mix(in srgb,var(--teal) 18%,transparent);outline:1px solid color-mix(in srgb,var(--teal) 45%,transparent)}
+.rrow .i{font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+.rrow .n{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rrow .val{font-family:var(--f-mono);font-size:12px;text-align:right}
+.hrow{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center;padding:5px 0;font-size:12px;color:var(--mut)}
+.hrow b{font-family:var(--f-mono);font-size:12px;color:var(--ink);text-align:right;font-weight:500}
+/* badges */
+.tag{display:inline-block;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;padding:2px 7px;border-radius:5px;border:1px solid var(--line2);color:var(--mut);white-space:nowrap}
+.tag.a{color:var(--blue);border-color:rgba(92,184,255,.35)}
+.tag.b{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 45%,transparent)}
+.tag.f{color:var(--amber);border-color:rgba(245,184,65,.35)}
+.tag.fox{color:var(--red);border-color:rgba(255,107,87,.3)}
+.tag.pil{color:var(--violet);border-color:rgba(183,156,255,.4)}
+.tag.warn{color:var(--amber);border-color:rgba(245,184,65,.3);background:rgba(245,184,65,.06)}
+/* mapa */
+.maplay{display:grid;grid-template-columns:230px 1fr 320px;height:100%}
+.maprail{border-right:1px solid var(--line);padding:14px 12px;overflow-y:auto;background:var(--panel)}
+.maprail .rl{font-size:9px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.15em;text-transform:uppercase;margin:14px 4px 7px}
+.maprail .rl:first-child{margin-top:0}
+.ind button{all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--mut);border:1px solid transparent;margin-bottom:3px}
+.ind button:hover{color:var(--ink);background:color-mix(in srgb,var(--teal) 10%,transparent)}
+.ind button.on{color:var(--ink);background:color-mix(in srgb,var(--teal) 16%,transparent);border-color:color-mix(in srgb,var(--teal) 45%,transparent)}
+.ind button>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ind button .v{font-family:var(--f-mono);font-size:11px;color:var(--dim);flex:none;margin-left:8px}
+.ind button.on .v{color:var(--teal)}
+.search{position:relative;margin-bottom:6px}
+.search input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:12.5px;padding:8px 11px;outline:none}
+.sug{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;z-index:1200;max-height:220px;overflow:auto;display:none}
+.sug div{padding:7px 11px;font-size:12px;cursor:pointer;color:var(--mut)}
+.sug div:hover{background:color-mix(in srgb,var(--teal) 12%,transparent);color:var(--ink)}
+.mapwrap{position:relative;background:var(--bg)}
+.mapc{position:absolute;inset:0}
+.leaflet-container{background:transparent;font-family:var(--f-body)}
+.mapvign{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px var(--vinheta)}
+.hud{position:absolute;top:13px;left:13px;z-index:800;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(8px);border:1px solid var(--line2);border-radius:12px;padding:13px 15px;min-width:205px;max-width:250px}
+.hud .t{font-family:var(--f-disp);font-size:15px;font-weight:700}
+.hud .s{font-size:11px;color:var(--mut);margin-top:2px;line-height:1.45}
+.hud .leg{margin-top:9px;display:flex;flex-direction:column;gap:4px}
+.hud .leg .r{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:10px;color:var(--mut)}
+.hud .leg .sw{width:14px;height:8px;border-radius:2px;flex:none}
+.hint{position:absolute;top:13px;right:13px;z-index:800;font-family:var(--f-mono);font-size:10px;color:var(--dim);background:color-mix(in srgb,var(--panel) 88%,transparent);padding:6px 10px;border-radius:8px;border:1px solid var(--line)}
+.kstrip{position:absolute;bottom:13px;left:13px;right:13px;z-index:800;display:flex;gap:9px;pointer-events:none}
+.kc{flex:1;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(8px);border:1px solid var(--line2);border-radius:10px;padding:9px 13px;pointer-events:auto}
+.kc .l{font-size:9px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.11em;text-transform:uppercase}
+.kc .v{font-family:var(--f-mono);font-size:18px;font-weight:600;margin-top:2px}
+.kc .x{font-size:10px;color:var(--mut);margin-top:2px}
+.mtip{background:var(--panel2)!important;border:1px solid var(--line2)!important;color:var(--ink)!important;border-radius:10px!important;padding:8px 11px!important;font-size:12px!important;box-shadow:0 8px 30px rgba(0,0,0,.5)!important}
+.mtip b{color:var(--teal)}
+.leaflet-tooltip-top:before{border-top-color:var(--line2)!important}
+.mapside{border-left:1px solid var(--line);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:13px;background:var(--panel)}
+.dtl .nm{font-family:var(--f-disp);font-size:18px;font-weight:800;line-height:1.2}
+.dtl .cd{font-family:var(--f-mono);font-size:10px;color:var(--dim);margin:3px 0 9px}
+.drow{display:grid;grid-template-columns:1fr 108px;gap:9px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.drow .l{font-size:11.5px;color:var(--mut)}
+.drow .val{font-family:var(--f-mono);font-size:12px;text-align:right;line-height:1.4}
+.drow .tr{position:relative;height:6px;background:var(--trilho);border-radius:3px;grid-column:1/3}
+.drow .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.drow .tr u{position:absolute;top:-3px;width:2px;height:12px;background:var(--ink);opacity:.5}
+.empty{color:var(--mut);font-size:12.5px;padding:10px 0;line-height:1.6}
+/* prosa */
+.prosa{max-width:900px;font-size:13px;line-height:1.72;color:var(--mut)}
+.prosa h4{font-family:var(--f-disp);color:var(--ink);font-size:15px;margin:18px 0 7px}
+.prosa p{margin-bottom:9px}
+.prosa ul{margin:0 0 10px 18px}
+.prosa li{margin-bottom:5px}
+.prosa b,.prosa strong{color:var(--ink);font-weight:600}
+.prosa code{font-family:var(--f-mono);font-size:11.5px;color:var(--teal);background:color-mix(in srgb,var(--teal) 11%,transparent);padding:1px 5px;border-radius:4px}
+.quote{border-left:2px solid var(--teal);padding:8px 0 8px 14px;margin:12px 0;color:var(--ink);font-size:13.5px;line-height:1.65}
+/* footer */
+footer{grid-column:1/3;display:flex;align-items:center;gap:20px;padding:0 20px;border-top:1px solid var(--line);font-family:var(--f-mono);font-size:10px;color:var(--dim);background:var(--panel)}
+footer b{color:var(--mut);font-weight:500}
+footer .st{margin-left:auto;display:flex;gap:6px;align-items:center}
+footer .led{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pl 2.6s infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+/* modal do CSV */
+.modal{position:fixed;inset:0;z-index:3000;background:var(--veu);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal[hidden]{display:none}
+.modalbox{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:18px;width:min(860px,100%);max-height:86vh;display:flex;flex-direction:column}
+.modalbox h3{font-family:var(--f-disp);font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.modalbox textarea{flex:1;min-height:240px;background:var(--panel2);color-scheme:light dark;border:1px solid var(--line);border-radius:10px;color:var(--ink);
+ font-family:var(--f-mono);font-size:11.5px;line-height:1.5;padding:12px;resize:vertical;outline:none;white-space:pre}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px}
+/* a animação NÃO toca em opacity: conteúdo que só aparece se um keyframe rodar
+   some em navegador com movimento reduzido ou em captura headless */
+.fade{animation:fi .4s ease both}
+@keyframes fi{from{transform:translateY(7px)}to{transform:none}}
+/* responsivo: o painel precisa caber em notebook de 1280 e em tela cheia de 1920 */
+@media (max-width:1560px){
+ .app{grid-template-columns:214px 1fr}
+ .maplay{grid-template-columns:206px 1fr 296px}
+ .hk{gap:16px}.hk .v{font-size:15px}
+ .g4{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:1280px){
+ .app{grid-template-columns:186px 1fr}
+ .maplay{grid-template-columns:180px 1fr 262px}
+ .munpick select{max-width:168px}
+ .hk .i:nth-child(n+4){display:none}
+ .g3{grid-template-columns:repeat(2,1fr)}
+ .kc .v{font-size:16px}.kc .x{display:none}
+ .hint{display:none}   /* colide com o HUD quando o mapa fica estreito */
+}
+@media (max-width:1060px){
+ .maplay{grid-template-columns:0 1fr 240px}
+ .maprail{display:none}
+ .g2,.g3,.g4{grid-template-columns:1fr}
+}
+/* telefone e tablet estreito: o painel deixa de ser uma tela só e passa a rolar.
+   O mapa ganha altura fixa; o menu vira uma faixa horizontal. */
+@media (max-width:760px){
+ html,body{height:auto}
+ body{overflow:auto}
+ .app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr auto;min-height:100%}
+ header{grid-column:1;flex-wrap:wrap;height:auto;padding:12px 16px;gap:10px}
+ .munpick{margin-left:0;flex:1 1 100%}
+ .munpick select{max-width:none;width:100%}
+ .hk{margin-left:0;width:100%;gap:14px;overflow-x:auto;padding-bottom:2px}
+ .hk .i{text-align:left;flex:none}
+ .hk .i:nth-child(n+4){display:flex;flex-direction:column}
+ nav{grid-column:1;border-right:none;border-bottom:1px solid var(--line);
+  display:flex;gap:6px;overflow-x:auto;padding:10px 16px;white-space:nowrap}
+ nav button{width:auto;flex:none;margin:0;padding:7px 12px;border:1px solid var(--line);gap:8px}
+ .nav-l,.navfoot{display:none}
+ main{grid-column:1}
+ .page{padding:16px}
+ .page.full{padding:0;height:auto}
+ .maplay{grid-template-columns:1fr;grid-template-rows:auto auto;height:auto}
+ /* no telefone a legenda sai de cima do mapa e vai para baixo dele: sobreposta,
+    ela cobria um terço do território */
+ .mapwrap{display:flex;flex-direction:column;height:auto}
+ .mapc{position:static;height:56vh;min-height:300px}
+ .mapvign,.hint{display:none}
+ .hud{position:static;max-width:none;border-radius:0;border-left:none;border-right:none;border-top:none;order:2}
+ .kstrip{order:3}
+ .mapside{border-left:none;border-top:1px solid var(--line);padding:16px}
+ .kstrip{position:static;flex-wrap:wrap;margin:0;padding:10px 12px;background:var(--panel)}
+ .kc{min-width:44%}
+ .hud{max-width:none;right:13px}
+ .topbar{flex-wrap:wrap}
+ .chip{margin-left:0}
+ footer{grid-column:1;height:auto;flex-wrap:wrap;gap:6px 16px;padding:10px 16px;line-height:1.5}
+ .drow{grid-template-columns:1fr 96px}
+}
+#boot{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:9999;font-family:var(--f-mono);color:var(--mut);font-size:13px;text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+<div id="boot">carregando dados do Censo 2022 e da qualificação fiscal…<br><span style="color:var(--dim);font-size:11px">se travar aqui, sirva a pasta por HTTP:<br><code>python3 -m http.server 8000</code> na raiz do projeto</span></div>
+
+<div class="app">
+<header>
+ <div class="logo"><div class="sig">CIB</div><div><h1>Painel CERURB</h1><div class="sub">Piauí · 224 municípios</div></div></div>
+ <div class="munpick"><label>Município</label><select id="munSel"></select></div>
+ <button class="btn ghost" id="tema" title="alternar tema" aria-label="alternar tema">tema</button>
+ <div class="hk" id="hk"></div>
+</header>
+
+<nav>
+ <div class="nav-l">Estado</div>
+ <button data-pg="estado">Mapa de alvos <span class="c">224</span></button>
+ <button data-pg="carteira">Carteira e qualificação</button>
+ <button data-pg="janela">Janela de 31/12</button>
+ <div class="nav-l">Município</div>
+ <button data-pg="territorio">Território <span class="c" id="nvTer"></span></button>
+ <button data-pg="ranking">Ranking de bairros</button>
+ <button data-pg="saneamento">Saneamento</button>
+ <button data-pg="viario">Pavimentação e viário</button>
+ <button data-pg="perfis">Perfis socioeconômicos</button>
+ <div class="nav-l">Referência</div>
+ <button data-pg="relatorios">Relatórios exportáveis</button>
+ <button data-pg="metodologia">Metodologia e fontes</button>
+ <button data-pg="congelado" class="frozen">Fora da v1</button>
+ <div class="navfoot" id="navfoot"></div>
+</nav>
+
+<main>
+ <section class="page full" id="pg-estado">
+  <div class="maplay">
+   <div class="maprail">
+    <div class="rl">Leitura comercial</div><div class="ind" id="indCom"></div>
+    <div class="rl">Leitura do território</div><div class="ind" id="indCen"></div>
+    <div class="rl">Localizar município</div>
+    <div class="search"><input id="qMun" placeholder="digite o nome…" autocomplete="off"><div class="sug" id="sugMun"></div></div>
+    <div class="rl">Realces</div>
+    <button class="btn ghost on" id="hlPil" style="width:100%;margin-bottom:6px;text-align:center">Pilotos e alvos</button>
+    <button class="btn ghost" id="hlFox" style="width:100%;text-align:center">Tenants Foxinline</button>
+   </div>
+   <div class="mapwrap">
+    <div class="mapc" id="mapEstado"></div><div class="mapvign"></div>
+    <div class="hud"><div class="t" id="hudET"></div><div class="s" id="hudES"></div><div class="leg" id="legE"></div></div>
+    <div class="hint">clique para fixar · duplo clique abre o território</div>
+    <div class="kstrip" id="kE"></div>
+   </div>
+   <div class="mapside">
+    <div class="card"><h3><span id="rkETit">Maiores valores</span> <span id="rkETag"></span></h3><div id="rkE"></div></div>
+    <div class="card"><h3>ITBI × IPTU <span>2025 · SICONFI</span></h3><svg id="scE" viewBox="0 0 300 200" style="width:100%"></svg>
+     <div style="font-size:10px;color:var(--dim);font-family:var(--f-mono);margin-top:6px;line-height:1.5" id="scENota">escala log · acima da diagonal = ITBI &gt; IPTU</div></div>
+    <div class="card dtl"><h3>Município <span id="dtlECd"></span></h3><div id="dtlE"></div></div>
+   </div>
+  </div>
+ </section>
+
+ <section class="page" id="pg-carteira"></section>
+ <section class="page" id="pg-janela"></section>
+
+ <section class="page full" id="pg-territorio">
+  <div class="maplay">
+   <div class="maprail">
+    <div id="terRailB">
+     <div class="rl">Indicador</div><div class="ind" id="indT"></div>
+     <div class="rl">Localizar bairro</div>
+     <div class="search"><input id="qB" placeholder="digite o nome…" autocomplete="off"><div class="sug" id="sugB"></div></div>
+     <button class="btn ghost on" id="tgFcu" style="width:100%;margin-top:10px;text-align:center">Favelas e comunidades</button>
+    </div>
+    <div class="navfoot" id="terFoot"></div>
+   </div>
+   <div class="mapwrap">
+    <div class="mapc" id="mapTer"></div><div class="mapvign"></div>
+    <div class="hud"><div class="t" id="hudTT"></div><div class="s" id="hudTS"></div><div class="leg" id="legT"></div></div>
+    <div class="hint">clique no bairro para fixar · role para zoom</div>
+    <div class="kstrip" id="kT"></div>
+   </div>
+   <div class="mapside">
+    <div class="card"><h3><span id="rkTTit">Menores valores</span> <span id="rkTTag"></span></h3><div id="rkT"></div></div>
+    <div class="card" id="cardScT"><h3>Renda mediana × esgoto <span>por bairro</span></h3><svg id="scT" viewBox="0 0 300 205" style="width:100%"></svg></div>
+    <div class="card dtl"><h3><span id="dtlTTit">Bairro selecionado</span> <span id="dtlTCd"></span></h3><div id="dtlT"></div></div>
+   </div>
+  </div>
+ </section>
+
+ <section class="page" id="pg-ranking"></section>
+ <section class="page" id="pg-saneamento"></section>
+ <section class="page" id="pg-viario"></section>
+ <section class="page" id="pg-perfis"></section>
+ <section class="page" id="pg-relatorios"></section>
+ <section class="page" id="pg-metodologia"></section>
+ <section class="page" id="pg-congelado"></section>
+</main>
+
+<footer>
+ <span><b>Censo</b> IBGE 2022 · agregados por bairro e por município</span>
+ <span><b>Fiscal</b> SICONFI 2025 · classificação RREO</span>
+ <span><b>CIB</b> RFB/Sinter · set/2026</span>
+ <span><b>Entorno</b> SIM/(SIM+NÃO) · <b>Renda</b> mediana V06006</span>
+ <span class="st"><span class="led"></span> <span id="stamp"></span></span>
+</footer>
+</div>
+
+<script>
+/* ============================================================ utilitários */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const N=v=>v==null?'—':Math.round(v).toLocaleString('pt-BR');
+const P1=v=>v==null?'—':v.toLocaleString('pt-BR',{maximumFractionDigits:1});
+const PC=v=>v==null?'—':P1(v)+'%';
+const RS=v=>v==null?'—':'R$ '+N(v);
+/* per capita abaixo de R$ 10 perde o sentido com uma casa: P1(3,03) imprime "3" */
+const RS2=v=>v==null?'—':'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const MI=v=>v==null?'—':v>=1e9?'R$ '+(v/1e9).toLocaleString('pt-BR',{maximumFractionDigits:2})+' bi'
+  :v>=1e6?'R$ '+(v/1e6).toLocaleString('pt-BR',{maximumFractionDigits:2})+' mi'
+  :v>=1e3?'R$ '+(v/1e3).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil':'R$ '+N(v);
+const X=v=>v==null?'—':(Math.round(v*100)/100).toLocaleString('pt-BR')+'×';
+/* ITBI > IPTU só faz sentido com os dois reportados: `5 > null` seria true,
+   porque o null vira 0 — e um município sem demonstrativo entraria na conta. */
+const maisItbi=p=>p.itbi!=null&&p.iptu!=null&&p.itbi>p.iptu;
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* Duas paletas, e a diferença é semântica, não estética:
+   CAR lê CARÊNCIA — o 1º quintil (menor cobertura, menor renda) é o crítico;
+   MAG lê MAGNITUDE — arrecadação e contagem, onde "pouco" não é "ruim":
+   município com IPTU baixo é o alvo do Segmento B, não um problema.
+   Os valores vêm dos tokens de CSS: é o mesmo lugar para os dois temas. */
+let _cor={};
+function tok(n){
+ if(_cor[n]==null) _cor[n]=getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+ return _cor[n];
+}
+const rampa=p=>[1,2,3,4,5].map(i=>tok('--'+p+'-'+i));
+let CAR=[],MAG=[],INV=[],SEMDADO='';
+function lerPaleta(){
+ _cor={};
+ CAR=rampa('car'); MAG=rampa('mag'); INV=[...CAR].reverse(); SEMDADO=tok('--semdado');
+ CAT_COR={'A':tok('--blue'),'fronteira':tok('--amber'),'B':tok('--teal'),
+  '3 de 3':tok('--teal'),'falhou antes de 2025':CAR[2],'falhou em 2025':tok('--amber'),
+  'nunca em 3 anos':tok('--red'),'sem host':tok('--teal'),'com host':tok('--red'),'sem dado':SEMDADO};
+}
+/* Três caminhos para o mesmo CSV, porque o ambiente decide qual existe.
+   O que separa os casos não é o endereço, é o sandbox: dentro do visualizador de
+   artifact o navegador recusa download iniciado pela página, e lá existe
+   window.claude para pedir o salvamento à plataforma. Em qualquer outro lugar —
+   servidor local, Cloudflare Pages, VPS — o download comum funciona. */
+const SANDBOX=(()=>{try{return !!(window.claude&&window.claude.use)}catch(e){return false}})();
+function baixarLocal(nome,texto){
+ const b=new Blob(['﻿'+texto],{type:'text/csv;charset=utf-8'});
+ const url=URL.createObjectURL(b);
+ const a=document.createElement('a');a.href=url;a.download=nome;a.click();
+ /* revogar aqui, na mesma volta do click, aborta o download em parte dos
+    navegadores: o arquivo ainda não foi lido. Solta depois. */
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+async function baixarCsv(nome,linhas){
+ const texto=linhas.join('\n');
+ if(!SANDBOX){ baixarLocal(nome,texto); return }
+ let dl=null;
+ try{ dl=await window.claude.use('downloads') }catch(e){}
+ if(dl){
+  try{ await dl.save({filename:nome,data:'﻿'+texto}); return }
+  catch(e){
+   if(e&&e.code==='declined') return;              /* o viewer disse não */
+   mostrarCsv(nome,texto,e&&e.message); return;
+  }
+ }
+ mostrarCsv(nome,texto);
+}
+function mostrarCsv(nome,texto,motivo){
+ let m=$('#csvModal');
+ if(!m){
+  m=document.createElement('div'); m.id='csvModal'; m.className='modal';
+  m.innerHTML=`<div class="modalbox">
+   <h3><span id="csvNome"></span> <button class="btn ghost" id="csvFecha">fechar</button></h3>
+   <p class="desc" id="csvMotivo"></p>
+   <textarea id="csvTxt" readonly spellcheck="false"></textarea>
+   <div style="display:flex;gap:8px;margin-top:10px"><button class="btn" id="csvCopia">Copiar tudo</button>
+   <span id="csvInfo" style="font-family:var(--f-mono);font-size:11px;color:var(--mut);align-self:center"></span></div></div>`;
+  document.body.appendChild(m);
+  m.onclick=e=>{if(e.target===m)m.hidden=true};
+  $('#csvFecha').onclick=()=>{m.hidden=true};
+  $('#csvCopia').onclick=async()=>{
+   const t=$('#csvTxt'); t.select();
+   try{await navigator.clipboard.writeText(t.value); $('#csvInfo').textContent='copiado'}
+   catch(e){ $('#csvInfo').textContent='use Ctrl+C' }
+  };
+ }
+ $('#csvMotivo').textContent=motivo
+  ? 'Não deu para salvar o arquivo ('+motivo+'). O conteúdo está abaixo, para copiar.'
+  : 'Selecione tudo e copie — ou rode o painel localmente, onde o botão baixa o arquivo.';
+ $('#csvNome').textContent=nome;
+ $('#csvTxt').value=texto;
+ $('#csvInfo').textContent=texto.split('\n').length+' linhas';
+ m.hidden=false;
+}
+const cs=v=>v==null?'':String(v).replace(/;/g,',');
+
+/* ============================================================ estado global */
+let META, CNEFE=null, MUNF=[], MUN={}, SELMUN='2211001', SELM=null, KE='segmento';
+let BAIRROS={}, FEATS=[], SELB=null, KT='renda_med';
+let mapE=null, layE=null, mapT=null, layT=null, layFcu=null, fcuOn=true;
+let hlPil=true, hlFox=false;
+
+/* servido de painel/ na árvore local, da raiz na página publicada */
+const CAMINHO_LAUDO=location.pathname.includes('/painel/')
+ ? '../m0-conector/LAUDO-completude.html' : 'm0-conector/LAUDO-completude.html';
+const PRAZO=new Date('2026-12-31T23:59:59');
+const dias=Math.ceil((PRAZO-new Date())/864e5);
+
+/* indicadores do mapa estadual ------------------------------------------- */
+const IE={
+ segmento:{l:'Segmento A / B',full:'Segmento comercial: A (IPTU ≥ R$ 1 mi), fronteira, B (IPTU < R$ 100 mil)',cat:1,cat_ord:['A','fronteira','B'],
+   val:p=>p.segmento,fmt:v=>v||'—'},
+ iptu:{l:'IPTU 2025',full:'IPTU arrecadado em 2025 (SICONFI, classificação RREO)',val:p=>p.iptu,fmt:MI,dir:1},
+ itbi:{l:'ITBI 2025',full:'ITBI arrecadado em 2025 (SICONFI, classificação RREO)',val:p=>p.itbi,fmt:MI,dir:1},
+ itbi_hab:{l:'ITBI por habitante',full:'ITBI 2025 ÷ população do Censo 2022 (V0001), recalculado aqui',val:p=>p.itbi_hab,fmt:RS2,dir:1},
+ itbi_iptu:{l:'ITBI ÷ IPTU',full:'Razão ITBI/IPTU — acima de 1 a transmissão vale mais que a propriedade',val:p=>p.itbi_iptu,fmt:X,dir:1},
+ rcl:{l:'RCL 2025',full:'Receita corrente líquida 2025 — capacidade de pagar, não de arrecadar IPTU',val:p=>p.rcl,fmt:MI,dir:1},
+ rreo:{l:'Sinal RREO',full:'Entrega do demonstrativo fiscal obrigatório em 2023, 2024 e 2025',cat:1,
+   cat_ord:['3 de 3','falhou antes de 2025','falhou em 2025','nunca em 3 anos','sem dado'],
+   val:p=>rotRreo(p),fmt:v=>v},
+ tenant_fox:{l:'Incumbente Foxinline',full:'Host municipal em Certificate Transparency (evidência forte p/ presença, fraca p/ ausência)',cat:1,cat_ord:['sem host','com host'],
+   val:p=>p.tenant_fox?'com host':'sem host',fmt:v=>v},
+ end:{l:'Endereços no CNEFE',full:'Endereços que o Censo 2022 enumerou, com coordenada — o volume que a remessa ao CADURB tem de cobrir',val:p=>p.end,fmt:N,dir:1},
+ cib_ativo:{l:'CIB já transmitido',full:'Inscrições ativas no CIB (RFB/Sinter, set/2026) — no PI, só Teresina',val:p=>p.cib_ativo,fmt:N,dir:1},
+ renda_med:{l:'Renda mediana',full:'Rendimento mediano do responsável pelo domicílio (V06006)',val:p=>p.renda_med,fmt:RS,dir:1,censo:1},
+ esgoto:{l:'Esgoto em rede',full:'Domicílios com esgoto em rede geral ou pluvial (%)',val:p=>p.esgoto,fmt:PC,dir:1,censo:1},
+ agua:{l:'Água da rede',full:'Domicílios com água da rede geral (%)',val:p=>p.agua,fmt:PC,dir:1,censo:1},
+ pav:{l:'Pavimentação',full:'Domicílios em face com via pavimentada (%)',val:p=>p.pav,fmt:PC,dir:1,censo:1},
+ ilum:{l:'Iluminação',full:'Domicílios em face com iluminação pública (%)',val:p=>p.ilum,fmt:PC,dir:1,censo:1},
+ bairros:{l:'Bairros no Censo',full:'Bairros oficiais na malha CD2022 — define se o painel territorial funciona',val:p=>p.bairros,fmt:N,dir:1,censo:1,mag:1},
+};
+/* indicadores do mapa municipal ------------------------------------------ */
+const IT={
+ renda_med:{l:'Renda mediana',full:'Rendimento mediano mensal dos responsáveis (R$)',fmt:RS},
+ esgoto:{l:'Esgoto em rede',full:'Domicílios com esgoto em rede geral (%)',fmt:PC},
+ agua:{l:'Água da rede',full:'Domicílios com água da rede geral (%)',fmt:PC},
+ pav:{l:'Pavimentação',full:'Domicílios em face com via pavimentada (%)',fmt:PC,ent:1},
+ ilum:{l:'Iluminação',full:'Domicílios em face com iluminação pública (%)',fmt:PC,ent:1},
+ calcada:{l:'Calçada',full:'Domicílios em face com calçada (%)',fmt:PC,ent:1},
+ bueiro:{l:'Bueiro / drenagem',full:'Domicílios em face com bueiro (%)',fmt:PC,ent:1},
+ rampa:{l:'Rampa p/ cadeirante',full:'Domicílios em face com rampa (%)',fmt:PC,ent:1},
+};
+
+/* ============================================================ carga */
+async function carregar(){
+ const [meta,mun,cne]=await Promise.all([
+   fetch('dados/meta.json').then(r=>r.json()),
+   fetch('dados/municipios.json').then(r=>r.json()),
+   fetch('dados/cnefe.json').then(r=>r.json()).catch(()=>null)]);
+ META=meta; CNEFE=cne; MUNF=mun.features.map(f=>({p:f.properties,geo:f.geometry}));
+ /* o CNEFE entra como propriedade do município: é volume de cadastro, que é a
+    unidade em que a remessa ao CADURB é medida e precificada */
+ if(CNEFE) MUNF.forEach(f=>{const c=CNEFE.municipios[f.p.cd]; if(c) Object.assign(f.p,{
+   end:c.end, end_dom:c.dom, end_estab:c.estab, end_obra:c.obra, end_agro:c.agro,
+   end_urb:c.na_malha, end_fora:c.fora_da_malha, end_apto:c.apto})});
+ MUNF.forEach(f=>MUN[f.p.cd]=f);
+ $('#stamp').textContent='dados de '+META.gerado_em+' · série local, sem servidor';
+ aplicarTema(lerTema(),false);
+ $('#tema').onclick=alternarTema;
+ /* sem escolha guardada, o painel segue o sistema — e só reage, não decide */
+ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
+  if(lerTema()) return; lerPaleta(); redesenhar();
+ });
+ const pedido=new URLSearchParams(location.search).get('m');
+ if(pedido&&MUN[pedido]) SELMUN=pedido;
+ montarSeletor(); montarHeader(); montarNav();
+ paginaEstado(); paginaCarteira(); paginaJanela(); paginaMetodologia(); paginaCongelado();
+ await trocarMunicipio(SELMUN,true);
+ const h=location.hash.replace('#','')||'estado'; ir(h);
+ $('#boot').remove();
+}
+function montarSeletor(){
+ const sel=$('#munSel'), comB=MUNF.filter(f=>f.p.bairros>0).sort((a,b)=>b.p.bairros-a.p.bairros);
+ const semB=MUNF.filter(f=>f.p.bairros===0).sort((a,b)=>a.p.name.localeCompare(b.p.name,'pt-BR'));
+ const og1=document.createElement('optgroup'); og1.label=`com bairros no Censo (${comB.length})`;
+ comB.forEach(f=>{const o=new Option(`${f.p.name} — ${f.p.bairros} bairros`,f.p.cd);og1.appendChild(o)});
+ const og2=document.createElement('optgroup'); og2.label=`sem bairros — modo municipal (${semB.length})`;
+ semB.forEach(f=>{const o=new Option(f.p.name,f.p.cd);og2.appendChild(o)});
+ sel.append(og1,og2); sel.value=SELMUN;
+ sel.onchange=()=>trocarMunicipio(sel.value);
+}
+function montarHeader(){
+ /* soma só o que foi reportado: 72 municípios não entregaram RREO 2025 e
+    somá-los como zero seria a mesma confusão que o painel proíbe em toda parte */
+ const tot=k=>MUNF.reduce((s,f)=>s+(f.p[k]||0),0);
+ const nRep=k=>MUNF.filter(f=>f.p[k]!=null).length;
+ const comCib=MUNF.filter(f=>f.p.cib_ativo).length;
+ $('#hk').innerHTML=[
+  ['Municípios',String(MUNF.length)],
+  ['Com bairros',String(META.com_bairros)],
+  ['IPTU reportado',MI(tot('iptu'))],
+  ['ITBI reportado',MI(tot('itbi'))],
+  ['CIB transmitido',comCib+' de '+MUNF.length],
+  ['Dias até 31/12',String(dias)],
+ ].map(([l,v])=>`<div class="i" title="${l.includes('reportado')?'soma sobre os '+nRep('iptu')+' municípios que entregaram RREO 2025':''}"><div class="l">${l}</div><div class="v">${v}</div></div>`).join('');
+}
+function montarNav(){
+ $$('nav button[data-pg]').forEach(b=>b.onclick=()=>ir(b.dataset.pg));
+ $('#navfoot').innerHTML=`${META.bairros_total} bairros · ${META.fcu_total} FCU<br>malha oficial CD 2022<br>ETL: painel/build_dados.py`;
+}
+const PAGINAS=['estado','carteira','janela','territorio','ranking','saneamento',
+ 'viario','perfis','relatorios','metodologia','congelado'];
+function ir(pg){
+ /* o hash vem da URL: qualquer coisa que não seja identificador CSS faria o
+    querySelector lançar, e a navegação morreria em silêncio */
+ if(!PAGINAS.includes(pg)) pg='estado';
+ $$('.page').forEach(p=>p.classList.toggle('on',p.id==='pg-'+pg));
+ $$('nav button[data-pg]').forEach(b=>b.classList.toggle('on',b.dataset.pg===pg));
+ location.hash=pg;
+ /* o mapa nasce dentro de uma página oculta: sem enquadrar de novo ao aparecer,
+    o fitBounds acontece sobre um contêiner de tamanho zero e o estado some da tela */
+ clearTimeout(window._mapa);
+ window._mapa=setTimeout(()=>{
+  try{
+   if(pg==='estado'&&mapE){mapE.invalidateSize(false);enquadrar(mapE,layE,[12,12])}
+   /* clicar numa linha do ranking pede o mapa NAQUELE bairro: reenquadrar tudo
+      aqui desfazia o pan que o chamador acabou de pedir */
+   if(pg==='territorio'&&mapT){mapT.invalidateSize(false);if(!focarBairro())enquadrar(mapT,layT,[16,16])}
+  }catch(e){console.warn('mapa:',e)}
+ },60);
+ $('main').scrollTop=0;
+}
+addEventListener('resize',()=>{
+ clearTimeout(window._rz); window._rz=setTimeout(()=>{
+  const pg=location.hash.replace('#','');
+  if(pg==='estado'&&mapE) mapE.invalidateSize();
+  if(pg==='territorio'&&mapT) mapT.invalidateSize();
+ },200);
+});
+
+/* ============================================================ escalas */
+/* Leaflet lança "Invalid LatLng (NaN,NaN)" se fitBounds rodar num contêiner de
+   tamanho zero — que é o estado de toda página oculta. Daí o setView inicial e
+   este guarda-corpo: só enquadra quando o contêiner já tem tamanho. */
+const PI_VIEW=[[-7.2,-42.8],6];
+function focarBairro(){
+ if(!SELB||!layT||!layT.getLayers) return false;
+ const c=mapT&&mapT.getContainer();
+ if(!c||!c.clientWidth||!c.clientHeight) return false;
+ const l=layT.getLayers().find(x=>x.feature.properties.cd===SELB);
+ if(!l) return false;
+ try{mapT.fitBounds(l.getBounds(),{padding:[70,70],animate:false})}catch(e){return false}
+ return true;
+}
+function enquadrar(map,lay,pad){
+ if(!map||!lay) return false;
+ const c=map.getContainer();
+ if(!c.clientWidth||!c.clientHeight) return false;
+ try{const b=lay.getBounds(); if(b&&b.isValid()){map.fitBounds(b,{padding:pad||[14,14],animate:false});return true}}catch(e){console.warn('enquadrar:',e)}
+ return false;
+}
+
+function quintis(vals){
+ const v=vals.filter(x=>x!=null&&!isNaN(x)).sort((a,b)=>a-b);
+ if(!v.length) return [0,0,0,0];
+ const q=i=>v[Math.floor(i*(v.length-1))];
+ return [q(.2),q(.4),q(.6),q(.8)];
+}
+/* ausência sempre no fim, nos dois sentidos: com 72 municípios sem RREO, uma
+   ordenação crescente por IPTU começava com 72 linhas em branco */
+function cmp(x,y,desc){
+ const vx=(x==null||x===''), vy=(y==null||y==='');
+ if(vx&&vy) return 0;
+ if(vx) return 1;
+ if(vy) return -1;
+ if(typeof x==='string'||typeof y==='string')
+  return (desc?-1:1)*String(x).localeCompare(String(y),'pt-BR');
+ return (desc?-1:1)*(x-y);
+}
+function faixa(v,q){let c=4;for(let i=0;i<4;i++){if(v<=q[i]){c=i;break}}return c}
+function corQ(v,q,pal){
+ if(v==null) return SEMDADO;
+ return (pal||CAR)[faixa(v,q)];
+}
+
+/* ============================================================ MAPA ESTADUAL */
+let CAT_COR={};
+/* a coluna sinal_rreo do CSV só nomeia duas falhas; o resto do estado vem vazio.
+   Ler "vazio" como "em dia" pintava de verde 82 municípios que faltaram em 2023
+   ou 2024 — e a própria ficha, que imprime o tripé cru, desmentia o mapa. */
+function rotRreo(p){
+ const r=p.rreo;
+ if(!r) return 'sem dado';        /* ausente do CSV de qualificação ≠ não entregou */
+ const n=r[0]+r[1]+r[2];
+ if(!r[2]) return n?'falhou em 2025':'nunca em 3 anos';
+ return n===3?'3 de 3':'falhou antes de 2025';
+}
+function corE(p){
+ const d=IE[KE], v=d.val(p);
+ if(d.cat) return CAT_COR[v]||SEMDADO;
+ return corQ(v,d._q,(d.censo&&!d.mag)?CAR:MAG);
+}
+function paginaEstado(){
+ /* indicador que depende de base ausente não vira uma tela inteira de "sem dado" */
+ if(!CNEFE) delete IE.end;
+ Object.keys(IE).forEach(k=>{const d=IE[k]; if(!d.cat) d._q=quintis(MUNF.map(f=>d.val(f.p)))});
+ mapE=L.map('mapEstado',{zoomControl:false,attributionControl:false,zoomSnap:.1,zoomDelta:.5,wheelPxPerZoomLevel:120,minZoom:3,maxZoom:18}).setView(PI_VIEW[0],PI_VIEW[1]);
+ L.control.zoom({position:'bottomright'}).addTo(mapE);
+ layE=L.geoJSON({type:'FeatureCollection',features:MUNF.map(f=>({type:'Feature',properties:f.p,geometry:f.geo}))},{
+  style:f=>estiloE(f.properties),
+  onEachFeature:(f,l)=>{
+   l.bindTooltip('',{className:'mtip',direction:'top',opacity:1,sticky:true});
+   l.on('click',()=>selecionarMun(f.properties.cd));
+   l.on('dblclick',()=>{trocarMunicipio(f.properties.cd);ir('territorio')});
+  }}).addTo(mapE);
+ enquadrar(mapE,layE,[12,12]);
+ const grpCom=$('#indCom'), grpCen=$('#indCen');
+ Object.keys(IE).forEach(k=>{
+  const d=IE[k], b=document.createElement('button');
+  b.className=k===KE?'on':''; b.dataset.k=k;
+  b.innerHTML=`<span>${d.l}</span><span class="v">${resumoE(k)}</span>`;
+  b.onclick=()=>{KE=k;$$('#indCom button,#indCen button').forEach(x=>x.classList.toggle('on',x.dataset.k===k));renderE()};
+  (d.censo?grpCen:grpCom).appendChild(b);
+ });
+ $('#hlPil').onclick=function(){hlPil=!hlPil;this.classList.toggle('on',hlPil);renderE()};
+ $('#hlFox').onclick=function(){hlFox=!hlFox;this.classList.toggle('on',hlFox);renderE()};
+ buscador('#qMun','#sugMun',()=>MUNF.map(f=>({n:f.p.name,cd:f.p.cd})),cd=>selecionarMun(cd,true));
+ renderE();
+}
+function resumoE(k){
+ const d=IE[k];
+ if(d.cat){const c={};MUNF.forEach(f=>{const v=d.val(f.p);c[v]=(c[v]||0)+1});
+  return (d.cat_ord||Object.keys(c)).map(x=>`${c[x]||0}`).join('/')}
+ if(k==='bairros') return String(META.com_bairros);
+ if(['iptu','itbi','rcl','cib_ativo'].includes(k)) return d.fmt(MUNF.reduce((s,f)=>s+(d.val(f.p)||0),0));
+ const vs=MUNF.map(f=>d.val(f.p)).filter(v=>v!=null).sort((a,b)=>a-b);
+ return vs.length?d.fmt(vs[Math.floor(vs.length/2)]):'—';
+}
+function estiloE(p){
+ const pil=hlPil&&p.papel, fox=hlFox&&p.tenant_fox;
+ return {fillColor:corE(p),fillOpacity:p.cd===SELM?.98:.9,
+   color:p.cd===SELM?tok('--sel'):fox?tok('--red'):pil?tok('--violet'):tok('--borda-mapa'),
+   weight:p.cd===SELM?2.4:(fox||pil)?1.8:.6};
+}
+function renderE(){
+ const d=IE[KE];
+ $('#hudET').textContent=d.l;
+ $('#hudES').textContent=d.full+(d.cat?'':(d.censo&&!d.mag)?' · vermelho = 20% mais carentes':' · tom mais claro = maior valor');
+ layE.eachLayer(l=>{const p=l.feature.properties;
+  l.setStyle(estiloE(p));
+  l.setTooltipContent(`<b>${esc(p.name)}</b><br>${d.l}: <b>${d.fmt(d.val(p))}</b><br>`+
+    `IPTU ${MI(p.iptu)} · ITBI ${MI(p.itbi)}<br>${p.bairros?p.bairros+' bairros':'sem bairros no Censo'}`);
+ });
+ $('#legE').innerHTML = d.cat
+  ? (d.cat_ord||[]).map(v=>[v,MUNF.filter(f=>d.val(f.p)===v).length]).filter(([,n])=>n)
+     .map(([v,n])=>`<div class="r"><span class="sw" style="background:${CAT_COR[v]}"></span>${v} · ${n}</div>`).join('')
+  : (()=>{const q=d._q,ext=[...q,Math.max(...MUNF.map(f=>d.val(f.p)||0))],cnt=[0,0,0,0,0];
+      MUNF.forEach(f=>{const v=d.val(f.p); if(v!=null) cnt[faixa(v,q)]++});
+      /* 72 municípios não entregaram RREO 2025: o campo fiscal deles é AUSENTE,
+         não zero. Cinza e contagem evitam a leitura "arrecada nada" */
+      const semd=MUNF.length-cnt.reduce((x,y)=>x+y,0);
+      return [0,1,2,3,4].filter(i=>cnt[i]).map(i=>
+       `<div class="r"><span class="sw" style="background:${((d.censo&&!d.mag)?CAR:MAG)[i]}"></span>até ${d.fmt(ext[i])} · ${cnt[i]}</div>`).join('')
+       +(semd?`<div class="r" style="margin-top:4px"><span class="sw" style="background:${SEMDADO}"></span>sem dado · ${semd}</div>`:'')})()
+    +(hlPil?`<div class="r" style="margin-top:4px"><span class="sw" style="background:${tok('--violet')}"></span>piloto / alvo nomeado</div>`:'')
+    +(hlFox?`<div class="r"><span class="sw" style="background:${tok('--red')}"></span>host Foxinline</div>`:'');
+ /* extremos */
+ const arr=MUNF.filter(f=>d.val(f.p)!=null&&(!d.cat));
+ const box=$('#rkE');
+ $('#rkETit').textContent=d.cat?'Distribuição':(d.censo&&!d.mag)?'Menores valores':'Maiores valores';
+ $('#rkETag').textContent='· '+d.l.toLowerCase();
+ if(d.cat){
+  const c={};MUNF.forEach(f=>{const v=d.val(f.p);c[v]=(c[v]||0)+1});
+  box.innerHTML=(d.cat_ord||Object.keys(c)).filter(v=>c[v]).map((v,i)=>`<div class="rrow"><div class="i">${i+1}</div><div><div class="n">${v}</div>
+   <div class="bar" style="margin-top:3px"><i style="width:${100*(c[v]||0)/MUNF.length}%;background:${CAT_COR[v]}"></i></div></div>
+   <div class="val">${c[v]||0}</div></div>`).join('');
+ }else{
+  const menor=(d.censo&&!d.mag);
+  const top=[...arr].sort((a,b)=>menor?d.val(a.p)-d.val(b.p):d.val(b.p)-d.val(a.p)).slice(0,8);
+  const mx=Math.max(...arr.map(f=>d.val(f.p)))||1;
+  box.innerHTML=top.map((f,i)=>`<div class="rrow${f.p.cd===SELM?' sel':''}" data-cd="${f.p.cd}"><div class="i">${i+1}</div>
+   <div><div class="n">${esc(f.p.name)}</div><div class="bar" style="margin-top:3px"><i style="width:${100*(d.val(f.p)/mx)}%;background:${corE(f.p)}"></i></div></div>
+   <div class="val">${d.fmt(d.val(f.p))}</div></div>`).join('');
+  $$('#rkE .rrow').forEach(r=>r.onclick=()=>selecionarMun(r.dataset.cd,true));
+ }
+ /* KPIs */
+ const nB=MUNF.filter(f=>f.p.segmento==='B').length, nA=MUNF.filter(f=>f.p.segmento==='A').length;
+ const fox=MUNF.filter(f=>f.p.tenant_fox).length, nunca=MUNF.filter(f=>rotRreo(f.p)==='nunca em 3 anos').length;
+ $('#kE').innerHTML=[
+  ['segmento B',String(nB),'IPTU < R$ 100 mil — vende prazo, não arrecadação'],
+  ['segmento A',String(nA),'IPTU ≥ R$ 1 mi — vende base de cálculo'],
+  ['sem RREO há 3 anos',String(nunca),'maior sinal de lead do B: não tem equipe'],
+  ['incumbente instalado',String(fox),'host municipal Foxinline no CT'],
+ ].map(([l,v,x])=>`<div class="kc fade"><div class="l">${l}</div><div class="v">${v}</div><div class="x">${x}</div></div>`).join('');
+ scatterE(); fichaE();
+}
+function selecionarMun(cd,pan){
+ SELM=(SELM===cd)?null:cd;
+ renderE();
+ if(SELM&&pan){const l=layE.getLayers().find(x=>x.feature.properties.cd===SELM); if(l) try{mapE.fitBounds(l.getBounds(),{padding:[60,60],animate:false})}catch(e){}}
+}
+function scatterE(){
+ const s=$('#scE'), W=300,H=200,pad=32; s.innerHTML='';
+ const mk=(t,a,txt)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;s.appendChild(e);return e};
+ const rotLog=e=>{const v=10**e;
+  return v>=1e9?(v/1e9)+' bi':v>=1e6?(v/1e6)+' mi':v>=1e3?(v/1e3)+' mil':String(v)};
+ const rs=MUNF.filter(f=>(f.p.iptu||0)>0&&(f.p.itbi||0)>0);
+ const lg=v=>Math.log10(v);
+ /* piso e teto saem do próprio dado: com piso fixo em 10^2 os municípios de
+    ITBI abaixo de R$ 100 caíam fora do viewBox sem aparecer em nenhuma contagem */
+ const hi=Math.ceil(Math.max(...rs.map(f=>Math.max(lg(f.p.iptu),lg(f.p.itbi)))));
+ const lo=Math.floor(Math.min(...rs.map(f=>Math.min(lg(f.p.iptu),lg(f.p.itbi)))));
+ const sx=v=>pad+(lg(v)-lo)/(hi-lo)*(W-pad-8), sy=v=>H-pad-(lg(v)-lo)/(hi-lo)*(H-pad-10);
+ mk('line',{x1:sx(10**lo),y1:sy(10**lo),x2:sx(10**hi),y2:sy(10**hi),stroke:tok('--grade-forte'),'stroke-dasharray':'3 3','stroke-width':1});
+ for(let e=lo+1;e<=hi;e++){
+  mk('line',{x1:pad,x2:W-8,y1:sy(10**e),y2:sy(10**e),stroke:tok('--grade'),'stroke-width':1});
+  /* a tabela fixa que estava aqui trocava 10^3 por "10k" e errava toda a escala
+     por uma potência; o rótulo agora vem do próprio expoente */
+  mk('text',{x:pad-4,y:sy(10**e)+3,'text-anchor':'end','font-size':7,fill:tok('--eixo')},rotLog(e));
+ }
+ rs.forEach(f=>{
+  const sel=f.p.cd===SELM;
+  const c=mk('circle',{cx:sx(f.p.iptu),cy:sy(f.p.itbi),r:sel?5:(f.p.papel?3.6:2.4),
+   fill:sel?tok('--sel'):f.p.papel?tok('--violet'):maisItbi(f.p)?tok('--amber'):tok('--teal'),'fill-opacity':sel?1:.72,
+   stroke:sel?tok('--teal'):'none','stroke-width':2,style:'cursor:pointer'});
+  c.onclick=()=>selecionarMun(f.p.cd,true);
+  c.appendChild(document.createElementNS('http://www.w3.org/2000/svg','title')).textContent=
+   `${f.p.name} · IPTU ${MI(f.p.iptu)} · ITBI ${MI(f.p.itbi)}`;
+ });
+ mk('text',{x:W-8,y:H-8,'text-anchor':'end','font-size':8,fill:tok('--eixo')},'IPTU →');
+ mk('text',{x:4,y:14,'font-size':8,fill:tok('--eixo')},'↑ ITBI');
+ mk('text',{x:W-8,y:14,'text-anchor':'end','font-size':8,fill:tok('--amber')},
+   rs.filter(f=>maisItbi(f.p)).length+' com ITBI > IPTU');
+ const fora=MUNF.length-rs.length, tot=MUNF.filter(f=>maisItbi(f.p)).length;
+ $('#scENota').innerHTML=`escala log · acima da diagonal = ITBI &gt; IPTU<br>${tot} municípios arrecadam mais ITBI que IPTU · ${fora} fora do gráfico (sem RREO 2025 ou valor zerado)`;
+}
+function fichaE(){
+ const box=$('#dtlE');
+ if(!SELM){box.innerHTML='<div class="empty">Clique num município no mapa, na lista ou na busca.<br>Duplo clique abre o território dele.</div>';$('#dtlECd').textContent='';return}
+ const p=MUN[SELM].p;
+ $('#dtlECd').textContent='IBGE '+p.cd;
+ const seg=p.segmento==='A'?'<span class="tag a">segmento A</span>':p.segmento==='fronteira'?'<span class="tag f">fronteira</span>'
+  :p.segmento==='B'?'<span class="tag b">segmento B</span>':'<span class="tag warn">sem segmento</span>';
+ const tags=[seg,
+  p.papel==='piloto'?'<span class="tag pil">piloto</span>':'',
+  p.papel==='alvo_itbi'?'<span class="tag pil">alvo ITBI</span>':'',
+  p.papel==='vitrine'?'<span class="tag pil">vitrine</span>':'',
+  p.tenant_fox?'<span class="tag fox">host Foxinline</span>':'',
+  rotRreo(p)!=='3 de 3'?`<span class="tag warn">RREO: ${rotRreo(p)}</span>`:'',
+  p.hipotese_itbi_rural?'<span class="tag warn">hipótese ITBI rural</span>':'',
+  p.cib_ativo?'<span class="tag b">CIB ativo</span>':'',
+ ].filter(Boolean).join(' ');
+ const divPop=p.pop_csv&&p.pop&&Math.abs(p.pop-p.pop_csv)>0;
+ const linhas=[['População (Censo 2022)',N(p.pop)],
+  ['Moradores em domicílios ocupados',N(p.mor)],
+  ...(divPop?[['— estimativa anual do CSV',N(p.pop_csv)]]:[]),
+  ['Domicílios',N(p.dom)],['Bairros no Censo',p.bairros||'—'],
+  ['Endereços no CNEFE',N(p.end)],
+  ['— domicílios particulares',N(p.end_dom)],
+  ...(p.end_urb!=null?[['— dentro da malha de bairros',N(p.end_urb)]]:[]),
+  ['IPTU 2025',MI(p.iptu)],['ITBI 2025',MI(p.itbi)],['ITBI ÷ IPTU',X(p.itbi_iptu)],['ITBI por habitante',RS2(p.itbi_hab)],
+  ['ISS 2025',MI(p.iss)],['RCL 2025',MI(p.rcl)],
+  ['Pacote B (12–25 mil) ÷ RCL',p.rcl?((12000/p.rcl*100).toFixed(3)+'% a '+(25000/p.rcl*100).toFixed(3)+'%'):'—'],
+  ['Renda mediana',RS(p.renda_med)],['Esgoto em rede',PC(p.esgoto)],['Água da rede',PC(p.agua)],
+  ['Pavimentação',PC(p.pav)],['Iluminação',PC(p.ilum)],
+  ['RREO 23/24/25',(p.rreo?p.rreo.map(x=>x?'✓':'✗').join(' ')+' · ':'')+rotRreo(p)],
+  ['Inscrições CIB ativas',N(p.cib_ativo)],
+   ...(p.cib_ativo&&p.end_urb?[['CIB ÷ endereços urbanos',PC(100*p.cib_ativo/p.end_urb)]]:[])];
+ box.innerHTML=`<div class="nm">${esc(p.name)}</div><div class="cd">${esc(p.rgint||'')} · ${N(p.area_km2)} km²</div>
+  <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${tags}</div>`+
+  (p.papel_nota?`<div class="quote" style="font-size:12px;margin:6px 0 10px">${esc(p.papel_nota)}</div>`:'')+
+  linhas.map(([l,v])=>`<div class="drow"><div class="l">${l}</div><div class="val">${v}</div></div>`).join('')+
+  `<button class="btn" style="margin-top:12px;width:100%;text-align:center" onclick="trocarMunicipio('${p.cd}');ir('territorio')">
+    ${p.bairros?'Abrir território ('+p.bairros+' bairros)':'Abrir ficha municipal (sem bairros)'}</button>`;
+}
+
+/* ============================================================ MUNICÍPIO */
+async function trocarMunicipio(cd,inicial){
+ if(!MUN[cd]) cd=MUNF[0]&&MUNF[0].p.cd;   /* link com código de outra UF não derruba a tela */
+ if(!MUN[cd]) return;
+ SELMUN=cd; SELB=null; $('#munSel').value=cd;
+ try{const u=new URL(location.href); u.searchParams.set('m',cd); history.replaceState(null,'',u)}catch(e){}
+ const p=MUN[cd].p;
+ if(p.bairros>0&&!BAIRROS[cd]){
+  try{
+   const r=await fetch('dados/bairros/'+cd+'.json');
+   if(!r.ok) throw new Error('HTTP '+r.status);
+   BAIRROS[cd]=await r.json();
+  }catch(e){
+   /* sem o arquivo do município a tela ficaria com o mapa do anterior e os
+      números do novo: melhor cair no modo sem-bairro e dizer o que houve */
+   BAIRROS[cd]=null;
+   console.error('bairros de '+cd+':',e);
+  }
+ }
+ if(cd!==SELMUN) return;   /* outra troca entrou na frente enquanto o fetch corria */
+ const pac=BAIRROS[cd];
+ FEATS=pac?pac.features.map(f=>({p:f.properties,geo:f.geometry})):[];
+ if(CNEFE) FEATS.forEach(f=>{const c=CNEFE.bairros[f.p.cd];
+   if(c){f.p.end=c.end; f.p.end_dom=c.dom}});
+ CACHE={};
+ const falhou=p.bairros>0&&!FEATS.length;
+ $('#nvTer').textContent=falhou?'dado não carregou':p.bairros?p.bairros+' bairros':'sem bairros';
+ $('#terFoot').innerHTML=falhou
+  ? `<b style="color:var(--red)">${esc(p.name)}: falha ao ler dados/bairros/${cd}.json</b><br>rode <code>build_dados.py</code> e sirva a pasta por HTTP`
+  : `${esc(p.name)}<br>${p.bairros||0} bairros · ${p.fcus||0} FCU<br>${N(p.dom)} domicílios`;
+ montarTerritorio(); paginaRanking(); paginaSaneamento(); paginaViario(); paginaPerfis(); paginaRelatorios();
+ if(!inicial&&location.hash.replace('#','')==='territorio'&&mapT) setTimeout(()=>{try{mapT.invalidateSize(false)}catch(e){}},60);
+}
+const wavg=(arr,k)=>{let a=0,b=0;arr.forEach(f=>{if(f.p[k]!=null&&f.p.dom){a+=f.p[k]*f.p.dom;b+=f.p.dom}});return b?a/b:null};
+/* quintis e universo eram recalculados a cada setStyle — filter+sort por bairro,
+   por quadro. O cache zera junto com FEATS, na troca de município. */
+let CACHE={};
+/* quem decide o corte de amostra é a ORIGEM da variável, não a lista de botões:
+   ônibus e arborização vêm do entorno e não estavam em IT, então caíam no corte
+   de domicílios (n_ok) em vez do corte do universo do entorno (n_ok_ent) */
+const ENT=new Set(['pav','ilum','calcada','rampa','bueiro','onibus','arbor_sem']);
+const validos=k=>CACHE['v'+k]||(CACHE['v'+k]=FEATS.filter(f=>f.p[k]!=null&&(ENT.has(k)?f.p.n_ok_ent:f.p.n_ok)));
+function qT(k){return CACHE['q'+k]||(CACHE['q'+k]=quintis(validos(k).map(f=>f.p[k])))}
+
+function montarTerritorio(){
+ const p=MUN[SELMUN].p;
+ if(!mapT){
+  mapT=L.map('mapTer',{zoomControl:false,attributionControl:false,zoomSnap:.1,zoomDelta:.5,wheelPxPerZoomLevel:120,minZoom:3,maxZoom:19}).setView(PI_VIEW[0],PI_VIEW[1]);
+  L.control.zoom({position:'bottomright'}).addTo(mapT);
+  $('#tgFcu').onclick=function(){fcuOn=!fcuOn;this.classList.toggle('on',fcuOn);
+    if(layFcu){fcuOn?layFcu.addTo(mapT):mapT.removeLayer(layFcu)}};
+  Object.keys(IT).forEach(k=>{
+   const b=document.createElement('button'); b.dataset.k=k; b.className=k===KT?'on':'';
+   b.onclick=()=>{KT=k;$$('#indT button').forEach(x=>x.classList.toggle('on',x.dataset.k===k));renderT()};
+   $('#indT').appendChild(b);
+  });
+  buscador('#qB','#sugB',()=>FEATS.map(f=>({n:f.p.name,cd:f.p.cd})),cd=>selecionarBairro(cd,true));
+ }
+ if(mapT.stop) mapT.stop();
+ if(layT){mapT.removeLayer(layT);layT=null}
+ if(layFcu){mapT.removeLayer(layFcu);layFcu=null}
+ $('#terRailB').style.display=''; $('#cardScT').style.display='';
+ $('#rkTTit').textContent='Menores valores'; $('#dtlTTit').textContent='Bairro selecionado';
+ if(!FEATS.length){ semBairro(p); return }
+ layT=L.geoJSON({type:'FeatureCollection',features:FEATS.map(f=>({type:'Feature',properties:f.p,geometry:f.geo}))},{
+  style:f=>estiloT(f.properties),
+  onEachFeature:(f,l)=>{l.bindTooltip('',{className:'mtip',direction:'top',opacity:1});l.on('click',()=>selecionarBairro(f.properties.cd))}
+ }).addTo(mapT);
+ enquadrar(mapT,layT,[16,16]);
+ const fcus=BAIRROS[SELMUN]&&BAIRROS[SELMUN].fcus;
+ if(fcus&&fcus.features.length){
+  layFcu=L.geoJSON(fcus,{style:{color:tok('--red'),weight:1.2,opacity:.95,fill:false},
+   onEachFeature:(f,l)=>l.bindTooltip('FCU · '+esc(f.properties.name),{className:'mtip',direction:'top',opacity:1})});
+  if(fcuOn) layFcu.addTo(mapT);
+ }
+ $('#tgFcu').style.display=(fcus&&fcus.features.length)?'':'none';
+ renderT();
+}
+function estiloT(p){
+ const ok=ENT.has(KT)?p.n_ok_ent:p.n_ok;
+ return {color:p.cd===SELB?tok('--sel'):tok('--borda-mapa'),weight:p.cd===SELB?2.4:.8,
+  fillColor:ok?corQ(p[KT],qT(KT),CAR):SEMDADO,
+  fillOpacity:ok?.92:.6,dashArray:ok?null:'2 3'};
+}
+function renderT(){
+ if(!FEATS.length) return;
+ const d=IT[KT], q=qT(KT);
+ $$('#indT button').forEach(b=>{const k=b.dataset.k;
+  b.innerHTML=`<span>${IT[k].l}</span><span class="v">${IT[k].fmt(wavg(validos(k),k))}</span>`});
+ $('#hudTT').textContent=d.l;
+ $('#hudTS').textContent=d.full+(ENT.has(KT)?' · universo do entorno (V05000)':'')+' · vermelho = 20% mais carentes';
+ const mx=Math.max(...validos(KT).map(f=>f.p[KT]));
+ const ext=[...q,mx];
+ const cnt=[0,0,0,0,0]; validos(KT).forEach(f=>cnt[faixa(f.p[KT],q)]++);
+ /* com empate de quintil (mediana de renda igual ao salário mínimo em metade dos
+    bairros) uma classe fica vazia: mostrá-la seria inventar uma faixa que não existe */
+ $('#legT').innerHTML=[0,1,2,3,4].filter(i=>cnt[i]).map(i=>
+   `<div class="r"><span class="sw" style="background:${CAR[i]}"></span>até ${d.fmt(ext[i])} · ${cnt[i]}</div>`).join('')
+  +(FEATS.length-validos(KT).length?`<div class="r" style="margin-top:4px"><span class="sw" style="background:${SEMDADO}"></span>amostra insuficiente · ${FEATS.length-validos(KT).length}</div>`:'');
+ layT.eachLayer(l=>{const p=l.feature.properties, ok=ENT.has(KT)?p.n_ok_ent:p.n_ok;
+  l.setStyle(estiloT(p));
+  l.setTooltipContent(`<b>${esc(p.name)}</b><br>${d.full}: <b>${ok?d.fmt(p[KT]):'amostra insuficiente'}</b><br>${N(p.dom)} domicílios`)});
+ const arr=validos(KT).sort((a,b)=>a.p[KT]-b.p[KT]).slice(0,8);
+ $('#rkTTag').textContent='· '+d.l.toLowerCase();
+ const mn=arr.length?arr[0].p[KT]:0;
+ $('#rkT').innerHTML=arr.length?arr.map((f,i)=>`<div class="rrow${f.p.cd===SELB?' sel':''}" data-cd="${f.p.cd}"><div class="i">${i+1}</div>
+  <div><div class="n">${esc(f.p.name)}</div><div class="bar" style="margin-top:3px"><i style="width:${100*(f.p[KT]-mn)/((mx-mn)||1)}%;background:${corQ(f.p[KT],q,CAR)}"></i></div></div>
+  <div class="val">${d.fmt(f.p[KT])}</div></div>`).join('')
+  :'<div class="empty">nenhum bairro com amostra suficiente para este indicador</div>';
+ $$('#rkT .rrow').forEach(r=>r.onclick=()=>selecionarBairro(r.dataset.cd));
+ const media=wavg(validos(KT),KT), munv=MUN[SELMUN].p[KT];
+ $('#kT').innerHTML=[
+  ['média do município',d.fmt(media),'ponderada por domicílios'],
+  ['agregado municipal',d.fmt(munv),'mesmo indicador, malha municipal'],
+  ['menor valor',arr.length?d.fmt(arr[0].p[KT]):'—',arr.length?arr[0].p.name:''],
+  ['abaixo do corte',String(FEATS.length-validos(KT).length)+' de '+FEATS.length,'n < 50 — fora do ranking'],
+ ].map(([l,v,x])=>`<div class="kc fade"><div class="l">${l}</div><div class="v">${v}</div><div class="x">${esc(x)}</div></div>`).join('');
+ scatterT(); fichaB();
+}
+function semBairro(p){
+ /* sem recorte de bairro não há o que ranquear, buscar ou correlacionar:
+    esconder os controles é mais honesto que deixá-los inertes na tela */
+ $('#terRailB').style.display='none'; $('#cardScT').style.display='none';
+ $('#rkTTit').textContent='Sem bairros'; $('#dtlTTit').textContent='Ficha municipal';
+ $('#hudTT').textContent='Modo sem bairro';
+ $('#hudTS').textContent=p.name+' não tem divisão de bairros na malha do Censo 2022.';
+ $('#legT').innerHTML=''; $('#rkTTag').textContent='';
+ $('#rkT').innerHTML='<div class="empty">Sem bairros no Censo. Os mesmos indicadores existem no agregado municipal — é o que a ficha ao lado mostra.</div>';
+ $('#scT').innerHTML=''; $('#kT').innerHTML='';
+ const g=MUN[SELMUN].geo;
+ layT=L.geoJSON({type:'Feature',properties:p,geometry:g},{style:{color:tok('--teal'),weight:1.6,fillColor:tok('--teal'),fillOpacity:.12}}).addTo(mapT);
+ enquadrar(mapT,layT,[30,30]);
+ $('#tgFcu').style.display='none';
+ $('#dtlTCd').textContent='IBGE '+p.cd;
+ $('#dtlT').innerHTML=`<div class="nm">${esc(p.name)}</div><div class="cd">agregado municipal · Censo 2022</div>
+  <div class="quote" style="font-size:12px">199 dos 224 municípios do PI não têm bairro no Censo. Isso não é falta de dado — é falta de <b>recorte intraurbano</b>. O produto aqui é conformidade (Segmento B), não painel territorial.</div>`+
+  [['Domicílios',N(p.dom)],['Moradores',N(p.mor)],['Renda mediana',RS(p.renda_med)],['Esgoto em rede',PC(p.esgoto)],
+   ['Água da rede',PC(p.agua)],['Pavimentação',PC(p.pav)],['Iluminação',PC(p.ilum)],['Calçada',PC(p.calcada)],
+   ['Idosos 60+',PC(p.idosos_pct)],['Crianças 0-14',PC(p.criancas_pct)]]
+   .map(([l,v])=>`<div class="drow"><div class="l">${l}</div><div class="val">${v}</div></div>`).join('');
+}
+function scatterT(){
+ const s=$('#scT'),W=300,H=205,pad=30; s.innerHTML='';
+ const mk=(t,a,txt)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;s.appendChild(e);return e};
+ const rs=FEATS.filter(f=>f.p.renda_med!=null&&f.p.esgoto!=null&&f.p.n_ok);
+ if(!rs.length){mk('text',{x:W/2,y:H/2,'text-anchor':'middle','font-size':9,fill:tok('--eixo')},'sem dado suficiente');return}
+ const rmax=Math.max(...rs.map(f=>f.p.renda_med))||1;
+ const sx=v=>pad+(v/rmax)*(W-pad-10), sy=v=>H-pad-(v/100)*(H-pad-14);
+ for(let g=0;g<=100;g+=25){
+  mk('line',{x1:pad,x2:W-10,y1:sy(g),y2:sy(g),stroke:tok('--grade'),'stroke-width':1});
+  mk('text',{x:pad-4,y:sy(g)+3,'text-anchor':'end','font-size':7,fill:tok('--eixo')},g);
+ }
+ const q=qT('esgoto');
+ rs.forEach(f=>{const sel=f.p.cd===SELB;
+  const c=mk('circle',{cx:sx(f.p.renda_med),cy:sy(f.p.esgoto),r:sel?5:3.3,fill:sel?tok('--sel'):corQ(f.p.esgoto,q,CAR),
+   'fill-opacity':.88,stroke:sel?tok('--teal'):'none','stroke-width':2,style:'cursor:pointer'});
+  c.onclick=()=>selecionarBairro(f.p.cd);
+  c.appendChild(document.createElementNS('http://www.w3.org/2000/svg','title')).textContent=
+   `${f.p.name} · R$ ${N(f.p.renda_med)} · esgoto ${PC(f.p.esgoto)}`});
+ mk('text',{x:W-10,y:14,'text-anchor':'end','font-size':8,fill:tok('--eixo')},'renda mediana →');
+ mk('text',{x:pad,y:14,'font-size':8,fill:tok('--eixo')},'↑ esgoto');
+}
+/* 4º campo = direção da cor. 'car' maior é melhor (carência no 1º quintil);
+   'def' maior é PIOR (face sem árvores é déficit, não cobertura); 'neu' não tem
+   direção nenhuma — proporção de idosos não é boa nem ruim, e pintá-la de
+   vermelho inventaria um juízo que o dado não carrega. */
+const LINHAS_B=[['Renda mediana','renda_med',RS,'car'],['Esgoto em rede','esgoto',PC,'car'],['Água da rede','agua',PC,'car'],
+ ['Pavimentação','pav',PC,'car'],['Iluminação','ilum',PC,'car'],['Calçada','calcada',PC,'car'],['Bueiro','bueiro',PC,'car'],
+ ['Endereços (CNEFE)','end',N,'neu'],['Rampa p/ cadeirante','rampa',PC,'car'],['Face sem árvores','arbor_sem',PC,'def'],
+ ['Idosos 60+','idosos_pct',PC,'neu'],['Crianças 0-14','criancas_pct',PC,'neu']];
+function fichaB(){
+ const box=$('#dtlT');
+ if(!SELB){box.innerHTML='<div class="empty">Clique no mapa, no ranking ou busque acima.</div>';$('#dtlTCd').textContent='';return}
+ const f=FEATS.find(x=>x.p.cd===SELB); if(!f) return;
+ const p=f.p; $('#dtlTCd').textContent='IBGE '+p.cd;
+ const avisos=[!p.n_ok?'<span class="tag warn">menos de 50 domicílios</span>':'',
+   !p.n_ok_ent?'<span class="tag warn">entorno: amostra insuficiente</span>':''].filter(Boolean).join(' ');
+ box.innerHTML=`<div class="nm">${esc(p.name)}</div>
+  <div class="cd">${N(p.dom)} domicílios · ${N(p.mor)} moradores · ${p.mor_por_dom||'—'} morad./dom.</div>
+  ${avisos?`<div style="margin-bottom:8px;display:flex;gap:5px;flex-wrap:wrap">${avisos}</div>`:''}`+
+ LINHAS_B.map(([l,k,fmt,dir])=>{
+  const v=p[k], w=wavg(validos(k).length?validos(k):FEATS,k);
+  const pal=dir==='def'?INV:dir==='neu'?MAG:CAR;
+  const teto=fmt===PC?100:Math.max(k==='renda_med'?4000:1,...FEATS.map(f2=>f2.p[k]||0));
+  const esc100=x=>Math.min(100,100*x/teto);
+  const larg=v==null?0:Math.max(2,esc100(v));
+  return `<div class="drow"><div class="l">${l}</div><div class="val">${v==null?'—':fmt(v)}</div>
+   <div class="tr"><i style="width:${larg}%;background:${v==null?SEMDADO:corQ(v,qT(k),pal)}"></i>
+   ${w==null?'':`<u style="left:${Math.min(99,esc100(w))}%"></u>`}</div></div>`}).join('')+
+ `<div style="margin-top:10px;font-size:10px;color:var(--dim);font-family:var(--f-mono)">marcador claro = média do município</div>`;
+}
+function selecionarBairro(cd,pan){
+ SELB=(SELB===cd)?null:cd;
+ if(layT&&layT.eachLayer) layT.eachLayer(l=>l.setStyle(estiloT(l.feature.properties)));
+ if(SELB&&pan) focarBairro();
+ renderT();
+}
+function buscador(inp,sug,fonte,onPick){
+ const i=$(inp), s=$(sug);
+ i.oninput=()=>{const t=i.value.toLowerCase().trim(); if(!t){s.style.display='none';return}
+  const hits=fonte().filter(x=>x.n.toLowerCase().includes(t)).slice(0,9);
+  s.innerHTML=hits.map(x=>`<div data-cd="${x.cd}">${esc(x.n)}</div>`).join('')||'<div>nenhum resultado</div>';
+  s.style.display='block';
+  s.querySelectorAll('[data-cd]').forEach(d=>d.onclick=()=>{onPick(d.dataset.cd);i.value='';s.style.display='none'})};
+ i.onblur=()=>setTimeout(()=>s.style.display='none',180);
+}
+
+/* ============================================================ CARTEIRA */
+let cKey='itbi', cDesc=true, cFil={seg:'',fox:'',rreo:'',bai:'',papel:''};
+function paginaCarteira(){
+ $('#pg-carteira').innerHTML=`
+ <div class="topbar"><div><h2>Carteira e qualificação</h2>
+  <div class="meta">Os 224 municípios do Piauí com o dado que decide alvo: arrecadação própria, capacidade de pagar (RCL), sinal de gestão fiscal (RREO), incumbente instalado e se o painel territorial funciona lá. Ordenação por qualquer coluna; a seleção exporta em CSV.</div></div>
+  <span class="chip real"><span class="d"></span>dado real · SICONFI + IBGE + RFB</span></div>
+ <div class="ctl">
+  <select id="fSeg"><option value="">todos os segmentos</option><option value="A">A — IPTU ≥ R$ 1 mi</option><option value="fronteira">fronteira</option><option value="B">B — IPTU &lt; R$ 100 mil</option></select>
+  <select id="fFox"><option value="">tenant: indiferente</option><option value="0">sem host Foxinline</option><option value="1">com host Foxinline</option></select>
+  <select id="fRreo"><option value="">RREO: indiferente</option><option value="nunca em 3 anos">nunca entregou (3 anos)</option><option value="falhou em 2025">falhou em 2025</option><option value="falhou antes de 2025">falhou antes de 2025</option><option value="3 de 3">3 de 3</option></select>
+  <select id="fBai"><option value="">bairros: indiferente</option><option value="1">com bairros no Censo</option><option value="0">sem bairros</option></select>
+  <select id="fPapel"><option value="">papel: indiferente</option><option value="piloto">piloto</option><option value="alvo_itbi">alvo ITBI</option><option value="hip">hipótese ITBI rural</option></select>
+  <input id="fQ" placeholder="buscar município…" style="min-width:180px">
+  <button class="btn" id="expC">Exportar CSV</button>
+  <span id="cCount" style="font-family:var(--f-mono);font-size:11.5px;color:var(--mut)"></span>
+ </div>
+ <div class="tw"><table><thead><tr>
+  <th data-k="name">Município</th><th data-k="segmento">Seg.</th>
+  <th data-k="pop" class="num">Pop.</th><th data-k="iptu" class="num">IPTU 2025</th>
+  <th data-k="itbi" class="num">ITBI 2025</th><th data-k="itbi_iptu" class="num">ITBI÷IPTU</th>
+  <th data-k="itbi_hab" class="num">ITBI/hab</th><th data-k="rcl" class="num">RCL 2025</th>
+  <th data-k="renda_med" class="num">Renda med.</th><th data-k="pav" class="num">Pav.</th>
+  <th data-k="end" class="num">Endereços</th>
+  <th data-k="bairros" class="num">Bairros</th><th data-k="tenant_fox">Sinais</th>
+ </tr></thead><tbody id="cBody"></tbody></table></div>`;
+ $$('#pg-carteira th[data-k]').forEach(th=>th.onclick=()=>{
+  if(cKey===th.dataset.k) cDesc=!cDesc; else {cKey=th.dataset.k;cDesc=true}
+  renderCarteira()});
+ ['fSeg','fFox','fRreo','fBai','fPapel'].forEach((id,i)=>$('#'+id).onchange=()=>{
+  cFil={seg:$('#fSeg').value,fox:$('#fFox').value,rreo:$('#fRreo').value,bai:$('#fBai').value,papel:$('#fPapel').value};renderCarteira()});
+ $('#fQ').oninput=renderCarteira;
+ $('#expC').onclick=()=>{
+  const arr=filtrarCarteira();
+  const cab='municipio;ibge;segmento;pop_censo_2022;pop_estimativa_csv;moradores_dppo;iptu_2025;itbi_2025;itbi_sobre_iptu;itbi_per_capita;iss_2025;rcl_2025;renda_mediana;esgoto_pct;pavimentacao_pct;bairros;fcus;tenant_foxinline;enderecos_cnefe;enderecos_domicilios;enderecos_em_bairro;rreo_2023;rreo_2024;rreo_2025;situacao_rreo;cib_ativo;papel';
+  baixarCsv('carteira-pi.csv',[
+   '# Painel CERURB · carteira de qualificação — gerado em '+META.gerado_em,
+   '# fiscal: portal SICONFI 2025 (classificação RREO) · censo: IBGE 2022 · CIB: RFB/Sinter set/2026',
+   '# pop_censo_2022 = V0001 (total de pessoas); itbi_per_capita recalculado sobre ela',
+   '# tenant Foxinline: Certificate Transparency — evidência forte p/ presença, fraca p/ ausência',
+   cab,
+   ...arr.map(f=>{const p=f.p;return [cs(p.name),p.cd,p.segmento,p.pop,p.pop_csv,p.mor,p.iptu,p.itbi,p.itbi_iptu,p.itbi_hab,p.iss,p.rcl,
+     p.renda_med,p.esgoto,p.pav,p.bairros,p.fcus,p.tenant_fox,p.end,p.end_dom,p.end_urb,...(p.rreo||['','','']),cs(rotRreo(p)),p.cib_ativo,p.papel||''].join(';')})]);
+ };
+ renderCarteira();
+}
+function filtrarCarteira(){
+ const q=($('#fQ')?$('#fQ').value:'').toLowerCase().trim();
+ return MUNF.filter(f=>{const p=f.p;
+  if(cFil.seg&&p.segmento!==cFil.seg) return false;
+  if(cFil.fox==='1'&&!p.tenant_fox) return false;
+  if(cFil.fox==='0'&&p.tenant_fox) return false;
+  if(cFil.rreo&&rotRreo(p)!==cFil.rreo) return false;
+  if(cFil.bai==='1'&&!p.bairros) return false;
+  if(cFil.bai==='0'&&p.bairros) return false;
+  if(cFil.papel==='hip'&&!p.hipotese_itbi_rural) return false;
+  if(cFil.papel&&cFil.papel!=='hip'&&p.papel!==cFil.papel) return false;
+  if(q&&!p.name.toLowerCase().includes(q)) return false;
+  return true})
+ .sort((a,b)=>cmp(a.p[cKey],b.p[cKey],cDesc));
+}
+function renderCarteira(){
+ const arr=filtrarCarteira();
+ $('#cCount').textContent=arr.length+' de '+MUNF.length+' · IPTU '+MI(arr.reduce((s,f)=>s+(f.p.iptu||0),0))+' · ITBI '+MI(arr.reduce((s,f)=>s+(f.p.itbi||0),0));
+ $('#cBody').innerHTML=arr.map(f=>{const p=f.p;
+  const sinais=[p.papel==='piloto'?'<span class="tag pil">piloto</span>':'',
+   p.papel==='alvo_itbi'?'<span class="tag pil">alvo ITBI</span>':'',
+   p.papel==='vitrine'?'<span class="tag pil">vitrine</span>':'',
+   p.tenant_fox?'<span class="tag fox">Fox</span>':'',
+   rotRreo(p)==='nunca em 3 anos'?'<span class="tag warn">sem RREO 3a</span>':rotRreo(p)==='falhou em 2025'?'<span class="tag warn">RREO 25</span>':rotRreo(p)==='falhou antes de 2025'?'<span class="tag">RREO 2/3</span>':'',
+   p.hipotese_itbi_rural?'<span class="tag warn">ITBI rural?</span>':'',
+   p.cib_ativo?'<span class="tag b">CIB</span>':''].filter(Boolean).join(' ');
+  const seg=p.segmento==='A'?'<span class="tag a">A</span>':p.segmento==='fronteira'?'<span class="tag f">fr</span>'
+   :p.segmento==='B'?'<span class="tag b">B</span>':'<span class="tag warn">—</span>';
+  return `<tr data-cd="${p.cd}" class="${p.cd===SELMUN?'sel':''}"><td>${esc(p.name)}</td><td>${seg}</td>
+   <td class="num">${N(p.pop)}</td><td class="num">${MI(p.iptu)}</td><td class="num">${MI(p.itbi)}</td>
+   <td class="num">${X(p.itbi_iptu)}</td><td class="num">${p.itbi_hab==null?'—':p.itbi_hab.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+   <td class="num">${MI(p.rcl)}</td><td class="num">${N(p.renda_med)}</td><td class="num">${PC(p.pav)}</td>
+   <td class="num">${N(p.end)}</td>
+   <td class="num">${p.bairros||'—'}</td><td>${sinais}</td></tr>`}).join('');
+ $$('#cBody tr').forEach(tr=>tr.onclick=()=>{trocarMunicipio(tr.dataset.cd);ir('territorio')});
+}
+
+/* ============================================================ JANELA */
+function paginaJanela(){
+ const B=MUNF.filter(f=>f.p.segmento==='B'), A=MUNF.filter(f=>f.p.segmento==='A');
+ const FR=MUNF.filter(f=>f.p.segmento==='fronteira');
+ const nunca=MUNF.filter(f=>rotRreo(f.p)==='nunca em 3 anos');
+ const cib=MUNF.filter(f=>f.p.cib_ativo);
+ const naoFox=MUNF.filter(f=>!f.p.tenant_fox);
+ const tamMin=(B.length+FR.length)*12000, tamMax=(B.length+FR.length)*25000;
+ const pilotos=MUNF.filter(f=>f.p.papel==='piloto'), alvos=MUNF.filter(f=>f.p.papel==='alvo_itbi');
+ const semanas=Math.max(0,Math.floor(dias/7));
+ $('#pg-janela').innerHTML=`
+ <div class="topbar"><div><h2>Janela de 31/12</h2>
+  <div class="meta">O produto é o prazo, não o painel. LC 214/2025, art. 266: todo imóvel urbano inscrito no CIB até <b>01/01/2027</b>. O que esta página mede é a distância entre a capacidade declarada e a meta — e onde o dado já diz por onde começar.</div></div>
+  <span class="chip real"><span class="d"></span>contagem sobre dado real · metas do PLANO §12.1</span></div>
+
+ <div class="grid g4" style="margin-bottom:16px">
+  ${kpi('dias até 31/12/2026',String(dias),semanas+' semanas · janela prática de assinatura nov–dez',dias<120?'bad':'')}
+  ${kpi('municípios do PI com CIB transmitido',cib.length+' de '+MUNF.length,
+    cib.length===1?`só ${esc(cib[0].p.name)} (${N(cib[0].p.cib_ativo)} inscrições ativas, RFB/Sinter set/2026)`
+     :`${N(cib.reduce((x,f)=>x+f.p.cib_ativo,0))} inscrições ativas (RFB/Sinter set/2026)`,'bad')}
+  ${kpi('capacidade artesanal','2 / mês','declarada no PLANO §11.2 — com conector pronto, 10 a 20/mês','warn')}
+  ${kpi('meta corrigida','2–3','contratos assinados até 15/11, com 8–12 propostas vivas e ≥20 reuniões','good')}
+ </div>
+
+ <div class="grid g3" style="margin-bottom:16px">
+  <div class="card"><h3>Onde está o mercado <span>${MUNF.length} municípios</span></h3>
+   ${hrow('Segmento B (IPTU < R$ 100 mil)',B.length,MUNF.length)}
+   ${hrow('Fronteira (R$ 100 mil–1 mi)',FR.length,MUNF.length)}
+   ${hrow('Segmento A (IPTU ≥ R$ 1 mi)',A.length,MUNF.length)}
+   ${hrow('Sem host Foxinline no CT',naoFox.length,MUNF.length)}
+   ${hrow('Nunca entregou RREO em 3 anos',nunca.length,MUNF.length)}
+   ${hrow('Com bairros no Censo',META.com_bairros,MUNF.length)}
+   <p class="desc" style="margin-top:10px">TAM de entrada do B + fronteira a R$ 12–25 mil por conta:
+    <b>${MI(tamMin)} a ${MI(tamMax)}</b> — contagem simples de ${B.length+FR.length} municípios × ticket.
+    O PLANO §3 chega a R$ 1,7–5,4 mi por outra contagem; nenhum dos dois é previsão de venda.</p></div>
+
+  <div class="card"><h3>Pilotos <span>PLANO §4 e §11.11</span></h3>
+   <p class="desc">Os melhores pilotos não são os de REURB <i>em tramitação</i>, e sim os <b>já 100% regularizados</b>: ali o cadastro georreferenciado existe e já foi pago. O caminho até a remessa é o mais curto que existe.</p>
+   ${pilotos.map(f=>`<div class="drow" style="cursor:pointer" onclick="trocarMunicipio('${f.p.cd}');ir('territorio')">
+     <div class="l"><b style="color:var(--ink)">${esc(f.p.name)}</b><br><span style="font-size:10.5px">${esc(f.p.papel_nota)}</span></div>
+     <div class="val">RCL ${MI(f.p.rcl)}<br><span style="color:var(--dim)">IPTU ${MI(f.p.iptu)}</span></div></div>`).join('')}
+   <p class="desc" style="margin-top:9px"><b>Teresina não é piloto</b> — é vitrine e conta A de 2027: Lei municipal 6.383/2026 já criou CTM+SIG+IDE na SEMPLAN, e o IPTU 2026 está suspenso sob auditoria do TCE-PI.</p></div>
+
+  <div class="card"><h3>Reordenação pelo ITBI <span>PLANO §13.6</span></h3>
+   <p class="desc">No interior, a transmissão vale mais que a propriedade. É o ITBI — não o IPTU — que dá ao prefeito um número próprio para associar ao travamento do registro.</p>
+   ${alvos.map(f=>`<div class="drow" style="cursor:pointer" onclick="selecionarMun('${f.p.cd}');ir('estado')">
+     <div class="l"><b style="color:var(--ink)">${esc(f.p.name)}</b><br><span style="font-size:10.5px">${esc(f.p.papel_nota)}</span></div>
+     <div class="val">${MI(f.p.itbi)}<br><span style="color:var(--dim)">${X(f.p.itbi_iptu)} o IPTU</span></div></div>`).join('')}
+   <p class="desc" style="margin-top:9px">${MUNF.filter(f=>maisItbi(f.p)).length} de ${MUNF.length} arrecadam <b>mais ITBI que IPTU</b>.${MUN['2202703']?` <b>Cocal (${X(MUN['2202703'].p.itbi_iptu)})</b> é narrativa, não alvo: ITBI de ${RS2(MUN['2202703'].p.itbi_hab)}/hab é base pequena demais.`:''}</p></div>
+ </div>
+
+ <div class="grid g2">
+  <div class="card"><h3>Ordem de execução <span>PLANO §12.5 · M0</span></h3>
+   <div class="prosa"><ol style="margin-left:18px">
+    <li>Reunião de escopo com o proponente REURB — destrava Guaribas e N. Sra. de Nazaré</li>
+    <li><b>Credencial CADURB verificada na semana 1</b> + cliente/validador gerados da spec OpenAPI pública</li>
+    <li><b>Metodologia publicada</b> — feito: ver <a href="#metodologia" onclick="ir('metodologia')">Metodologia e fontes</a></li>
+    <li>Ataque direto aos municípios do sinal RREO — qualificação já em mãos, nenhum e-SIC necessário</li>
+    <li>Verificação fiscal de Altos e Paulistana no TCE-PI</li>
+    <li>Dossiê de dispensa reutilizável + calendário de empenho</li>
+    <li>E2 — diagnóstico de conformidade em Guaribas / N. Sra. de Nazaré</li>
+    <li>INEP só depois do conector e da verificação fiscal</li>
+   </ol></div></div>
+  <div class="card"><h3>O que conta como evidência contra a tese <span>PLANO §12.1</span></h3>
+   <div class="prosa">
+    <p>O relógio da tese é o <b>gatilho de 90 dias</b>, não os 30. Contagem baixa com leading saudáveis é problema de execução; leading zerados é problema de tese.</p>
+    <p><b>Classificar todo não-fechamento:</b> atraso de prefeito, de orçamento ou de eleição <b>não é</b> rejeição de preço com dor confirmada. Só a segunda conta contra a tese.</p>
+    <div class="quote">"O convênio com a Receita é gratuito e a API é aberta — o que o município não tem é o cadastro que ela aceita. Nós entregamos a remessa aceita no CADURB dentro do prazo de 31/12, para o senhor não perder o repasse do IBS nem travar o registro dos imóveis dos seus eleitores."</div>
+    <p style="font-size:12px">Veículo: dispensa por valor — <b>R$ 65.492,11</b> (art. 75, II, Decreto 12.807/2025). Consórcio público dobra para R$ 130.984,22 (§ 2º) — <b>não a APPM</b>, que é associação civil.</p>
+   </div></div>
+ </div>`;
+}
+const kpi=(l,v,x,c)=>`<div class="kpi ${c||''} fade"><div class="l">${l}</div><div class="v">${v}</div><div class="x">${x}</div></div>`;
+const hrow=(l,n,tot)=>`<div class="hrow"><span>${l}</span><div class="bar"><i style="width:${100*n/tot}%;background:var(--teal)"></i></div><b>${n}</b></div>`;
+
+/* ============================================================ RANKING */
+let rKey='renda_med', rDesc=false;
+function paginaRanking(){
+ const p=MUN[SELMUN].p;
+ if(!FEATS.length){ $('#pg-ranking').innerHTML=vazioMun('Ranking de bairros'); return }
+ $('#pg-ranking').innerHTML=`
+ <div class="topbar"><div><h2>Ranking de bairros · ${esc(p.name)}</h2>
+  <div class="meta">${FEATS.length} bairros da malha oficial CD 2022. Bairros com menos de 50 domicílios — ou menos de 50 no universo do entorno — aparecem marcados e ficam fora do ranking dos indicadores afetados.</div></div>
+  <span class="chip real"><span class="d"></span>dado real · IBGE Censo 2022</span></div>
+ <div class="ctl"><button class="btn" id="expR">Exportar CSV</button>
+  <span style="font-family:var(--f-mono);font-size:11.5px;color:var(--mut)">clique no cabeçalho para ordenar · clique na linha para abrir no mapa</span></div>
+ <div class="tw"><table><thead><tr>
+  <th data-k="name">Bairro</th><th data-k="dom" class="num">Domic.</th><th data-k="mor" class="num">Morad.</th>
+  <th data-k="renda_med" class="num">Renda med.</th><th data-k="esgoto" class="num">Esgoto</th><th data-k="agua" class="num">Água</th>
+  <th data-k="pav" class="num">Pav.</th><th data-k="ilum" class="num">Ilum.</th><th data-k="calcada" class="num">Calçada</th>
+  <th data-k="bueiro" class="num">Bueiro</th><th data-k="end" class="num">Endereços</th><th data-k="criancas_pct" class="num">0-14</th><th data-k="idosos_pct" class="num">60+</th><th>Amostra</th>
+ </tr></thead><tbody id="rBody"></tbody></table></div>`;
+ $$('#pg-ranking th[data-k]').forEach(th=>th.onclick=()=>{
+  if(rKey===th.dataset.k) rDesc=!rDesc; else {rKey=th.dataset.k;rDesc=false}
+  renderRanking()});
+ $('#expR').onclick=()=>{
+  baixarCsv('bairros-'+SELMUN+'.csv',[
+   '# Painel CERURB · '+MUN[SELMUN].p.name+' — bairros, Censo 2022 (gerado em '+META.gerado_em+')',
+   '# entorno = SIM/(SIM+NAO), exclui nao declarado · renda = mediana V06006 · universo n>=50 domicilios',
+   '# pop_censo_2022 = V0001 (total de pessoas); moradores_dppo = V00005 (so domicilios particulares permanentes ocupados)',
+   'bairro;cd_bairro;pop_censo_2022;area_km2;enderecos_cnefe;enderecos_domicilios;domicilios;moradores_dppo;renda_mediana;renda_media;esgoto_pct;agua_pct;pavimentacao_pct;iluminacao_pct;calcada_pct;bueiro_pct;rampa_pct;onibus_pct;face_sem_arvore_pct;criancas_0_14_pct;idosos_60_pct;n_entorno;amostra_ok;amostra_entorno_ok',
+   ...FEATS.map(f=>{const b=f.p;return [cs(b.name),b.cd,b.pop,b.area_km2,b.end,b.end_dom,b.dom,b.mor,b.renda_med,b.renda,b.esgoto,b.agua,b.pav,b.ilum,b.calcada,
+     b.bueiro,b.rampa,b.onibus,b.arbor_sem,b.criancas_pct,b.idosos_pct,b.n_ent,b.n_ok,b.n_ok_ent].join(';')})]);
+ };
+ renderRanking();
+}
+function renderRanking(){
+ const arr=[...FEATS].sort((a,b)=>cmp(a.p[rKey],b.p[rKey],rDesc));
+ $('#rBody').innerHTML=arr.map(f=>{const b=f.p;
+  const am=[!b.n_ok?'<span class="tag warn">n&lt;50 dom.</span>':'',!b.n_ok_ent?'<span class="tag warn">entorno n&lt;50</span>':''].filter(Boolean).join(' ')||'<span class="tag b">ok</span>';
+  return `<tr data-cd="${b.cd}" class="${b.cd===SELB?'sel':''}"><td>${esc(b.name)}</td><td class="num">${N(b.dom)}</td><td class="num">${N(b.mor)}</td>
+   <td class="num">${N(b.renda_med)}</td><td class="num">${PC(b.esgoto)}</td><td class="num">${PC(b.agua)}</td>
+   <td class="num">${PC(b.pav)}</td><td class="num">${PC(b.ilum)}</td><td class="num">${PC(b.calcada)}</td>
+   <td class="num">${PC(b.bueiro)}</td><td class="num">${N(b.end)}</td><td class="num">${PC(b.criancas_pct)}</td><td class="num">${PC(b.idosos_pct)}</td><td>${am}</td></tr>`}).join('');
+ $$('#rBody tr').forEach(tr=>tr.onclick=()=>{selecionarBairro(tr.dataset.cd,true);ir('territorio')});
+}
+const vazioMun=t=>`<div class="topbar"><div><h2>${t}</h2>
+ <div class="meta">${esc(MUN[SELMUN].p.name)} não tem divisão de bairros na malha do Censo 2022 — como 199 dos 224 municípios do PI. Esta página existe só na escala de bairro.</div></div>
+ <span class="chip hip"><span class="d"></span>sem recorte intraurbano</span></div>
+ <div class="card"><h3>O que existe para este município</h3>
+ <p class="desc">Os mesmos indicadores, calculados pelas mesmas regras, no agregado municipal — em <a href="#territorio" onclick="ir('territorio')">Território</a> e na <a href="#carteira" onclick="ir('carteira')">Carteira</a>. Para vender aqui, o produto é conformidade (Segmento B), não painel territorial.</p></div>`;
+
+/* ============================================================ SANEAMENTO / VIÁRIO */
+function distrib(k){
+ const q=qT(k), c=[0,0,0,0,0];
+ validos(k).forEach(f=>c[faixa(f.p[k],q)]++);
+ return {q,c};
+}
+function cardDist(k){
+ const d=IT[k], {q,c}=distrib(k), mx=Math.max(...c,1);
+ const munv=MUN[SELMUN].p[k];
+ return `<div class="card"><h3>${d.l} <span>bairros por quintil</span></h3>
+  <p class="desc">média ponderada ${d.fmt(wavg(validos(k),k))} · agregado municipal ${d.fmt(munv)} · ${validos(k).length} de ${FEATS.length} bairros no universo</p>
+  ${c.map((n,i)=>[n,i]).filter(([n])=>n).map(([n,i])=>`<div class="hrow"><span>Q${i+1}${i===0?' (menores)':i===4?' (maiores)':''} · até ${d.fmt([...q,Math.max(...validos(k).map(f=>f.p[k]))][i])}</span>
+   <div class="bar"><i style="width:${100*n/mx}%;background:${CAR[i]}"></i></div><b>${n}</b></div>`).join('')}
+  ${c.some(n=>!n)?'<div style="font-size:10.5px;color:var(--dim);font-family:var(--f-mono);margin-top:7px">quintis vazios omitidos — o valor se repete na quebra</div>':''}</div>`;
+}
+function cardPiores(k,n){
+ const d=IT[k], arr=validos(k).sort((a,b)=>a.p[k]-b.p[k]).slice(0,n||8);
+ const mx=Math.max(...validos(k).map(f=>f.p[k]))||1;
+ return `<div class="card"><h3>Menores valores · ${d.l.toLowerCase()} <span>${arr.length}</span></h3>
+  ${arr.map((f,i)=>`<div class="rrow" onclick="selecionarBairro('${f.p.cd}',true);ir('territorio')"><div class="i">${i+1}</div>
+   <div><div class="n">${esc(f.p.name)}</div><div class="bar" style="margin-top:3px"><i style="width:${100*f.p[k]/mx}%;background:${corQ(f.p[k],qT(k),CAR)}"></i></div></div>
+   <div class="val">${d.fmt(f.p[k])}</div></div>`).join('')||'<div class="empty">sem bairro no universo</div>'}</div>`;
+}
+function paginaSaneamento(){
+ if(!FEATS.length){$('#pg-saneamento').innerHTML=vazioMun('Saneamento');return}
+ const p=MUN[SELMUN].p;
+ const semEsg=validos('esgoto').filter(f=>f.p.esgoto<50);
+ const domSemEsg=validos('esgoto').reduce((s,f)=>s+f.p.dom*(1-f.p.esgoto/100),0);
+ $('#pg-saneamento').innerHTML=`
+ <div class="topbar"><div><h2>Saneamento · ${esc(p.name)}</h2>
+  <div class="meta">Domicílios ligados à rede geral: água (V00111) e esgoto (V00309), sobre domicílios particulares permanentes ocupados (V00001). Sem estimativa, sem modelo — contagem do Censo.</div></div>
+  <span class="chip real"><span class="d"></span>dado real · IBGE Censo 2022</span></div>
+ <div class="grid g4" style="margin-bottom:16px">
+  ${kpi('esgoto em rede',PC(wavg(validos('esgoto'),'esgoto')),'média ponderada por domicílios')}
+  ${kpi('água da rede',PC(wavg(validos('agua'),'agua')),'média ponderada por domicílios')}
+  ${kpi('bairros abaixo de 50% de esgoto',String(semEsg.length),'de '+validos('esgoto').length+' no universo',semEsg.length?'warn':'')}
+  ${kpi('domicílios sem esgoto em rede',N(domSemEsg),'soma sobre os '+validos('esgoto').length+' bairros no universo','bad')}
+ </div>
+ <div class="grid g2" style="margin-bottom:14px">${cardDist('esgoto')}${cardDist('agua')}</div>
+ <div class="grid g2">${cardPiores('esgoto',10)}${cardPiores('agua',10)}</div>`;
+}
+function paginaViario(){
+ if(!FEATS.length){$('#pg-viario').innerHTML=vazioMun('Pavimentação e viário');return}
+ const p=MUN[SELMUN].p;
+ const ex=[['Via pavimentada','pav'],['Iluminação pública','ilum'],['Calçada','calcada'],['Rampa p/ cadeirante','rampa'],['Bueiro / drenagem','bueiro'],['Ponto de ônibus','onibus']];
+ $('#pg-viario').innerHTML=`
+ <div class="topbar"><div><h2>Pavimentação e viário · ${esc(p.name)}</h2>
+  <div class="meta">Entorno urbanístico por <b>domicílio</b>, não por face de quadra: o denominador é SIM ÷ (SIM + NÃO), excluindo "não declarado". A métrica por face faz um segmento com terreno baldio pesar igual a um com 50 casas — foi ela que produziu a "armadilha de Tabajaras" e está aposentada.</div></div>
+  <span class="chip real"><span class="d"></span>dado real · entorno por domicílio (V0500x)</span></div>
+ <div class="grid g3" style="margin-bottom:16px">
+  ${ex.map(([l,k])=>kpi(l,PC(wavg(validos(k),k)),'agregado municipal '+PC(p[k]))).join('')}
+ </div>
+ <div class="grid g2" style="margin-bottom:14px">${cardDist('pav')}${cardDist('ilum')}</div>
+ <div class="grid g2">${cardPiores('pav',10)}${cardPiores('calcada',10)}</div>`;
+}
+
+/* ============================================================ PERFIS (k-means) */
+function paginaPerfis(){
+ if(!FEATS.length){$('#pg-perfis').innerHTML=vazioMun('Perfis socioeconômicos');return}
+ const p=MUN[SELMUN].p;
+ const dims=['renda_med','esgoto','pav','ilum'];
+ /* as quatro dimensões incluem pavimentação e iluminação, que são do entorno:
+    exigir só n_ok deixava entrar bairro com 3 registros de entorno, e o `nrm`
+    ainda convertia o ausente em 0,5 — um valor médio inventado que desloca o
+    centróide e, com ele, o rótulo de prioridade */
+ const base=FEATS.filter(f=>f.p.n_ok&&f.p.n_ok_ent&&dims.every(d=>f.p[d]!=null));
+ if(base.length<3){
+  $('#pg-perfis').innerHTML=`
+  <div class="topbar"><div><h2>Perfis socioeconômicos · ${esc(p.name)}</h2>
+   <div class="meta">Agrupamento exige pelo menos três bairros com amostra suficiente nas quatro dimensões. ${esc(p.name)} tem ${base.length} de ${FEATS.length}.</div></div>
+   <span class="chip hip"><span class="d"></span>amostra insuficiente</span></div>
+  <div class="card"><h3>Por que esta tela está vazia</h3>
+   <p class="desc">Renda mediana, esgoto, pavimentação e iluminação precisam existir no mesmo bairro, com n ≥ 50 no universo de domicílios <b>e</b> no universo do entorno. Agrupar com menos que isso produziria três grupos e nenhuma informação.</p></div>`;
+  return;
+ }
+ const mm={}; dims.forEach(d=>{const vs=base.map(f=>f.p[d]);mm[d]=[Math.min(...vs),Math.max(...vs)]});
+ const nrm=(d,v)=>(v-mm[d][0])/((mm[d][1]-mm[d][0])||1);
+ let cent=[[.85,.85,.85,.85],[.5,.5,.5,.5],[.15,.15,.15,.15]];
+ const cl=base.map(()=>0);
+ for(let it=0;it<40;it++){
+  base.forEach((f,i)=>{let best=0,bd=1e9;
+   cent.forEach((c,ci)=>{const d2=dims.reduce((s,d,j)=>s+(nrm(d,f.p[d])-c[j])**2,0);if(d2<bd){bd=d2;best=ci}});
+   cl[i]=best});
+  cent=cent.map((c,ci)=>{const g=base.filter((f,i)=>cl[i]===ci);
+   return g.length?dims.map(d=>g.reduce((s,f)=>s+nrm(d,f.p[d]),0)/g.length):c});
+ }
+ /* a ordenação dos grupos usa as QUATRO dimensões, não só a renda: ordenar por
+    renda sozinha rotulava como "prioridade alta" um grupo com esgoto melhor que o
+    grupo "média" — o rótulo contradizia os números exibidos logo abaixo dele */
+ const carencia=ci=>{let a=0,b=0;base.forEach((f,i)=>{if(cl[i]===ci&&f.p.dom){
+   const c=dims.reduce((sm,d)=>sm+(1-nrm(d,f.p[d])),0)/dims.length; a+=c*f.p.dom; b+=f.p.dom}});return b?a/b:0};
+ const ordem=[0,1,2].sort((x,y)=>carencia(y)-carencia(x));
+ const rot=['prioridade alta','prioridade média','prioridade baixa'];
+ const grupos=rot.map(()=>[]);
+ base.forEach((f,i)=>grupos[ordem.indexOf(cl[i])].push(f));
+ const wg=(g,k)=>{let a=0,b=0;g.forEach(f=>{if(f.p[k]!=null){a+=f.p[k]*f.p.dom;b+=f.p.dom}});return b?a/b:null};
+ $('#pg-perfis').innerHTML=`
+ <div class="topbar"><div><h2>Perfis socioeconômicos · ${esc(p.name)}</h2>
+  <div class="meta">Agrupamento <b>k-means (k=3, 40 iterações, sementes fixas)</b> sobre quatro dimensões normalizadas por min–max: renda mediana, esgoto, pavimentação e iluminação. <b>Não há índice sintético com pesos arbitrários</b> — cada bairro aponta o grupo e os valores que o colocaram lá.</div></div>
+  <span class="chip real"><span class="d"></span>método declarado · docs/metodologia-iv.md §3</span></div>
+ <div class="grid g3" style="margin-bottom:16px">
+  ${grupos.map((g,i)=>`<div class="card"><h3>${rot[i]} <span>${g.length} bairros</span></h3>
+   <p class="desc">${N(g.reduce((s,f)=>s+f.p.dom,0))} domicílios · ${N(g.reduce((s,f)=>s+f.p.mor,0))} moradores</p>
+   ${[['Renda mediana',wg(g,'renda_med'),RS],['Esgoto',wg(g,'esgoto'),PC],['Pavimentação',wg(g,'pav'),PC],['Iluminação',wg(g,'ilum'),PC]]
+     .map(([l,v,fmt])=>`<div class="drow"><div class="l">${l}</div><div class="val">${fmt(v)}</div></div>`).join('')}
+   <div style="margin-top:10px;font-size:11px;color:var(--mut);line-height:1.6">${g.slice(0,14).map(f=>esc(f.p.name)).join(' · ')}${g.length>14?` … +${g.length-14}`:''}</div>
+  </div>`).join('')}
+ </div>
+ <div class="card"><h3>Limitação declarada</h3>
+  <p class="desc">k-means assume grupos convexos e, com k fixo em 3, perde nuance. Quando houver série temporal, reavaliar contra cortes fixos.
+   Ficam fora do agrupamento <b>${FEATS.length-base.length} de ${FEATS.length}</b> bairros: os que têm menos de 50 domicílios, os que têm menos de 50 no universo do entorno e os que não têm as quatro dimensões medidas.</p></div>`;
+}
+
+/* ============================================================ RELATÓRIOS */
+function paginaRelatorios(){
+ const p=MUN[SELMUN].p;
+ const cards=[
+  ['Bairros do município','Um CSV por bairro com os 17 indicadores, o tamanho do universo do entorno e as duas marcas de amostra. Cabeçalho traz a regra de cálculo.',FEATS.length>0,()=>$('#expR')&&$('#expR').click()],
+  ['Carteira dos 224 municípios','Arrecadação, RCL, sinais de qualificação e papel comercial. O mesmo arquivo que alimenta a página Carteira, com a proveniência no cabeçalho.',true,()=>{ir('carteira');setTimeout(()=>$('#expC').click(),80)}],
+  ['Base do estado, achatada','Uma linha por município com os indicadores do Censo no agregado municipal — serve os 199 sem bairro.',true,()=>{
+    baixarCsv('municipios-pi.csv',[
+     '# Painel CERURB · agregados municipais, Censo 2022 (gerado em '+META.gerado_em+')',
+     'municipio;ibge;pop_censo_2022;domicilios;moradores_dppo;renda_mediana;renda_media;esgoto_pct;agua_pct;pavimentacao_pct;iluminacao_pct;calcada_pct;bueiro_pct;rampa_pct;onibus_pct;criancas_0_14_pct;idosos_60_pct;bairros;fcus',
+     ...MUNF.map(f=>{const b=f.p;return [cs(b.name),b.cd,b.pop,b.dom,b.mor,b.renda_med,b.renda,b.esgoto,b.agua,b.pav,b.ilum,b.calcada,b.bueiro,b.rampa,b.onibus,b.criancas_pct,b.idosos_pct,b.bairros,b.fcus].join(';')})])}],
+  ['Lista de pilotos e alvos','Os municípios nomeados no PLANO com o motivo de cada um, para anexar ao dossiê de dispensa.',true,()=>{
+    baixarCsv('pilotos-alvos-pi.csv',[
+     '# Painel CERURB · pilotos e alvos nomeados (PLANO §4, §13.6) — gerado em '+META.gerado_em,
+     '# fiscal: portal SICONFI 2025 (classificação RREO) · bairros: malha IBGE CD 2022',
+     'municipio;ibge;papel;motivo;iptu_2025;itbi_2025;rcl_2025;bairros',
+     ...MUNF.filter(f=>f.p.papel).map(f=>{const b=f.p;return [cs(b.name),b.cd,b.papel,cs(b.papel_nota),b.iptu,b.itbi,b.rcl,b.bairros].join(';')})])}],
+ ];
+ $('#pg-relatorios').innerHTML=`
+ <div class="topbar"><div><h2>Relatórios exportáveis</h2>
+  <div class="meta">Todo CSV sai com a proveniência no cabeçalho: fonte, data de consulta e a regra de cálculo. Número sem [fonte, data] não sai daqui — é regra fixa do plano, não estilo.</div></div>
+  <span class="chip real"><span class="d"></span>exportação com metodologia embutida</span></div>
+ <div class="grid g2">${cards.map(([t,d,ok],i)=>`<div class="card"><h3>${t}</h3><p class="desc">${d}</p>
+   <button class="btn" data-i="${i}" ${ok?'':'disabled'}>${ok?'Baixar CSV':'Indisponível para '+esc(p.name)}</button></div>`).join('')}
+  <div class="card"><h3>Laudo de completude CADURB <span>m0-conector/</span></h3>
+   <p class="desc">O produto do diagnóstico não é um CSV: é o laudo offline gerado pelo validador sobre o export do ERP municipal, com as 10 regras semânticas e o vocabulário de falha da própria API (<code>TipoFalhaDTO</code>). Quando o município rodar a validação oficial, os erros terão os mesmos nomes do laudo que ele comprou.</p>
+   <button class="btn ghost" onclick="window.open(CAMINHO_LAUDO,'_blank')">Abrir laudo de exemplo</button></div>
+ </div>`;
+ $$('#pg-relatorios .btn[data-i]').forEach(b=>b.onclick=()=>cards[+b.dataset.i][3]());
+}
+
+/* ============================================================ METODOLOGIA */
+function paginaMetodologia(){
+ $('#pg-metodologia').innerHTML=`
+ <div class="topbar"><div><h2>Metodologia e fontes</h2>
+  <div class="meta">Item bloqueante do M0, publicado. Quem contesta um número deste painel tem onde olhar antes de perguntar.</div></div>
+  <span class="chip real"><span class="d"></span>versão 2 · set/2026</span></div>
+ <div class="grid g2">
+  <div class="card"><h3>Regras de cálculo</h3><div class="prosa">
+   <h4>Entorno — denominador sem "não declarado"</h4>
+   <p>% = SIM ÷ (SIM + NÃO). Pavimentação <code>V05006/(V05006+V05007)</code>, iluminação <code>V05012/(V05012+V05013)</code>, e o mesmo para calçada, rampa, bueiro e ponto de ônibus. Arborização permanece <code>V05030/V05000</code> — não há par SIM/NÃO.</p>
+   <h4>Entorno é por domicílio, nunca por face</h4>
+   <p>Existem dois arquivos de entorno. O que vale é o de <b>domicílios</b> (V0500x). Por face, um segmento com terreno baldio pesa igual a um com 50 casas: Tabajaras aparece com 36,8% por face e 95,2% por domicílio. A "armadilha de Tabajaras" era artefato da métrica errada.</p>
+   <h4>Renda: mediana, nunca média</h4>
+   <p><code>V06006</code> (mediana) é o indicador principal; <code>V06004</code> (média) fica como secundária. A razão média/mediana chega a 1,59 e inverte posições no ranking.</p>
+   <h4>Universo: dois cortes, não um</h4>
+   <p><code>n_ok</code> — 50 domicílios ocupados (V00001) — vale para renda, água e esgoto. <b>Os indicadores de entorno usam outro universo</b>: V05000 é "domicílio em setor <i>escolhido</i> para aplicação do entorno", não o total de domicílios. Por isso existe <code>n_ok_ent</code>. No Piauí a cobertura é praticamente total (mediana 1,0), mas o segundo corte separa <b>8 bairros</b> que passam num universo e falham no outro — Rudiador tem 95 domicílios e 3 no universo do entorno — além de <b>18 sem registro nenhum</b> de entorno.</p>
+   <h4>Sem índice sintético</h4>
+   <p>Não há <code>iv</code> com pesos inventados. O agrupamento é k-means (k=3, 40 iterações, sementes fixas) sobre renda mediana, esgoto, pavimentação e iluminação, normalizadas por min–max e ordenadas por carência ponderada por domicílios.</p>
+   <h4>Médias municipais</h4>
+   <p>Sempre ponderadas por domicílios ocupados — nunca média simples de bairros.</p>
+   <h4>A cor tem direção declarada</h4>
+   <p>Nos indicadores de território a cor lê <b>carência</b>: o primeiro quintil — menor renda, menor cobertura — é <b>vermelho</b>. Nos indicadores de arrecadação e contagem a cor lê <b>magnitude</b>, numa rampa de um tom só, porque ali "pouco" não é "ruim": município com IPTU baixo é o alvo do Segmento B, não um problema a corrigir. Misturar as duas leituras na mesma paleta é o erro que faz um mapa de bairro rico parecer um mapa de emergência.</p>
+  </div></div>
+  <div class="card"><h3>Fontes <span>data de consulta</span></h3>
+   <table><tbody>${META.fontes.map(f=>`<tr style="cursor:default"><td style="width:42%">${esc(f.k)}</td><td>${esc(f.v)}</td><td class="num" style="white-space:nowrap">${esc(f.d)}</td></tr>`).join('')}</tbody></table>
+   <div class="prosa" style="margin-top:14px">
+   <h4>Ressalvas que viajam junto com o número</h4>
+   <ul>
+    <li><b>IPTU e ITBI vêm do portal SICONFI</b> (classificação RREO), nunca da soma crua da API MSC — que devolve três valores divergentes e <b>ITBI = 0</b> em municípios com cartório ativo. Não misturar portal e API na mesma tabela.</li>
+    <li><b>Tenant Foxinline</b> vem de Certificate Transparency: evidência <b>forte para presença, fraca para ausência</b>. E há uma cegueira estrutural — <code>cerurb.prourb.foxinline.com</code> é host único, então municípios do programa estadual não aparecem.</li>
+    <li><b>CIB transmitido</b>: a lista de inscrições ativas da RFB (set/2026) traz 188 municípios no Brasil e, no Piauí, <b>só Teresina</b> (363.805). A formulação segura para o deck é "menos de 4% dos 5.570 municípios até set/2026".</li>
+    <li><b>O arquivo <code>adesoes.xls</code> da RFB não é uma lista de adesões.</b> A aba chama-se TOM e traz os 5.570 municípios do país — é tabela de referência. Não serve para afirmar quem aderiu ao convênio; isso continua dependendo do e-SIC à Receita.</li>
+    <li><b>Hipótese ITBI rural:</b> os sete municípios do sul com ITBI alto e IPTU quase nulo têm receita provavelmente ligada a <b>terra rural</b> — cujo CIB é alimentado pelo INCRA via SNCR, não pelo município. Estão marcados como hipótese e <b>não</b> como alvo.</li>
+    <li><b>CNEFE é cadastro de endereços, não de imóveis.</b> Traz o que o Censo enumerou — com coordenada, tipo e nome de logradouro, CEP e número —, mas <b>não</b> tem inscrição imobiliária, titular nem geometria de lote: mede a distância até o cadastro do município, não o substitui. O corte por bairro é feito por <b>geometria</b>, não por código de setor: o CNEFE referencia setores de <i>coleta</i> e os agregados do Censo usam setores de <i>divulgação</i>, e juntar pelos códigos perderia 10,4% dos endereços do Piauí. Aferição: em Teresina, as 363.805 inscrições CIB ativas equivalem a <b>97,9%</b> dos 371.548 endereços que o Censo enumerou dentro da malha de bairros.</li>
+    <li><b>A situação do RREO é lida do tripé de entregas, não da coluna de sinal.</b> O <code>qualificacao-pi.csv</code> só nomeia duas falhas (<code>NUNCA_3ANOS</code> e <code>FALHOU_2025</code>) e deixa o campo vazio para todo o resto — inclusive para <b>82 municípios que entregaram 2025 mas faltaram em 2023 ou 2024</b>. Ler o vazio como "em dia" pintava esses 82 de verde. A classificação exibida (3 de 3 · falhou antes de 2025 · falhou em 2025 · nunca em 3 anos) vem de <code>rreo2023/2024/2025</code>.</li>
+    <li><b>72 municípios não entregaram RREO 2025.</b> Para eles o campo fiscal é <b>ausente</b>, não zero — aparecem em cinza no mapa e com travessão na tabela. Outros 13 reportaram <b>IPTU igual a zero</b>, que é dado, não falta de dado. Somar os dois grupos como "arrecada nada" seria erro de leitura.</li>
+    <li><b>População é a do Censo 2022</b> — <code>V0001</code> ("total de pessoas") dos agregados básicos do IBGE, disponível para os 224. A coluna <code>pop</code> do <code>qualificacao-pi.csv</code> é <b>estimativa anual</b>, existe só para 152 e diverge: Altos 47.453 no Censo × 46.826 na estimativa. Ela continua no painel e no CSV como linha de rastreio, nunca como o número. <b>ITBI por habitante é recalculado</b> sobre a população do Censo.</li>
+   </ul>
+   <h4>Reprodução</h4>
+   <p><code>python3 dados/baixar.py</code> (idempotente) e <code>.venv/bin/python painel/build_dados.py</code>. O ETL reproduz, dígito a dígito, os 123 bairros de Teresina da rodada anterior — divergência zero em 11 campos × 123 bairros.</p>
+  </div></div>
+ </div>`;
+}
+
+/* ============================================================ FORA DA V1 */
+function paginaCongelado(){
+ const itens=[
+  ['Simulador de investimento','Precisa de um modelo de impacto — quanto custa e quanto muda cada ponto percentual de cobertura. Sem isso, o simulador é um multiplicador de chute com cara de engenharia. Congelado até existir custo unitário auditável.'],
+  ['Status CERURB','Depende de convênio e de cláusula de acesso. O contrato TJ-PI 156/2023 veda repasse a outras empresas, e a cláusula 4.1.1 abre a órgãos, não a fornecedores. <b>CERURB fora do caminho crítico</b> é condição inegociável do plano: zero engenharia antes de credencial emitida.'],
+  ['Educação viva (INEP)','Os microdados do Censo Escolar 2025 (537 MB) permitem geocodificar escolas e cruzar com os polígonos. É trabalho real e útil — mas entra <b>depois</b> do conector CADURB e da verificação fiscal. Ordem do M0, não falta de dado.'],
+  ['PGV e valor de referência','Segmento A, e só com ART de avaliador (CREA) e metodologia publicável (IAAO / NBR 14653). O valor será contestado; ART de avaliação é de engenheiro, não de pipeline.'],
+  ['ML e chat conversacional','ML é ferramenta interna de calibração, nunca promessa contratual — fora de SLA. Quando entrar, o método defensável perante TCE é regressão hedônica espacial com coeficientes declarados; GBM só como benchmark.'],
+  ['Série histórica','O Censo é de 2022 e não há segunda medição. Toda variação temporal neste painel seria inventada. Quando houver série, a regra de corte do k-means deve ser reavaliada.'],
+ ];
+ $('#pg-congelado').innerHTML=`
+ <div class="topbar"><div><h2>Fora da v1 — e por quê</h2>
+  <div class="meta">Escopo congelado com motivo declarado. A regra que governa esta página: <b>nenhuma tela com dado fictício em bairro nomeado</b>. O protótipo anterior dizia que Mocambinho tinha 36% de pavimentação; o real é 99,6% — erro de 63,6 pontos na direção errada, que um gestor local identifica em segundos.</div></div>
+  <span class="chip frz"><span class="d"></span>congelado · não demonstrar</span></div>
+ <div class="grid g2">${itens.map(([t,d])=>`<div class="card"><h3>${t}</h3><p class="desc">${d}</p></div>`).join('')}</div>
+ <div class="card" style="margin-top:14px"><h3>O que sobrevive do produto original</h3>
+  <div class="prosa"><div class="quote">O produto é o prazo legal, não o painel. O cliente é o ordenador de despesa sem equipe. O aceite é a remessa aceita no CADURB. A cartografia chega paga pela REURB.</div>
+  <p>Este painel tem dois papéis, e nenhum deles é "o produto": é <b>vitrine</b> — a prova de que se conhece o território — e é <b>instrumento de qualificação</b>, que decide para quem ligar primeiro. O que se vende é conformidade com o art. 266 até 31/12/2026.</p></div></div>`;
+}
+
+/* O tema é escolha do leitor e sobrevive à visita seguinte. Sem localStorage
+   (janela anônima, dados bloqueados) o painel segue o sistema, sem quebrar. */
+function lerTema(){try{return localStorage.getItem('cerurb-tema')}catch(e){return null}}
+function aplicarTema(t,guardar){
+ if(t) document.documentElement.setAttribute('data-theme',t);
+ else document.documentElement.removeAttribute('data-theme');
+ if(guardar){try{t?localStorage.setItem('cerurb-tema',t):localStorage.removeItem('cerurb-tema')}catch(e){}}
+ lerPaleta();
+}
+function temaAtual(){
+ const t=document.documentElement.getAttribute('data-theme');
+ if(t) return t;
+ return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+}
+/* tudo que embute cor em HTML gerado precisa nascer de novo */
+function redesenhar(){
+ renderE();
+ /* FCU e a camada do modo sem-bairro guardam a cor de quando nasceram:
+    remontar o território é o que faz as duas seguirem o tema */
+ if(mapT) montarTerritorio();
+ paginaCarteira(); paginaJanela(); paginaRanking(); paginaSaneamento();
+ paginaViario(); paginaPerfis(); paginaRelatorios();
+ ir(location.hash.replace('#','')||'estado');
+}
+function alternarTema(){
+ aplicarTema(temaAtual()==='dark'?'light':'dark',true);
+ redesenhar();
+}
+
+window.addEventListener('hashchange',()=>ir(location.hash.replace('#','')||'estado'));
+carregar().catch(e=>{
+ document.getElementById('boot').innerHTML='falha ao carregar os dados:<br><span style="color:var(--red)">'+esc(e.message)+'</span><br><br>'+
+ '<span style="color:var(--dim);font-size:11px">abra por HTTP — <code>python3 -m http.server 8000</code> na raiz do projeto<br>e acesse http://localhost:8000/painel/</span>';
+});
+</script>
+</body>
+</html>

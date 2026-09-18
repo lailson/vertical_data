@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Laudo de Completude Cadastral — IBGE 2207702</title>
+<style>
+:root{--paper:#F0EDE3;--ink:#20261F;--teal:#17453D;--ochre:#BC8A2E;--terra:#B14B34;--slate:#6E7266;--line:#D9D4C4}
+*{box-sizing:border-box}body{margin:0;font-family:'IBM Plex Sans',-apple-system,sans-serif;background:var(--paper);color:var(--ink);padding:36px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--teal);padding-bottom:14px;margin-bottom:22px}
+h1{font:600 24px Georgia,serif;margin:0} .sub{color:var(--slate);font-size:13px;margin-top:4px}
+.chip{background:var(--teal);color:#fff;font-size:11px;font-weight:600;padding:6px 12px;border-radius:99px;letter-spacing:.04em}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.k{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.k .l{font-size:11.5px;color:var(--slate)} .k .v{font:600 30px Georgia,serif;margin-top:4px}
+h2{font:600 16px Georgia,serif;margin:22px 0 8px} p.ok{color:var(--teal);font-weight:600}
+.hrow{display:grid;grid-template-columns:230px 1fr 64px;gap:10px;align-items:center;font-size:13px;padding:5px 0}
+.hl{color:var(--slate)} .hbar{height:8px;background:var(--line);border-radius:4px;overflow:hidden} .hbar i{display:block;height:100%}
+.hv{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.foot{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--slate);line-height:1.6}
+</style></head><body>
+<div class="head"><div><h1>Laudo de Completude Cadastral</h1>
+<div class="sub">Município IBGE 2207702 · base: exemplo_base.csv · 5 imóveis · gerado em 2026-09-17</div></div>
+<span class="chip">DIAGNÓSTICO CADURB · SINTER/RFB</span></div>
+<div class="kpis">
+<div class="k"><div class="l">Imóveis analisados</div><div class="v">5</div></div>
+<div class="k"><div class="l">Aptos à transmissão</div><div class="v" style="color:#BC8A2E">60.0%</div></div>
+<div class="k"><div class="l">Com falha obrigatória</div><div class="v" style="color:var(--terra)">2</div></div>
+<div class="k"><div class="l">Inscrições duplicadas</div><div class="v">1</div></div></div>
+<h2>Falhas por regra (bloqueiam a remessa)</h2><div class="hrow"><span class="hl">areaTerreno ausente</span><div class="hbar"><i style="width:100%;background:#B14B34"></i></div><span class="hv">1</span></div><div class="hrow"><span class="hl">CEP não tem 8 dígitos</span><div class="hbar"><i style="width:100%;background:#BC8A2E"></i></div><span class="hv">1</span></div>
+<h2>Cobertura de campos estratégicos</h2><div class="hrow"><span class="hl">% titularidade</span><div class="hbar"><i style="width:100%;background:#2E6B5E"></i></div><span class="hv">100.0%</span></div><div class="hrow"><span class="hl">área construída</span><div class="hbar"><i style="width:100%;background:#2E6B5E"></i></div><span class="hv">100.0%</span></div><div class="hrow"><span class="hl">valor venal</span><div class="hbar"><i style="width:100%;background:#2E6B5E"></i></div><span class="hv">100.0%</span></div><div class="hrow"><span class="hl">titular (nome)</span><div class="hbar"><i style="width:80%;background:#2E6B5E"></i></div><span class="hv">80.0%</span></div><div class="hrow"><span class="hl">titular (NI)</span><div class="hbar"><i style="width:80%;background:#2E6B5E"></i></div><span class="hv">80.0%</span></div><div class="hrow"><span class="hl">bairro</span><div class="hbar"><i style="width:80%;background:#2E6B5E"></i></div><span class="hv">80.0%</span></div><div class="hrow"><span class="hl">titularidade em % (a remessa converte para 0–1)</span><div class="hbar"><i style="width:80%;background:#2E6B5E"></i></div><span class="hv">80.0%</span></div><div class="hrow"><span class="hl">georreferência</span><div class="hbar"><i style="width:40%;background:#2E6B5E"></i></div><span class="hv">40.0%</span></div>
+<h2>Consistência</h2>
+<div class="hrow"><span class="hl">Titularidade que não soma ~100%</span><div></div><span class="hv">1</span></div>
+<div class="hrow"><span class="hl">Avisos não bloqueantes</span><div></div><span class="hv">5</span></div>
+<div class="foot">Regras obrigatórias derivadas da spec pública de homologação do CADURB (Sinter/RFB, openapi capturada em 16/09/2026). Este laudo mede a distância entre o cadastro atual e o leiaute exigido pelo art. 266 da LC 214/2025 — não avalia a gestão local. Com a adesão do município ao convênio Sinter, a mesma base pode ser validada no endpoint oficial (POST /v1/validacao) e transmitida em produção.</div>
+</body></html>

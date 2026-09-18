@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Gestão Territorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F0EDE3;
+    --paper-raised:#F7F5EE;
+    --ink:#20261F;
+    --ink-soft:#4B5147;
+    --teal:#17453D;
+    --teal-soft:#E4EBE7;
+    --ochre:#BC8A2E;
+    --ochre-soft:#F5EAD3;
+    --terracotta:#B14B34;
+    --terracotta-soft:#F4E1DA;
+    --blue:#2E5C8A;
+    --blue-soft:#E2EAF2;
+    --slate:#6E7266;
+    --line:#D9D4C4;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;}
+  h1,h2,h3,.serif{font-family:'Source Serif 4',serif;}
+  .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;}
+
+  .sidebar{background:var(--teal);color:#EFEAD9;padding:28px 22px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .brand{display:flex;flex-direction:column;gap:2px;}
+  .brand .mark{width:34px;height:34px;border:2px solid #EFEAD9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Source Serif 4',serif;font-size:16px;margin-bottom:8px;}
+  .brand .name{font-family:'Source Serif 4',serif;font-size:19px;line-height:1.2;}
+  .brand .sub{font-size:12px;color:#B9CDC6;letter-spacing:.02em;}
+
+  .nav-group{display:flex;flex-direction:column;gap:2px;}
+  .nav-label{font-size:11px;color:#9FBBB2;text-transform:uppercase;letter-spacing:.08em;margin:12px 0 6px 2px;}
+  .nav-item{padding:9px 10px;border-radius:6px;font-size:14px;color:#DCE7E1;cursor:pointer;display:flex;align-items:center;justify-content:space-between;border:none;background:none;text-align:left;width:100%;font-family:'IBM Plex Sans';}
+  .nav-item.active{background:rgba(239,234,217,.14);color:#fff;font-weight:600;}
+  .nav-item:hover:not(.active){background:rgba(239,234,217,.07);}
+  .nav-item .count{font-size:11px;color:#9FBBB2;}
+
+  .sidebar-foot{margin-top:auto;padding-top:18px;border-top:1px solid rgba(239,234,217,.15);font-size:12px;color:#9FBBB2;line-height:1.5;}
+
+  .main{padding:30px 40px 60px;max-width:1180px;}
+  .page{display:none;}
+  .page.active{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  .topbar{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+  .topbar h1{font-size:26px;margin:0 0 4px;font-weight:600;}
+  .topbar .meta{font-size:13px;color:var(--slate);}
+  .select-region{background:var(--paper-raised);border:1px solid var(--line);border-radius:8px;padding:9px 14px;font-family:'IBM Plex Sans';font-size:13px;color:var(--ink);}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px;}
+  .kpi{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:18px 20px;}
+  .kpi .label{font-size:12px;color:var(--slate);margin-bottom:8px;}
+  .kpi .value{font-family:'Source Serif 4',serif;font-size:30px;font-weight:600;line-height:1;}
+  .kpi .delta{font-size:12px;margin-top:8px;color:var(--slate);}
+  .kpi.alert .value{color:var(--terracotta);}
+  .kpi.good .value{color:var(--teal);}
+  .kpi.info .value{color:var(--blue);}
+
+  .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;margin-bottom:24px;}
+  .panel{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:22px;}
+  .panel h2{font-size:17px;margin:0 0 4px;font-weight:600;}
+  .panel .desc{font-size:12.5px;color:var(--slate);margin-bottom:16px;}
+
+  .map-legend{display:flex;gap:16px;margin-bottom:14px;font-size:12px;color:var(--ink-soft);flex-wrap:wrap;}
+  .map-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .swatch{width:11px;height:11px;border-radius:3px;display:inline-block;}
+  .map-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+  .map-grid.big{grid-template-columns:repeat(6,1fr);gap:10px;}
+  .cell{aspect-ratio:1;border-radius:4px;position:relative;cursor:pointer;transition:transform .12s ease;}
+  .cell:hover{transform:scale(1.06);z-index:2;}
+  .cell .tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:11px;padding:6px 8px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;margin-bottom:6px;}
+  .cell:hover .tip{opacity:1;}
+  .map-caption{font-size:11px;color:var(--slate);margin-top:12px;}
+  .map-toggle{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .map-toggle button{padding:7px 13px;border-radius:7px;border:1px solid var(--line);background:#fff;font-size:12.5px;cursor:pointer;color:var(--ink-soft);font-family:'IBM Plex Sans';}
+  .map-toggle button.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+
+  .rank-row{display:grid;grid-template-columns:26px 1fr auto 70px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;cursor:pointer;}
+  .rank-row:last-child{border-bottom:none;}
+  .rank-row:hover{background:rgba(0,0,0,.02);}
+  .rank-num{font-family:'Source Serif 4',serif;color:var(--slate);font-size:14px;}
+  .rank-name{font-weight:500;}
+  .rank-sub{font-size:11.5px;color:var(--slate);}
+  .bar-track{height:6px;background:var(--line);border-radius:3px;width:100px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:3px;}
+  .rank-val{font-weight:600;text-align:right;font-variant-numeric:tabular-nums;}
+
+  .clusters{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+  .cluster-card{border-radius:10px;padding:18px;border:1px solid var(--line);}
+  .cluster-card h3{font-size:15px;margin:0 0 6px;font-weight:600;}
+  .cluster-card p{font-size:12.5px;color:var(--ink-soft);margin:0 0 12px;line-height:1.5;}
+  .cluster-card .stat{font-size:12px;color:var(--slate);display:flex;justify-content:space-between;padding:4px 0;border-top:1px dashed var(--line);}
+  .cluster-card .stat:first-of-type{border-top:none;}
+  .c-high{background:var(--terracotta-soft);}
+  .c-mid{background:var(--ochre-soft);}
+  .c-low{background:var(--teal-soft);}
+  .c-info{background:var(--blue-soft);}
+
+  .sim-panel{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:24px;margin-bottom:24px;}
+  .sim-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+  .sim-controls{display:flex;gap:10px;flex-wrap:wrap;}
+  .sim-btn{padding:8px 14px;border-radius:7px;border:1px solid var(--line);background:#fff;font-size:12.5px;cursor:pointer;color:var(--ink-soft);font-family:'IBM Plex Sans';}
+  .sim-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .sim-region-select{margin:14px 0;}
+  .sim-region-select select{background:#fff;border:1px solid var(--line);border-radius:7px;padding:8px 12px;font-size:12.5px;font-family:'IBM Plex Sans';color:var(--ink);}
+  .sim-result{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px;}
+  .sim-result .box{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px;}
+  .sim-result .box .n{font-family:'Source Serif 4',serif;font-size:22px;font-weight:600;}
+  .sim-result .box .l{font-size:11.5px;color:var(--slate);margin-top:4px;}
+
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .data-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);padding:8px 10px;border-bottom:1px solid var(--line);font-weight:600;}
+  .data-table td{padding:9px 10px;border-bottom:1px solid var(--line);}
+  .data-table tr:hover td{background:rgba(0,0,0,.02);}
+  .tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;}
+  .tag.high{background:var(--terracotta-soft);color:var(--terracotta);}
+  .tag.mid{background:var(--ochre-soft);color:var(--ochre);}
+  .tag.low{background:var(--teal-soft);color:var(--teal);}
+
+  .report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .report-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:18px;}
+  .report-card h3{font-size:14.5px;margin:0 0 6px;}
+  .report-card p{font-size:12px;color:var(--slate);margin:0 0 14px;line-height:1.5;}
+  .report-card button{background:var(--teal);color:#fff;border:none;padding:8px 14px;border-radius:7px;font-size:12.5px;cursor:pointer;font-family:'IBM Plex Sans';}
+
+  .trend-wrap{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px;}
+
+  .footnote{font-size:11.5px;color:var(--slate);margin-top:28px;line-height:1.6;border-top:1px solid var(--line);padding-top:16px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">T</div>
+      <div class="name">Painel Territorial</div>
+      <div class="sub">Gestão baseada em dados · REURB</div>
+    </div>
+
+    <nav>
+      <div class="nav-group">
+        <div class="nav-label">Visão geral</div>
+        <button class="nav-item" data-page="overview">Painel principal</button>
+        <button class="nav-item" data-page="mapa">Mapa territorial</button>
+        <button class="nav-item" data-page="ranking">Ranking de bairros</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Investimento setorial</div>
+        <button class="nav-item" data-page="saneamento">Saneamento básico</button>
+        <button class="nav-item" data-page="pavimentacao">Pavimentação</button>
+        <button class="nav-item" data-page="educacao">Educação</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Análise</div>
+        <button class="nav-item" data-page="perfis">Perfis socioeconômicos</button>
+        <button class="nav-item" data-page="simulador">Simulador de investimento</button>
+        <button class="nav-item" data-page="historico">Séries históricas</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Regularização</div>
+        <button class="nav-item" data-page="cerurb">Status CERURB <span class="count">1.842</span></button>
+        <button class="nav-item" data-page="relatorios">Relatórios exportáveis</button>
+      </div>
+    </nav>
+
+    <div class="sidebar-foot">
+      Dados de exemplo para fins de prototipação.<br>Fonte planejada: CERURB (Foxinline).
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <section class="page active" id="page-overview">
+      <div class="topbar">
+        <div>
+          <h1>Visão territorial — Teresina</h1>
+          <div class="meta">18 bairros monitorados · última atualização: 04/09/2026</div>
+        </div>
+        <select class="select-region">
+          <option>Todos os bairros</option>
+          <option>Zona Sudeste</option>
+          <option>Zona Norte</option>
+          <option>Zona Sul</option>
+        </select>
+      </div>
+
+      <section class="kpis">
+        <div class="kpi alert">
+          <div class="label">Bairros em alta prioridade</div>
+          <div class="value">6</div>
+          <div class="delta">de 18 monitorados</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Famílias mapeadas</div>
+          <div class="value">1.842</div>
+          <div class="delta">+96 nos últimos 30 dias</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Cobertura de saneamento média</div>
+          <div class="value">61%</div>
+          <div class="delta">variação de 22% a 96% entre bairros</div>
+        </div>
+        <div class="kpi good">
+          <div class="label">Imóveis regularizados</div>
+          <div class="value">1.240</div>
+          <div class="delta">67% do total mapeado</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <h2>Mapa esquemático de vulnerabilidade</h2>
+          <div class="desc">Clique em "Mapa territorial" no menu para a versão completa, com camadas por indicador.</div>
+          <div class="map-legend">
+            <span><i class="swatch" style="background:var(--teal)"></i>Baixa (0–33)</span>
+            <span><i class="swatch" style="background:var(--ochre)"></i>Média (34–66)</span>
+            <span><i class="swatch" style="background:var(--terracotta)"></i>Alta (67–100)</span>
+          </div>
+          <div class="map-grid" id="mapGridOverview"></div>
+          <div class="map-caption">Representação ilustrativa — a versão final usará geometria real dos bairros (PostGIS).</div>
+        </div>
+
+        <div class="panel">
+          <h2>Ranking por vulnerabilidade</h2>
+          <div class="desc">Os 8 bairros mais críticos. Clique em um bairro para ver o ranking completo.</div>
+          <div id="rankListOverview"></div>
+        </div>
+      </section>
+
+      <section>
+        <h2 style="font-size:18px;margin:0 0 4px;">Perfis de bairro (agrupamento automático)</h2>
+        <div class="desc" style="margin-bottom:14px;">Bairros com características semelhantes agrupados por perfil, para orientar o tipo de intervenção mais adequado.</div>
+        <div class="clusters">
+          <div class="cluster-card c-high">
+            <h3>Prioridade alta</h3>
+            <p>Renda baixa, densidade alta, infraestrutura abaixo de 40%. Intervenção recomendada: saneamento e regularização.</p>
+            <div class="stat"><span>Bairros</span><span>6</span></div>
+            <div class="stat"><span>Famílias</span><span>612</span></div>
+            <div class="stat"><span>Saneamento médio</span><span>31%</span></div>
+          </div>
+          <div class="cluster-card c-mid">
+            <h3>Prioridade média</h3>
+            <p>Infraestrutura parcial, ocupação consolidada. Intervenção recomendada: pavimentação e iluminação.</p>
+            <div class="stat"><span>Bairros</span><span>7</span></div>
+            <div class="stat"><span>Famílias</span><span>784</span></div>
+            <div class="stat"><span>Saneamento médio</span><span>64%</span></div>
+          </div>
+          <div class="cluster-card c-low">
+            <h3>Prioridade baixa</h3>
+            <p>Infraestrutura consolidada. Intervenção recomendada: manutenção e monitoramento periódico.</p>
+            <div class="stat"><span>Bairros</span><span>5</span></div>
+            <div class="stat"><span>Famílias</span><span>446</span></div>
+            <div class="stat"><span>Saneamento médio</span><span>89%</span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footnote">
+        Critério de priorização baseado em vulnerabilidade social, densidade populacional e carência de infraestrutura — não em critérios político-eleitorais. Dados exibidos são ilustrativos, para validação do conceito antes da integração real com o CERURB.
+      </div>
+    </section>
+
+    <section class="page" id="page-mapa">
+      <div class="topbar">
+        <div><h1>Mapa territorial</h1><div class="meta">Alterne entre indicadores para visualizar diferentes camadas</div></div>
+      </div>
+      <div class="panel">
+        <div class="map-toggle" id="mapLayerToggle">
+          <button class="active" data-layer="iv">Vulnerabilidade</button>
+          <button data-layer="saneamento">Saneamento</button>
+          <button data-layer="pavimentacao">Pavimentação</button>
+          <button data-layer="educacao">Evasão escolar</button>
+        </div>
+        <div class="map-legend" id="mapLegendBig"></div>
+        <div class="map-grid big" id="mapGridBig"></div>
+        <div class="map-caption">Representação ilustrativa em grade — a versão final usará geometria real dos bairros via PostGIS.</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-ranking">
+      <div class="topbar">
+        <div><h1>Ranking de bairros</h1><div class="meta">Todos os 18 bairros monitorados, por índice de vulnerabilidade</div></div>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Bairro</th><th>IV</th><th>Saneamento</th><th>Pavimentação</th><th>Evasão escolar</th><th>Famílias</th><th>Prioridade</th></tr></thead>
+          <tbody id="rankingTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="page" id="page-saneamento">
+      <div class="topbar">
+        <div><h1>Saneamento básico</h1><div class="meta">Cobertura de água tratada, esgoto e coleta de resíduos por bairro</div></div>
+      </div>
+      <section class="kpis" id="kpiSaneamento"></section>
+      <div class="panel">
+        <h2>Bairros com menor cobertura</h2>
+        <div class="desc">Ordenados do mais crítico ao menos crítico — candidatos prioritários a investimento.</div>
+        <div id="rankSaneamento"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-pavimentacao">
+      <div class="topbar">
+        <div><h1>Pavimentação</h1><div class="meta">Cobertura de vias pavimentadas e estimativa de extensão pendente</div></div>
+      </div>
+      <section class="kpis" id="kpiPavimentacao"></section>
+      <div class="grid">
+        <div class="panel">
+          <h2>Bairros com menor cobertura de pavimentação</h2>
+          <div class="desc">Km estimados de vias sem pavimentação, por bairro.</div>
+          <div id="rankPavimentacao"></div>
+        </div>
+        <div class="panel">
+          <h2>Classificação por urgência</h2>
+          <div class="desc">Combinação de cobertura de pavimentação e densidade populacional.</div>
+          <div class="clusters" style="grid-template-columns:1fr;">
+            <div class="cluster-card c-high"><h3>Urgente</h3><p>Cobertura abaixo de 40% em áreas densamente povoadas.</p><div class="stat"><span>Bairros</span><span id="pav-urgente-n">-</span></div></div>
+            <div class="cluster-card c-mid"><h3>Atenção</h3><p>Cobertura entre 40% e 70%, com deterioração progressiva das vias.</p><div class="stat"><span>Bairros</span><span id="pav-atencao-n">-</span></div></div>
+            <div class="cluster-card c-low"><h3>Estável</h3><p>Cobertura acima de 70%, foco em manutenção preventiva.</p><div class="stat"><span>Bairros</span><span id="pav-estavel-n">-</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-educacao">
+      <div class="topbar">
+        <div><h1>Educação</h1><div class="meta">Distância média até a escola, evasão escolar e matrículas por bairro</div></div>
+      </div>
+      <section class="kpis" id="kpiEducacao"></section>
+      <div class="grid">
+        <div class="panel">
+          <h2>Bairros com maior taxa de evasão</h2>
+          <div class="desc">Prioridade para ações de permanência escolar e transporte.</div>
+          <div id="rankEducacao"></div>
+        </div>
+        <div class="panel">
+          <h2>Cobertura escolar</h2>
+          <div class="desc">Distância média até a unidade escolar mais próxima, por bairro.</div>
+          <table class="data-table">
+            <thead><tr><th>Bairro</th><th>Escolas</th><th>Distância média</th><th>Matrículas</th></tr></thead>
+            <tbody id="tabelaEducacao"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-perfis">
+      <div class="topbar">
+        <div><h1>Perfis socioeconômicos</h1><div class="meta">Composição familiar, renda e condições de moradia por bairro</div></div>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Bairro</th><th>Renda predominante</th><th>Moradores/domicílio</th><th>Presença de idosos</th><th>Presença de crianças</th><th>Tipo de posse predominante</th></tr></thead>
+          <tbody id="tabelaPerfis"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="page" id="page-simulador">
+      <div class="topbar">
+        <div><h1>Simulador de investimento</h1><div class="meta">Estime o custo-benefício social antes de decidir onde alocar recursos</div></div>
+      </div>
+      <div class="sim-panel">
+        <div class="sim-head">
+          <div>
+            <h2 style="font-size:17px;margin:0 0 4px;">Parâmetros da simulação</h2>
+            <div class="desc" style="margin:0;">Escolha o tipo de investimento e o bairro para estimar o impacto.</div>
+          </div>
+          <div class="sim-controls" id="simTypeButtons">
+            <button class="sim-btn active" data-t="saneamento">Saneamento</button>
+            <button class="sim-btn" data-t="pavimentacao">Pavimentação</button>
+            <button class="sim-btn" data-t="iluminacao">Iluminação</button>
+            <button class="sim-btn" data-t="educacao">Educação</button>
+          </div>
+        </div>
+        <div class="sim-region-select">
+          <label style="font-size:12.5px;color:var(--slate);margin-right:8px;">Bairro:</label>
+          <select id="simRegionSelect"></select>
+        </div>
+        <div class="sim-result" id="simResult"></div>
+      </div>
+      <div class="footnote">
+        Custo-benefício social = população beneficiada estimada / valor investido. Critério técnico e auditável, alternativo ao uso político-eleitoral de dados públicos.
+      </div>
+    </section>
+
+    <section class="page" id="page-historico">
+      <div class="topbar">
+        <div><h1>Séries históricas</h1><div class="meta">Evolução dos indicadores ao longo do tempo</div></div>
+      </div>
+      <div class="panel">
+        <h2>Cobertura média de saneamento no município</h2>
+        <div class="desc">Últimos 6 semestres — evolução acumulada com os investimentos realizados.</div>
+        <div class="trend-wrap"><svg id="trendChart" width="100%" height="220" viewBox="0 0 640 220"></svg></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-cerurb">
+      <div class="topbar">
+        <div><h1>Status CERURB</h1><div class="meta">Andamento da regularização fundiária por bairro</div></div>
+      </div>
+      <section class="kpis">
+        <div class="kpi good"><div class="label">Regularizados</div><div class="value">1.240</div><div class="delta">67% do total</div></div>
+        <div class="kpi info"><div class="label">Em análise</div><div class="value">402</div><div class="delta">22% do total</div></div>
+        <div class="kpi alert"><div class="label">Pendentes</div><div class="value">200</div><div class="delta">11% do total</div></div>
+        <div class="kpi"><div class="label">Tempo médio do processo</div><div class="value">7,4</div><div class="delta">meses, do cadastro ao registro</div></div>
+      </section>
+      <div class="panel">
+        <h2>Status por bairro</h2>
+        <table class="data-table">
+          <thead><tr><th>Bairro</th><th>Regularizados</th><th>Em análise</th><th>Pendentes</th></tr></thead>
+          <tbody id="tabelaCerurb"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="page" id="page-relatorios">
+      <div class="topbar">
+        <div><h1>Relatórios exportáveis</h1><div class="meta">Modelos prontos para prestação de contas e planejamento</div></div>
+      </div>
+      <div class="report-grid">
+        <div class="report-card"><h3>Relatório de vulnerabilidade territorial</h3><p>Ranking completo, metodologia do índice e recomendações por bairro.</p><button>Gerar PDF</button></div>
+        <div class="report-card"><h3>Relatório de saneamento básico</h3><p>Cobertura por bairro, evolução histórica e priorização de investimento.</p><button>Gerar PDF</button></div>
+        <div class="report-card"><h3>Relatório de pavimentação</h3><p>Km pavimentados, pendentes e classificação de urgência por bairro.</p><button>Gerar PDF</button></div>
+        <div class="report-card"><h3>Relatório de educação</h3><p>Evasão escolar, cobertura e distância média por bairro.</p><button>Gerar PDF</button></div>
+        <div class="report-card"><h3>Relatório de regularização fundiária</h3><p>Status consolidado do CERURB, por bairro e por etapa do processo.</p><button>Gerar PDF</button></div>
+        <div class="report-card"><h3>Relatório de simulações de investimento</h3><p>Histórico de simulações realizadas e cenários comparados.</p><button>Gerar PDF</button></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const bairros = [
+  {nome:"Vila Irmã Dulce", iv:88, saneamento:24, pavimentacao:31, evasao:14.2, escolas:1, distEscola:2.4, matriculas:410, familias:212, renda:"até 1 SM", moradores:4.6, idosos:true, criancas:true, posse:"Posseiro", pendentes:64, analise:58, regularizados:90},
+  {nome:"Mocambinho", iv:81, saneamento:29, pavimentacao:36, evasao:12.8, escolas:1, distEscola:2.1, matriculas:380, familias:198, renda:"até 1 SM", moradores:4.3, idosos:true, criancas:true, posse:"Posseiro", pendentes:52, analise:60, regularizados:86},
+  {nome:"Santa Luzia", iv:76, saneamento:33, pavimentacao:41, evasao:11.5, escolas:2, distEscola:1.8, matriculas:355, familias:165, renda:"1–2 SM", moradores:4.1, idosos:false, criancas:true, posse:"Cessão", pendentes:38, analise:49, regularizados:78},
+  {nome:"Vila Nova do Alto da Ressurreição", iv:72, saneamento:38, pavimentacao:44, evasao:10.9, escolas:2, distEscola:1.7, matriculas:330, familias:140, renda:"1–2 SM", moradores:4.0, idosos:true, criancas:true, posse:"Posseiro", pendentes:24, analise:44, regularizados:72},
+  {nome:"Bela Vista", iv:69, saneamento:41, pavimentacao:47, evasao:9.8, escolas:2, distEscola:1.6, matriculas:300, familias:120, renda:"1–2 SM", moradores:3.9, idosos:false, criancas:true, posse:"Cessão", pendentes:18, analise:38, regularizados:64},
+  {nome:"São Sebastião", iv:65, saneamento:47, pavimentacao:53, evasao:9.1, escolas:2, distEscola:1.5, matriculas:290, familias:110, renda:"1–2 SM", moradores:3.8, idosos:true, criancas:true, posse:"Proprietário informal", pendentes:14, analise:31, regularizados:65},
+  {nome:"Parque Piauí", iv:58, saneamento:55, pavimentacao:58, evasao:8.0, escolas:2, distEscola:1.3, matriculas:270, familias:98, renda:"2–3 SM", moradores:3.6, idosos:false, criancas:true, posse:"Proprietário informal", pendentes:10, analise:24, regularizados:64},
+  {nome:"Vila Renascença", iv:52, saneamento:61, pavimentacao:63, evasao:7.2, escolas:3, distEscola:1.2, matriculas:255, familias:92, renda:"2–3 SM", moradores:3.5, idosos:false, criancas:true, posse:"Proprietário informal", pendentes:7, analise:19, regularizados:66},
+  {nome:"Todos os Santos", iv:47, saneamento:66, pavimentacao:68, evasao:6.4, escolas:3, distEscola:1.1, matriculas:240, familias:88, renda:"2–3 SM", moradores:3.4, idosos:true, criancas:false, posse:"Proprietário informal", pendentes:5, analise:15, regularizados:68},
+  {nome:"Aeroporto", iv:41, saneamento:72, pavimentacao:74, evasao:5.6, escolas:3, distEscola:1.0, matriculas:220, familias:80, renda:"2–3 SM", moradores:3.2, idosos:false, criancas:false, posse:"Proprietário", pendentes:4, analise:12, regularizados:64},
+  {nome:"Ilhotas", iv:34, saneamento:79, pavimentacao:80, evasao:4.9, escolas:3, distEscola:0.9, matriculas:205, familias:70, renda:"3+ SM", moradores:3.1, idosos:false, criancas:false, posse:"Proprietário", pendentes:3, analise:9, regularizados:58},
+  {nome:"Horto Florestal", iv:29, saneamento:84, pavimentacao:83, evasao:4.2, escolas:4, distEscola:0.8, matriculas:190, familias:64, renda:"3+ SM", moradores:3.0, idosos:false, criancas:false, posse:"Proprietário", pendentes:2, analise:7, regularizados:55},
+  {nome:"Fátima", iv:24, saneamento:88, pavimentacao:87, evasao:3.6, escolas:4, distEscola:0.7, matriculas:180, familias:60, renda:"3+ SM", moradores:2.9, idosos:false, criancas:false, posse:"Proprietário", pendentes:1, analise:5, regularizados:54},
+  {nome:"Jóquei", iv:20, saneamento:91, pavimentacao:90, evasao:3.1, escolas:4, distEscola:0.6, matriculas:170, familias:55, renda:"3+ SM", moradores:2.8, idosos:false, criancas:false, posse:"Proprietário", pendentes:1, analise:4, regularizados:50},
+  {nome:"Noivos", iv:17, saneamento:93, pavimentacao:92, evasao:2.8, escolas:4, distEscola:0.6, matriculas:160, familias:50, renda:"3+ SM", moradores:2.7, idosos:false, criancas:false, posse:"Proprietário", pendentes:0, analise:3, regularizados:47},
+  {nome:"Cabral", iv:14, saneamento:94, pavimentacao:93, evasao:2.5, escolas:5, distEscola:0.5, matriculas:150, familias:48, renda:"3+ SM", moradores:2.6, idosos:false, criancas:false, posse:"Proprietário", pendentes:0, analise:2, regularizados:46},
+  {nome:"São Cristóvão", iv:12, saneamento:94, pavimentacao:94, evasao:2.3, escolas:5, distEscola:0.5, matriculas:145, familias:44, renda:"3+ SM", moradores:2.5, idosos:false, criancas:false, posse:"Proprietário", pendentes:0, analise:2, regularizados:42},
+  {nome:"Centro", iv:9, saneamento:96, pavimentacao:96, evasao:1.9, escolas:6, distEscola:0.4, matriculas:140, familias:40, renda:"3+ SM", moradores:2.4, idosos:false, criancas:false, posse:"Proprietário", pendentes:0, analise:1, regularizados:39},
+];
+
+const cv = getComputedStyle(document.documentElement);
+function colorFor(val){
+  if(val >= 67) return cv.getPropertyValue('--terracotta');
+  if(val >= 34) return cv.getPropertyValue('--ochre');
+  return cv.getPropertyValue('--teal');
+}
+function colorForInverse(val){
+  if(val < 40) return cv.getPropertyValue('--terracotta');
+  if(val < 70) return cv.getPropertyValue('--ochre');
+  return cv.getPropertyValue('--teal');
+}
+function prioTag(iv){
+  if(iv>=67) return '<span class="tag high">Alta</span>';
+  if(iv>=34) return '<span class="tag mid">Média</span>';
+  return '<span class="tag low">Baixa</span>';
+}
+function fmtPct(n){ return n + '%'; }
+
+const navItems = document.querySelectorAll('.nav-item[data-page]');
+const pages = document.querySelectorAll('.page');
+function goToPage(id){
+  pages.forEach(p=>p.classList.toggle('active', p.id === 'page-'+id));
+  navItems.forEach(n=>n.classList.toggle('active', n.dataset.page === id));
+  window.scrollTo(0,0);
+  window.location.hash = id;
+}
+navItems.forEach(item=>{
+  item.addEventListener('click', ()=> goToPage(item.dataset.page));
+});
+window.addEventListener('DOMContentLoaded', ()=>{
+  const initial = window.location.hash.replace('#','') || 'overview';
+  goToPage(initial);
+});
+
+function buildMiniMap(containerId){
+  const el = document.getElementById(containerId);
+  bairros.forEach(b=>{
+    const cell = document.createElement('div');
+    cell.className='cell';
+    cell.style.background = colorFor(b.iv);
+    cell.innerHTML = `<div class="tip">${b.nome} · IV ${b.iv}</div>`;
+    cell.addEventListener('click', ()=>goToPage('ranking'));
+    el.appendChild(cell);
+  });
+}
+buildMiniMap('mapGridOverview');
+
+function buildRankMini(containerId, limit){
+  const el = document.getElementById(containerId);
+  const sorted = [...bairros].sort((a,b)=>b.iv-a.iv).slice(0,limit);
+  sorted.forEach((b,i)=>{
+    const row = document.createElement('div');
+    row.className='rank-row';
+    row.innerHTML = `
+      <div class="rank-num">${i+1}</div>
+      <div><div class="rank-name">${b.nome}</div><div class="rank-sub">${b.familias} famílias · saneamento ${b.saneamento}%</div></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${b.iv}%;background:${colorFor(b.iv)}"></div></div>
+      <div class="rank-val">${b.iv}</div>`;
+    row.addEventListener('click', ()=>goToPage('ranking'));
+    el.appendChild(row);
+  });
+}
+buildRankMini('rankListOverview', 8);
+
+const layerConfig = {
+  iv:{label:'Índice de vulnerabilidade', getVal:b=>b.iv, color:colorFor, legend:[['Baixa (0–33)','--teal'],['Média (34–66)','--ochre'],['Alta (67–100)','--terracotta']]},
+  saneamento:{label:'Cobertura de saneamento', getVal:b=>b.saneamento, color:colorForInverse, legend:[['Crítica (<40%)','--terracotta'],['Parcial (40–70%)','--ochre'],['Boa (>70%)','--teal']]},
+  pavimentacao:{label:'Cobertura de pavimentação', getVal:b=>b.pavimentacao, color:colorForInverse, legend:[['Crítica (<40%)','--terracotta'],['Parcial (40–70%)','--ochre'],['Boa (>70%)','--teal']]},
+  educacao:{label:'Taxa de evasão escolar', getVal:b=>b.evasao*6, color:colorFor, legend:[['Baixa evasão','--teal'],['Média evasão','--ochre'],['Alta evasão','--terracotta']]},
+};
+const mapGridBig = document.getElementById('mapGridBig');
+const mapLegendBig = document.getElementById('mapLegendBig');
+function renderBigMap(layerKey){
+  const cfg = layerConfig[layerKey];
+  mapGridBig.innerHTML = '';
+  bairros.forEach(b=>{
+    const val = cfg.getVal(b);
+    const cell = document.createElement('div');
+    cell.className='cell';
+    cell.style.background = cfg.color(val);
+    cell.innerHTML = `<div class="tip">${b.nome} · ${cfg.label}: ${layerKey==='educacao'? b.evasao+'%':Math.round(val)}</div>`;
+    cell.addEventListener('click', ()=>goToPage('ranking'));
+    mapGridBig.appendChild(cell);
+  });
+  mapLegendBig.innerHTML = cfg.legend.map(([label,varName])=>
+    `<span><i class="swatch" style="background:${cv.getPropertyValue(varName)}"></i>${label}</span>`).join('');
+}
+document.querySelectorAll('#mapLayerToggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#mapLayerToggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderBigMap(btn.dataset.layer);
+  });
+});
+renderBigMap('iv');
+
+const rankingBody = document.getElementById('rankingTableBody');
+[...bairros].sort((a,b)=>b.iv-a.iv).forEach((b,i)=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${i+1}</td><td>${b.nome}</td><td>${b.iv}</td><td>${fmtPct(b.saneamento)}</td><td>${fmtPct(b.pavimentacao)}</td><td>${b.evasao}%</td><td>${b.familias}</td><td>${prioTag(b.iv)}</td>`;
+  rankingBody.appendChild(tr);
+});
+
+const saneamentoMedio = Math.round(bairros.reduce((s,b)=>s+b.saneamento,0)/bairros.length);
+const criticosSaneamento = bairros.filter(b=>b.saneamento<40).length;
+document.getElementById('kpiSaneamento').innerHTML = `
+  <div class="kpi"><div class="label">Cobertura média</div><div class="value">${saneamentoMedio}%</div><div class="delta">média entre os 18 bairros</div></div>
+  <div class="kpi alert"><div class="label">Bairros críticos</div><div class="value">${criticosSaneamento}</div><div class="delta">cobertura abaixo de 40%</div></div>
+  <div class="kpi">
+    <div class="label">Menor cobertura</div><div class="value">${Math.min(...bairros.map(b=>b.saneamento))}%</div><div class="delta">${bairros.reduce((a,b)=>a.saneamento<b.saneamento?a:b).nome}</div>
+  </div>
+  <div class="kpi good"><div class="label">Maior cobertura</div><div class="value">${Math.max(...bairros.map(b=>b.saneamento))}%</div><div class="delta">${bairros.reduce((a,b)=>a.saneamento>b.saneamento?a:b).nome}</div></div>
+`;
+const rankSaneamentoEl = document.getElementById('rankSaneamento');
+[...bairros].sort((a,b)=>a.saneamento-b.saneamento).slice(0,10).forEach((b,i)=>{
+  const row = document.createElement('div');
+  row.className='rank-row';
+  row.innerHTML = `<div class="rank-num">${i+1}</div><div><div class="rank-name">${b.nome}</div><div class="rank-sub">${b.familias} famílias</div></div>
+  <div class="bar-track"><div class="bar-fill" style="width:${b.saneamento}%;background:${colorForInverse(b.saneamento)}"></div></div>
+  <div class="rank-val">${b.saneamento}%</div>`;
+  rankSaneamentoEl.appendChild(row);
+});
+
+const pavMedio = Math.round(bairros.reduce((s,b)=>s+b.pavimentacao,0)/bairros.length);
+const kmPendentes = bairros.reduce((s,b)=>s + Math.round((100-b.pavimentacao)*0.18),0);
+document.getElementById('kpiPavimentacao').innerHTML = `
+  <div class="kpi"><div class="label">Cobertura média</div><div class="value">${pavMedio}%</div><div class="delta">média entre os 18 bairros</div></div>
+  <div class="kpi alert"><div class="label">Km estimados sem pavimentação</div><div class="value">${kmPendentes}</div><div class="delta">estimativa a partir da cobertura declarada</div></div>
+  <div class="kpi"><div class="label">Bairros abaixo de 50%</div><div class="value">${bairros.filter(b=>b.pavimentacao<50).length}</div><div class="delta">candidatos a investimento prioritário</div></div>
+  <div class="kpi good"><div class="label">Bairros acima de 85%</div><div class="value">${bairros.filter(b=>b.pavimentacao>=85).length}</div><div class="delta">foco em manutenção</div></div>
+`;
+const rankPavEl = document.getElementById('rankPavimentacao');
+[...bairros].sort((a,b)=>a.pavimentacao-b.pavimentacao).slice(0,10).forEach((b,i)=>{
+  const kmFalta = Math.round((100-b.pavimentacao)*0.18);
+  const row = document.createElement('div');
+  row.className='rank-row';
+  row.innerHTML = `<div class="rank-num">${i+1}</div><div><div class="rank-name">${b.nome}</div><div class="rank-sub">~${kmFalta} km sem pavimentação</div></div>
+  <div class="bar-track"><div class="bar-fill" style="width:${b.pavimentacao}%;background:${colorForInverse(b.pavimentacao)}"></div></div>
+  <div class="rank-val">${b.pavimentacao}%</div>`;
+  rankPavEl.appendChild(row);
+});
+document.getElementById('pav-urgente-n').textContent = bairros.filter(b=>b.pavimentacao<40).length;
+document.getElementById('pav-atencao-n').textContent = bairros.filter(b=>b.pavimentacao>=40 && b.pavimentacao<70).length;
+document.getElementById('pav-estavel-n').textContent = bairros.filter(b=>b.pavimentacao>=70).length;
+
+const evasaoMedia = (bairros.reduce((s,b)=>s+b.evasao,0)/bairros.length).toFixed(1);
+const distMedia = (bairros.reduce((s,b)=>s+b.distEscola,0)/bairros.length).toFixed(1);
+const totalEscolas = bairros.reduce((s,b)=>s+b.escolas,0);
+const totalMatriculas = bairros.reduce((s,b)=>s+b.matriculas,0);
+document.getElementById('kpiEducacao').innerHTML = `
+  <div class="kpi alert"><div class="label">Taxa de evasão média</div><div class="value">${evasaoMedia}%</div><div class="delta">variação de ${Math.min(...bairros.map(b=>b.evasao))}% a ${Math.max(...bairros.map(b=>b.evasao))}%</div></div>
+  <div class="kpi"><div class="label">Distância média até a escola</div><div class="value">${distMedia} km</div><div class="delta">média entre os 18 bairros</div></div>
+  <div class="kpi"><div class="label">Escolas mapeadas</div><div class="value">${totalEscolas}</div><div class="delta">unidades na área monitorada</div></div>
+  <div class="kpi good"><div class="label">Matrículas ativas</div><div class="value">${totalMatriculas.toLocaleString('pt-BR')}</div><div class="delta">total na área monitorada</div></div>
+`;
+const rankEducEl = document.getElementById('rankEducacao');
+[...bairros].sort((a,b)=>b.evasao-a.evasao).slice(0,10).forEach((b,i)=>{
+  const row = document.createElement('div');
+  row.className='rank-row';
+  row.innerHTML = `<div class="rank-num">${i+1}</div><div><div class="rank-name">${b.nome}</div><div class="rank-sub">${b.distEscola} km até a escola mais próxima</div></div>
+  <div class="bar-track"><div class="bar-fill" style="width:${b.evasao*6}%;background:${colorFor(b.evasao*6)}"></div></div>
+  <div class="rank-val">${b.evasao}%</div>`;
+  rankEducEl.appendChild(row);
+});
+const tabelaEducEl = document.getElementById('tabelaEducacao');
+bairros.forEach(b=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${b.nome}</td><td>${b.escolas}</td><td>${b.distEscola} km</td><td>${b.matriculas}</td>`;
+  tabelaEducEl.appendChild(tr);
+});
+
+const tabelaPerfisEl = document.getElementById('tabelaPerfis');
+bairros.forEach(b=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${b.nome}</td><td>${b.renda}</td><td>${b.moradores}</td><td>${b.idosos?'Sim':'Não'}</td><td>${b.criancas?'Sim':'Não'}</td><td>${b.posse}</td>`;
+  tabelaPerfisEl.appendChild(tr);
+});
+
+const tabelaCerurbEl = document.getElementById('tabelaCerurb');
+bairros.forEach(b=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${b.nome}</td><td>${b.regularizados}</td><td>${b.analise}</td><td>${b.pendentes}</td>`;
+  tabelaCerurbEl.appendChild(tr);
+});
+
+const simRegionSelect = document.getElementById('simRegionSelect');
+bairros.forEach(b=>{
+  const opt = document.createElement('option');
+  opt.value = b.nome; opt.textContent = b.nome;
+  simRegionSelect.appendChild(opt);
+});
+simRegionSelect.value = 'Vila Irmã Dulce';
+
+const simFormulas = {
+  saneamento:{custoPorFamilia:2260, reducaoPorFamiliaAtendida:0.09, labelValor:'Investimento estimado em saneamento'},
+  pavimentacao:{custoPorFamilia:1450, reducaoPorFamiliaAtendida:0.05, labelValor:'Investimento estimado em pavimentação'},
+  iluminacao:{custoPorFamilia:480, reducaoPorFamiliaAtendida:0.03, labelValor:'Investimento estimado em iluminação'},
+  educacao:{custoPorFamilia:610, reducaoPorFamiliaAtendida:0.06, labelValor:'Investimento estimado em ações educacionais'},
+};
+let simType = 'saneamento';
+function runSimulation(){
+  const b = bairros.find(x=>x.nome === simRegionSelect.value);
+  const f = simFormulas[simType];
+  const valor = Math.round(b.familias * f.custoPorFamilia);
+  const pessoas = Math.round(b.familias * b.moradores);
+  const reducao = Math.min(30, Math.round(b.familias * f.reducaoPorFamiliaAtendida));
+  document.getElementById('simResult').innerHTML = `
+    <div class="box"><div class="n">R$ ${valor.toLocaleString('pt-BR')}</div><div class="l">${f.labelValor}</div></div>
+    <div class="box"><div class="n">${pessoas.toLocaleString('pt-BR')}</div><div class="l">Pessoas beneficiadas (estimativa)</div></div>
+    <div class="box"><div class="n">-${reducao} pts</div><div class="l">Redução estimada no índice de vulnerabilidade</div></div>
+  `;
+}
+document.querySelectorAll('#simTypeButtons .sim-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#simTypeButtons .sim-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    simType = btn.dataset.t;
+    runSimulation();
+  });
+});
+simRegionSelect.addEventListener('change', runSimulation);
+runSimulation();
+
+const trendData = [42,47,51,55,58,61];
+const trendLabels = ['2024.1','2024.2','2025.1','2025.2','2026.1','2026.2'];
+const svg = document.getElementById('trendChart');
+const w=640,h=220,pad=36;
+const maxV=100, minV=0;
+const stepX = (w-pad*2)/(trendData.length-1);
+function xFor(i){return pad+i*stepX;}
+function yFor(v){return h-pad-((v-minV)/(maxV-minV))*(h-pad*2);}
+let path = `M ${xFor(0)} ${yFor(trendData[0])}`;
+trendData.forEach((v,i)=>{ if(i>0) path += ` L ${xFor(i)} ${yFor(v)}`; });
+let svgHtml = `<line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="${cv.getPropertyValue('--line')}" stroke-width="1"/>`;
+svgHtml += `<path d="${path}" fill="none" stroke="${cv.getPropertyValue('--teal')}" stroke-width="2.5"/>`;
+trendData.forEach((v,i)=>{
+  svgHtml += `<circle cx="${xFor(i)}" cy="${yFor(v)}" r="4" fill="${cv.getPropertyValue('--teal')}"/>`;
+  svgHtml += `<text x="${xFor(i)}" y="${h-pad+18}" font-size="10.5" fill="${cv.getPropertyValue('--slate')}" text-anchor="middle" font-family="IBM Plex Sans">${trendLabels[i]}</text>`;
+  svgHtml += `<text x="${xFor(i)}" y="${yFor(v)-10}" font-size="11" fill="${cv.getPropertyValue('--ink')}" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600">${v}%</text>`;
+});
+svg.innerHTML = svgHtml;
+</script>
+</body>
+</html>
