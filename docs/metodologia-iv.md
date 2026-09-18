@@ -217,9 +217,17 @@ coincide com `DthAtualizaCadastralEmpreend` em todos os registros.
 
 **Três ressalvas que a tela precisa carregar, e carrega:**
 
-1. **Município é o menor recorte.** O `CodCEP` existe, mas vem mascarado nos três
-   últimos dígitos (`64066***`): sobra o prefixo de cinco, o mesmo recorte que já se
-   usa para validar CEP. Qualquer número por bairro aqui seria modelagem, não medição.
+1. **Município é o menor recorte _desta_ base.** O `CodCEP` existe, mas vem mascarado
+   nos três últimos dígitos (`64066***`): sobra o prefixo de cinco, o mesmo recorte que já
+   se usa para validar CEP.
+
+   **Corrigido em 18/09/2026:** a afirmação valia para a base tabular e foi generalizada
+   demais. O **SIGEL** publica camada de **pontos** de GD com `MdaLatitude`/`MdaLongitude`
+   (`.../Geracao_distribuida/GD_Sigel/FeatureServer/0`). Medido: 71.558 pontos no PI,
+   31.457 em Teresina, mediana de 6,6 km do centro. Mas as coordenadas vêm arredondadas em
+   **duas casas (~1,1 km)**, ~0,9% estão grosseiramente fora do município declarado, e a
+   cobertura é de **79%** contra a base tabular. Serve para **superfície de densidade**;
+   atribuir ponto a bairro seria inventar precisão. Ver `analise/29-analise-fontes-propostas.md`.
 2. **Atualização diária não é dado do dia.** A carga é de 18/09/2026 e a conexão mais
    recente é de **30/06/2026** — quase três meses de defasagem. Por isso o último ano
    da série aparece **tracejado e com marcador vazado**: lido como ano inteiro,

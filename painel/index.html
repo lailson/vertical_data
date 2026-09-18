@@ -1377,8 +1377,10 @@ function paginaEnergia(){
 
  $('#pg-energia').innerHTML=`
  <div class="topbar"><div><h2>Energia distribuída · Piauí</h2>
-  <div class="meta">Micro e minigeração conectada à rede, por município. <b>Município é o menor recorte desta base</b> —
-   o CEP da ANEEL vem mascarado nos três últimos dígitos, então nada aqui desce a bairro.</div></div>
+  <div class="meta">Micro e minigeração conectada à rede, por município. <b>Município é o menor recorte
+   <i>desta</i> base</b> — o CEP vem mascarado nos três últimos dígitos. Existe coordenada na camada de
+   pontos do SIGEL, com precisão de ~1,1 km e 79% de cobertura: dá superfície de densidade, não contagem
+   por bairro.</div></div>
   <span class="chip real"><span class="d"></span>dado real · ANEEL ${GD.vintage}</span></div>
 
  <div class="grid g4" style="margin-bottom:14px">
