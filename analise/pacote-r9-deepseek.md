@@ -1,3 +1,46 @@
+# Rodada 9 — REVISÃO DE PLANO. Eixo técnico/método.
+
+Contexto mínimo para julgar (o resto está no plano, Anexo 1):
+
+O produto é conformidade com o art. 266 da LC 214/2025 — todo imóvel urbano inscrito no CIB
+até 31/12/2026. O painel existente cobre 224 municípios do Piauí com dado público real
+(Censo 2022 por bairro, CNEFE, RREO/SICONFI, RFB/Sinter). Um protótipo anterior usava dado
+fictício e dizia que o bairro **Mocambinho** tinha 36% de pavimentação; o real é 99,6% — erro
+de 63,6 pontos na direção errada. Desde então vale a regra: **nenhuma tela com dado fictício
+em bairro nomeado**.
+
+Um parceiro comercial pediu: *"tem como colocar as possibilidades com dados imaginários?"*.
+O plano do Anexo 1 responde a isso.
+
+**Responda no máximo 7 achados, só o que muda o plano. Seja específico: aponte seção.**
+
+1. **Vazamento de alvo (§11.2).** Medi que `iptu/itbi/rcl` saem do próprio RREO 2025 e estão
+   preenchidos exatamente nos 152 municípios que entregaram — mesmo conjunto. Excluí-os.
+   Sobrou: Censo 2022 (pop, área, bairros, renda_med, esgoto, pav, mor_por_dom), entregas de
+   2023/24, e `cib_ativo` da RFB. **Alguma dessas ainda vaza?** Pense em `cib_ativo` e em
+   `bairros` (contagem de bairros no Censo) — eles são anteriores ao desfecho de fato?
+2. **O alvo é um proxy e eu não disse isso com todas as letras.** "Entregou RREO 2025" mede
+   envio de demonstrativo fiscal ao SICONFI. A pergunta de negócio é "vai falhar na remessa
+   ao CADURB até 31/12/2026". São correlacionados por capacidade administrativa, não iguais.
+   Isso invalida o uso, ou basta declarar o proxy? Se basta, como medir a distância entre os
+   dois sem ter o desfecho real ainda?
+3. **N=224, 9 variáveis, 72 positivos.** Regressão logística com coeficientes publicados e AUC
+   por deixa-um-fora. Isso é honesto nesse N, ou já é sobreajuste com cara de rigor? Qual o
+   número mínimo de variáveis que você manteria?
+4. **Critério de aceite 2 é inexequível como escrito** — "varredura que cruza todo número
+   renderizado em tela de bairro real contra o JSON de origem". Os números são formatados,
+   agregados e computados. Proponha um critério **verificável** que cubra o mesmo risco.
+5. **Chat (§11.5): "o modelo escolhe a consulta, o número vem do arquivo".** Onde esse desenho
+   quebra? Pergunta ambígua, agregação que o modelo especifica errado, comparação que exige
+   junção que o schema não tem. O que falta no desenho?
+6. **Geometria do município inventado.** Serra do Meio (IBGE 2299999) precisa aparecer no mapa.
+   Se eu colocar o polígono dentro dos limites do Piauí, o mapa estadual passa a mostrar 225
+   polígonos e implica um município que não existe. Se colocar fora, parece defeito. Qual a
+   saída?
+7. Qualquer defeito de método que eu não listei.
+
+## Anexo 1 — o plano completo
+
 # Plano — modo demonstração ("as possibilidades", com dado fictício)
 
 **Data:** 2026-09-18 · **Status:** plano, aguardando execução
@@ -72,17 +115,6 @@ mundo que não foi medido. Vão para o município inventado.
 - O nome não colide com nenhum dos 224 (verificado).
 - Nos bairros, nomes inventados sem paralelo em Teresina ou Parnaíba.
 
-**Onde ele não aparece — e isto é o ponto mais importante desta seção.**
-Serra do Meio **não entra no mapa estadual e não entra no seletor de municípios reais**.
-Se o polígono fosse desenhado dentro dos limites do Piauí, o mapa passaria a mostrar
-**225** municípios sobre a malha oficial do IBGE — uma afirmação falsa sobre o estado,
-renderizada com a autoridade de geometria oficial. É o erro do Mocambinho outra vez, com
-outra roupa: ficção vestida de mapa oficial.
-
-Ele tem **entrada própria**, seletor próprio e malha própria, visível apenas nas telas de
-nível municipal do modo demonstração. O contador do painel real continua dizendo
-**224 municípios · 479 bairros** em qualquer circunstância.
-
 ### Como o dado é gerado
 
 Fictício **não quer dizer arbitrário**. O gerador é calibrado nas distribuições reais
@@ -118,20 +150,6 @@ já sabem ler. O trabalho novo é só o das telas que não existem.
 
 ---
 
-## 5-bis. A frase que a demonstração precisa ganhar
-
-Um plano que lista telas é lista de funcionalidades. O critério que decide se isto valeu:
-
-> Depois de navegar por 10 minutos, o parceiro consegue dizer **"entendi o produto inteiro
-> e a ordem em que ele é construído"** — e apontar onde o coletor que ele quer fazer entra
-> nessa ordem.
-
-Isso define o que a demonstração é: **artefato de alinhamento de escopo e sequência**, não
-peça de venda. Se ao fim ele disser "que bonito" e não souber dizer a ordem, a
-demonstração falhou mesmo com todas as telas prontas.
-
----
-
 ## 6. Telas, em duas etapas
 
 ### Etapa 1 — as duas que carregam a conversa
@@ -142,13 +160,6 @@ Move o investimento e vê a cobertura mudar no mapa e no ranking. As premissas f
 é etiqueta no próprio número: *custo unitário é parâmetro, não medição*.
 Sem isso, é um multiplicador de chute com cara de engenharia — que foi exatamente o
 motivo do congelamento.
-
-**O campo de custo nasce vazio.** Embarcar um padrão — "R$ 3.800 por ligação" — seria
-ancorar a conta inteira num número inventado, que é precisamente o defeito que congelou
-esta tela; um padrão plausível é mais perigoso que um implausível, porque ninguém o
-questiona. Ao lado do campo fica a **referência publicada** (SNIS, contratos do PAC
-saneamento) para quem quiser um ponto de partida citável. O primeiro número que o leitor
-vê é o dele.
 
 **`#remessa` · Status da coleta e da remessa** (maquete, Serra do Meio)
 O painel depois do contrato: coletados / validados / aceitos no CADURB / recusados —
@@ -178,13 +189,7 @@ foi assim que Mocambinho circulou. Então, mesmo no regime mais leve:
 2. o município inventado carrega o rótulo *município-modelo* no seletor, no título e
    no rodapé de fontes;
 3. cada número de maquete nasce com marcação própria, não só aviso de rodapé;
-4. a rota é `?demo` — o painel real nunca chega nela sozinho. **Mas `?demo` é
-   adivinhável** por quem já tem a senha do painel, então a entrada é um link próprio e a
-   faixa de fronteira aparece já no primeiro quadro, antes de qualquer dado pintar;
-5. **validade declarada.** Artefato de demonstração vaza e apodrece: a faixa carrega a data
-   de geração e o modo expira — passada a data, a tela abre dizendo que está vencida em vez
-   de mostrar números velhos. Quando a conversa com o parceiro fechar, `demo/` sai do
-   `montar.sh` por padrão e só volta sob flag explícita.
+4. a rota é `?demo` — o painel real nunca chega nela sozinho.
 
 ---
 
@@ -193,15 +198,8 @@ foi assim que Mocambinho circulou. Então, mesmo no regime mais leve:
 1. **Sem `?demo`, nada muda**: o painel busca exatamente os mesmos arquivos de hoje
    (verificável na aba de rede) e o contador segue **224 municípios · 479 bairros**.
 2. **Nenhum bairro real nomeado exibe número que não venha de `build_dados.py`.**
-   A verificação do plano anterior — "cruzar todo número renderizado contra o JSON" — era
-   inexequível: os números são formatados, agregados e computados, e `R$ 194 mi` não casa
-   com `194312887.0`. No lugar dela, três conferências que **dão** para automatizar:
-   a) em modo demo, nenhum objeto de município real é mutado (congelado com
-      `Object.freeze`, e a tentativa de escrita falha ruidosamente em vez de passar);
-   b) todo valor **projetado** nasce com marcação estrutural própria — uma classe CSS que
-      a varredura encontra —, nunca com a mesma marcação de valor medido;
-   c) o mapa estadual e o contador conferem **224 municípios · 479 bairros** com e sem a
-      flag.
+   Verificação: varredura que cruza todo número renderizado em tela de bairro real
+   contra o JSON de origem.
 3. Toda tela de demonstração mostra a faixa de fronteira num recorte de 360×640.
 4. `gerar_demo.py` é **determinístico**: duas execuções produzem arquivos idênticos
    (`sha256` igual).
@@ -247,18 +245,10 @@ foi assim que Mocambinho circulou. Então, mesmo no regime mais leve:
 | 4 | chat sobre os dados (§11.5) | um dia |
 | — | sonda de layout, fronteira, documentação, deploy | meio dia |
 
-**Ordem revista, depois da revisão (§12).** A janela prática de assinatura é nov–dez/2026
-— cerca de 60 dias. Quatro dias em demonstração é caro nesse contexto, e a ordem original
-enterrava a única etapa que não é demonstração.
-
-| ordem | o quê | por quê agora |
-|---|---|---|
-| 1º | **etapa 3** — modelo de risco | Não é demonstração: é o instrumento de qualificação que decide para quem ligar primeiro, e vale mais na janela curta do que qualquer tela. |
-| 2º | **etapas 0 + 1** — gerador + simulador + status da remessa | Responde à pergunta do parceiro e custa 1,5 dia. **Para aqui e mostra.** |
-| 3º | etapa 2 e etapa 4 | Só se ele pedir. Série, educação e PGV são maquete de forma; o chat é a peça mais cara e a menos urgente. |
-
-O corte: **não construir as seis telas de uma vez**. A etapa 1 responde à pergunta feita;
-o resto responde a perguntas que ninguém fez ainda.
+Ordem sugerida: **0 → 1 → mostrar ao parceiro → 2, 3, 4**. A etapa 1 já responde à
+pergunta dele. A **3 é a que menos parece demonstração e mais parece produto**, porque
+roda em dado real e devolve uma lista de quem ligar primeiro — pode ser antecipada se a
+conversa for comercial e não conceitual.
 
 ---
 
@@ -309,37 +299,12 @@ RREO 2025 é vazamento de alvo: o modelo aprenderia que "quem tem IPTU preenchid
 entregou", acertaria perto de 100% e não teria utilidade nenhuma — com a agravante de
 parecer excelente. É o tipo de erro que só aparece depois, no cliente.
 
-**Regra que fica:** feature só entra se existir **antes** do desfecho.
-
-Aplicando a regra com rigor, mais duas caem — e uma terceira restrição aparece:
-
-| variável | medido | veredito |
-|---|---|---|
-| `cib_ativo` | **1 de 224** é diferente de zero | Fora. Não é variável, é identificador: separa Teresina de todo o resto. E é medida de **set/2026**, posterior ao desfecho de 2025 — vazamento temporal ao contrário. |
-| `bairros` | pop mediana **28.212** com malha × **5.496** sem | Fora, ou `pop` fora. "Ter bairro no Censo" é quase um recorte de porte: as duas dizem a mesma coisa e juntas inflam a confiança. |
-
-**Orçamento de variáveis.** O desfecho minoritário tem **72 casos**. Pela regra de dez
-eventos por variável, o N sustenta **7** — e o plano previa 9. Acima disso não é modelo,
-é sobreajuste com aparência de rigor, que é exatamente o defeito que se quer evitar.
-
-**Conjunto final: no máximo 6.** As entregas de 2023 e 2024 (que carregam o sinal mais
-forte), porte, renda mediana, e duas do Censo. Qualquer variável adicional precisa
-**substituir** uma, não somar.
+**Regra que fica:** feature só entra se existir **antes** do desfecho. Sobram as do Censo
+2022, as entregas de 2023 e 2024, e o CIB da RFB — e essas estão completas nos **224**.
 
 ### 11.3 Uso 1 — risco de não entregar (tem base, roda em dado real)
 
-**Antes do número, a ressalva que governa o uso.** "Entregou o RREO 2025" mede o envio de
-um demonstrativo fiscal ao SICONFI. A pergunta de negócio é outra: *"vai falhar na remessa
-ao CADURB até 31/12/2026?"*. As duas se ligam por **capacidade administrativa** — a mesma
-secretaria com a mesma equipe —, mas não são a mesma coisa, e o desfecho real ainda não
-existe porque o prazo não venceu.
-
-Então o que o modelo estima é **risco de capacidade administrativa**, e é assim que a tela
-tem de chamá-lo. Chamá-lo de "risco de não entregar o CIB" seria vender a correlação como
-identidade. Quando as primeiras remessas acontecerem, o desfecho verdadeiro passa a existir
-e o modelo deve ser **reajustado contra ele**, não contra o proxy.
-
-Desfecho observado, rotulado: **152 entregaram, 72 não**. E o histórico sozinho já
+Desfecho real, observado, rotulado: **152 entregaram, 72 não**. E o histórico sozinho já
 carrega sinal legítimo:
 
 | entregou em 2023, 2024 | entregou em 2025 |
@@ -400,27 +365,6 @@ aproximação simpática.
 
 Isso elimina a alucinação numérica por construção, e não por instrução ao modelo.
 
-**Mas move o problema, não o resolve — e o lugar para onde ele vai é pior.** Se o modelo
-especifica a consulta, ele pode especificar a consulta **errada**, e aí o número está
-certo e a resposta está errada, que é mais difícil de pegar. Três modos de falha
-concretos, todos já presentes neste conjunto de dados:
-
-1. **Média não ponderada.** Perguntar "qual a cobertura média de esgoto no Piauí?" e somar
-   percentuais dividido por 224 dá um número, e é o número errado: o painel pondera por
-   domicílios, e é por isso que existe `wavg`. Um agregador ingênuo trata Teresina e um
-   município de 2 mil habitantes como iguais.
-2. **Ausência virando zero.** É a regra central do projeto, e a que um `SUM` viola por
-   padrão: 72 municípios sem RREO 2025 somariam como R$ 0 de IPTU, e o total do estado
-   sairia menor do que é, com cara de fato.
-3. **Corte de amostra ignorado.** Ranking de bairro sem aplicar `n_ok` devolve um bairro
-   com 3 domicílios em primeiro lugar — o erro que criou o corte.
-
-**Consequência de desenho:** a camada de consulta **não pode ser genérica**. Ela expõe um
-conjunto fechado de operações que já carregam as regras do painel — média ponderada,
-nulo propagado como nulo, corte de amostra aplicado — e o modelo escolhe entre elas. Não
-é SQL livre sobre os JSON; é um cardápio de perguntas que o painel sabe responder
-corretamente. O que o modelo faz é achar a entrada do cardápio e preencher os parâmetros.
-
 **Onde roda:** o painel hoje é estático e abre sem internet — e isso é uma propriedade,
 não um acaso: a demonstração numa prefeitura não pode depender do wifi. O chat quebra
 essa propriedade, então entra como **camada opcional**, numa Pages Function ao lado do
@@ -455,53 +399,3 @@ projeto — **nunca crédito de provedor que serve cliente**.
 congelado *por falta de base de dados* — passa a estar **delimitado por método**. O
 motivo declarado na tela *Fora da v1* precisa ser reescrito para dizer isso, senão o
 painel contradiz o próprio produto.
-
----
-
-## 12. Rodada 9 — registro da revisão
-
-**Data:** 2026-09-18 · **Revisores externos: nenhum disponível.**
-
-| eixo | ferramenta | resultado |
-|---|---|---|
-| técnico | DeepSeek `deepseek-v4-pro` | **HTTP 402 — Insufficient Balance.** Chave sem saldo. |
-| técnico (alternativa) | Kimi | **403 — cota mensal esgotada**, renova no próximo ciclo. |
-| negócio | GLM 5.3 via Z.ai Coding Plan | **Weekly/Monthly Limit Exhausted**, reinicia em **22/09/2026 00:08**. |
-
-Os pacotes ficaram prontos e versionados (`pacote-r9-deepseek.md`, `pacote-r9-glm.md`):
-quando qualquer um dos três voltar, a rodada roda sem remontagem. **Nada foi cobrado de
-crédito de provedor que serve cliente** — é a regra que foi violada em 08/09 e não se
-repete por conveniência.
-
-Esta revisão é, portanto, **de um eixo só**. Vale menos que as oito anteriores, e o plano
-deve passar pelo crivo externo antes de virar código — sobretudo o eixo comercial, que é
-onde eu tenho menos distância crítica.
-
-### O que a revisão mudou
-
-| # | achado | onde |
-|---|---|---|
-| 1 | O município inventado, desenhado dentro do Piauí, faria o mapa estadual afirmar **225** municípios sobre malha oficial do IBGE. É o erro do Mocambinho com outra roupa. | §4 |
-| 2 | O critério de aceite 2 era **inexequível**: cruzar número formatado (`R$ 194 mi`) com JSON (`194312887.0`). Trocado por três conferências automatizáveis. | §8 |
-| 3 | O alvo do modelo é **proxy** (entrega de demonstrativo fiscal ≠ remessa ao CADURB) e o texto escorregava entre as duas coisas. | §11.3 |
-| 4 | Custo unitário padrão no simulador seria **ficção virando âncora** — e um padrão plausível é mais perigoso que um implausível, porque ninguém o questiona. Campo nasce vazio. | §6 |
-| 5 | Faltava a **frase que a demonstração precisa ganhar**. Sem ela, é lista de funcionalidades. | §5-bis |
-| 6 | Sem regra de **validade e remoção**; `?demo` adivinhável por quem tem a senha. | §7 |
-| 7 | **`cib_ativo` não é variável, é identificador** — 1 de 224 diferente de zero — e é medida posterior ao desfecho. | §11.2 |
-| 8 | **`bairros` é colinear com `pop`** (mediana 28.212 × 5.496). Juntas inflam a confiança. | §11.2 |
-| 9 | **9 variáveis excedem o N.** 72 eventos sustentam 7; o conjunto final é 6. | §11.2 |
-| 10 | O chat move a alucinação de lugar em vez de eliminá-la: consulta errada devolve **número certo e resposta errada**. Média não ponderada, ausência virando zero, corte de amostra ignorado. | §11.5 |
-| 11 | A ordem enterrava a única etapa que **não é demonstração**. O modelo de risco passa a ser o primeiro. | §10 |
-
-### O que fica em aberto para o crivo externo
-
-Três perguntas que eu não tenho como responder sozinho, porque sou parte interessada:
-
-1. **"Só o parceiro" é premissa estável?** Há evidência contra, nas mãos: ele já
-   encaminhou um link do painel com âncora de tela (`#congelado`) numa mensagem. Quem
-   navega e compartilha link compartilha de novo.
-2. **Demonstrar capacidade congelada cria promessa comercial?** O painel afirma por
-   escrito que essas seis coisas estão fora da v1. Mostrar a forma delas pode virar
-   obrigação implícita — e isso é questão jurídica, não de produto.
-3. **Quatro dias de demonstração numa janela de 60?** A ordem revista reduz para 1,5 dia
-   antes de parar e mostrar, mas a pergunta de alocação continua aberta.
