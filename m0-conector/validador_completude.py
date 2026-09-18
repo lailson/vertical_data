@@ -228,7 +228,7 @@ def main():
 .head{{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--teal);padding-bottom:14px;margin-bottom:22px}}
 h1{{font:700 24px Inter,sans-serif;letter-spacing:-.02em;margin:0}} .sub{{color:var(--slate);font-size:13px;margin-top:4px}}
 .chip{{background:var(--teal);color:#fff;font-size:11px;font-weight:600;padding:6px 12px;border-radius:99px;letter-spacing:.04em}}
-.kpis{{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}}
+.kpis{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}}
 .k{{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}}
 .k .l{{font-size:11.5px;color:var(--slate)}} .k .v{{font:600 30px 'IBM Plex Mono',monospace;margin-top:4px;font-variant-numeric:tabular-nums}}
 h2{{font:700 16px Inter,sans-serif;margin:22px 0 8px}} p.ok{{color:var(--teal);font-weight:600}}
@@ -238,6 +238,7 @@ h2{{font:700 16px Inter,sans-serif;margin:22px 0 8px}} p.ok{{color:var(--teal);f
 .marca{{display:flex;align-items:center;gap:7px;margin-bottom:9px;font-size:14px;font-weight:700;letter-spacing:-.02em}}
 .marca b{{color:var(--marca);font-weight:700}}
 .foot{{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--slate);line-height:1.6}}
+@media(max-width:560px){{body{{padding:22px 14px}}.head{{flex-direction:column;gap:12px;align-items:flex-start}}.hrow{{grid-template-columns:1fr 56px;gap:8px}}.hrow .hbar{{grid-column:1/3;order:3}}/* linhas de Consistência passam um <div> vazio no lugar da barra; sem isto ele ocupa a coluna do valor e joga o número para a linha de baixo */.hrow>div:empty{{display:none}}.hl{{white-space:normal}}h1{{font-size:21px}} .k .v{{font-size:25px}}}}
 </style></head><body>
 <div class="head"><div><div class="marca"><svg viewBox="0 0 32 32" width="21" height="21" aria-hidden="true"><defs><linearGradient id="vdl" x1="3" y1="0" x2="29" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#12B0A0"/><stop offset="1" stop-color="#0B2545"/></linearGradient></defs><g fill="url(#vdl)"><rect x="3" y="19" width="5" height="11" rx="1.4"/><rect x="10" y="14" width="5" height="16" rx="1.4"/><rect x="17" y="9" width="5" height="21" rx="1.4"/><rect x="24" y="6" width="5" height="24" rx="1.4"/></g><circle cx="26.5" cy="2.7" r="2.7" fill="#12B0A0"/></svg><span>Vertical<b>Data</b></span></div><h1>Laudo de Completude Cadastral</h1>
 <div class="sub">Município IBGE {ibge} · base: {os.path.basename(path)} · {len(rows)} imóveis · gerado em {__import__('datetime').date.today().isoformat()}</div></div>

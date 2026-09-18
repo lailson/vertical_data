@@ -167,11 +167,11 @@ header{grid-column:1/3;display:flex;align-items:center;gap:18px;padding:0 20px;b
 .logo h1 span{color:var(--vd-acento-forma)}
 .logo h1{font-family:var(--f-disp);font-size:18px;font-weight:800}
 .logo .sub{font-size:10px;color:var(--mut);font-family:var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
-.munpick{display:flex;align-items:center;gap:8px;margin-left:12px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
-.munpick label{font-size:9.5px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
-.munpick select{background:transparent;border:none;color:var(--ink);font-family:var(--f-body);font-size:13px;outline:none;max-width:230px}
-.munpick select option{background:#0F1D18}
-.hk{display:flex;gap:22px;margin-left:auto}
+.munpick{display:flex;align-items:center;gap:8px;margin-left:12px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;min-width:0}
+.munpick label{font-size:9.5px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.1em;text-transform:uppercase;flex:none}
+.munpick select{background:transparent;border:none;color:var(--ink);font-family:var(--f-body);font-size:13px;outline:none;max-width:230px;min-width:0;flex:1 1 0}
+.munpick select option{background:var(--vd-painel);color:var(--vd-tinta)}
+.hk{display:flex;gap:22px;margin-left:auto;min-width:0}
 .hk .i{text-align:right}
 .hk .l{font-size:9px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
 .hk .v{font-family:var(--f-mono);font-size:16px;font-weight:600;margin-top:2px}
@@ -179,7 +179,10 @@ header{grid-column:1/3;display:flex;align-items:center;gap:18px;padding:0 20px;b
 nav{border-right:1px solid var(--line);padding:14px 12px;overflow-y:auto;background:var(--panel)}
 .nav-l{font-size:9px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.16em;text-transform:uppercase;margin:16px 6px 7px}
 .nav-l:first-child{margin-top:2px}
-nav button{all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--mut);border:1px solid transparent;transition:.14s;margin-bottom:3px}
+/* box-sizing depois de `all:unset`: o reset devolve a propriedade a content-box
+   e o `*{box-sizing:border-box}` do topo não vale mais aqui. Sem isto, width:100%
+   soma os 22px de padding e o botão vaza da coluna. */
+nav button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--mut);border:1px solid transparent;transition:.14s;margin-bottom:3px}
 nav button:hover{color:var(--ink);background:color-mix(in srgb,var(--teal) 10%,transparent)}
 nav button.on{color:var(--ink);background:color-mix(in srgb,var(--teal) 16%,transparent);border-color:color-mix(in srgb,var(--teal) 45%,transparent)}
 nav button .c{font-family:var(--f-mono);font-size:10.5px;color:var(--dim)}
@@ -222,14 +225,14 @@ th.num,td.num{text-align:right;font-family:var(--f-mono);white-space:nowrap}
 td{padding:7px 8px;border-bottom:1px solid var(--line)}
 tbody tr{cursor:pointer}
 tbody tr:hover{background:color-mix(in srgb,var(--teal) 8%,transparent)}
-tbody tr.sel{background:rgba(47,230,176,.11)}
+tbody tr.sel{background:color-mix(in srgb,var(--teal) 14%,transparent)}
 .tw{max-height:calc(100vh - 330px);overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 /* controles */
 .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .ctl select,.ctl input{background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:var(--f-body);font-size:12.5px;padding:7px 10px;outline:none}
 .ctl select:focus,.ctl input:focus{border-color:color-mix(in srgb,var(--teal) 55%,transparent)}
-.btn{all:unset;cursor:pointer;background:color-mix(in srgb,var(--teal) 16%,transparent);border:1px solid color-mix(in srgb,var(--teal) 45%,transparent);color:var(--teal);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:500}
-.btn:hover{background:rgba(47,230,176,.18)}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;background:color-mix(in srgb,var(--teal) 16%,transparent);border:1px solid color-mix(in srgb,var(--teal) 45%,transparent);color:var(--teal);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:500}
+.btn:hover{background:color-mix(in srgb,var(--teal) 26%,transparent)}
 .btn.ghost{background:transparent;border-color:var(--line2);color:var(--mut)}
 .btn.ghost.on{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 50%,transparent);background:color-mix(in srgb,var(--teal) 12%,transparent)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
@@ -257,7 +260,7 @@ tbody tr.sel{background:rgba(47,230,176,.11)}
 .maprail{border-right:1px solid var(--line);padding:14px 12px;overflow-y:auto;background:var(--panel)}
 .maprail .rl{font-size:9px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.15em;text-transform:uppercase;margin:14px 4px 7px}
 .maprail .rl:first-child{margin-top:0}
-.ind button{all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--mut);border:1px solid transparent;margin-bottom:3px}
+.ind button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--mut);border:1px solid transparent;margin-bottom:3px}
 .ind button:hover{color:var(--ink);background:color-mix(in srgb,var(--teal) 10%,transparent)}
 .ind button.on{color:var(--ink);background:color-mix(in srgb,var(--teal) 16%,transparent);border-color:color-mix(in srgb,var(--teal) 45%,transparent)}
 .ind button>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -327,13 +330,16 @@ footer .led{width:6px;height:6px;border-radius:50%;background:var(--teal);box-sh
 /* responsivo: o painel precisa caber em notebook de 1280 e em tela cheia de 1920 */
 @media (max-width:1560px){
  .app{grid-template-columns:214px 1fr}
- .maplay{grid-template-columns:206px 1fr 296px}
+ .maplay{grid-template-columns:218px 1fr 296px}
+ .ind button{padding:8px 9px}
  .hk{gap:16px}.hk .v{font-size:15px}
  .g4{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:1280px){
  .app{grid-template-columns:186px 1fr}
- .maplay{grid-template-columns:180px 1fr 262px}
+ .maplay{grid-template-columns:202px 1fr 262px}
+ .ind button{padding:8px 7px}
+ .ind button .v{margin-left:6px}
  .munpick select{max-width:168px}
  .hk .i:nth-child(n+4){display:none}
  .g3{grid-template-columns:repeat(2,1fr)}
@@ -351,6 +357,9 @@ footer .led{width:6px;height:6px;border-radius:50%;background:var(--teal);box-sh
  html,body{height:auto}
  body{overflow:auto}
  .app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr auto;min-height:100%}
+ /* trilha de grid tem mínimo automático igual ao min-content dos filhos: sem
+    isto, um cabeçalho que não encolhe estica a página e ela rola de lado */
+ .app>*{min-width:0}
  header{grid-column:1;flex-wrap:wrap;height:auto;padding:12px 16px;gap:10px}
  .munpick{margin-left:0;flex:1 1 100%}
  .munpick select{max-width:none;width:100%}
@@ -793,6 +802,8 @@ function paginaEstado(){
  Object.keys(IE).forEach(k=>{
   const d=IE[k], b=document.createElement('button');
   b.className=k===KE?'on':''; b.dataset.k=k;
+  // o rótulo leva reticências em coluna estreita; o title devolve o nome inteiro
+  b.title=d.l;
   b.innerHTML=`<span>${d.l}</span><span class="v">${resumoE(k)}</span>`;
   b.onclick=()=>{KE=k;$$('#indCom button,#indCen button').forEach(x=>x.classList.toggle('on',x.dataset.k===k));renderE()};
   (d.censo?grpCen:grpCom).appendChild(b);
@@ -1037,6 +1048,7 @@ function renderT(){
  if(!FEATS.length) return;
  const d=IT[KT], q=qT(KT);
  $$('#indT button').forEach(b=>{const k=b.dataset.k;
+  b.title=IT[k].l;
   b.innerHTML=`<span>${IT[k].l}</span><span class="v">${IT[k].fmt(wavg(validos(k),k))}</span>`});
  $('#hudTT').textContent=d.l;
  $('#hudTS').textContent=d.full+(ENT.has(KT)?' · universo do entorno (V05000)':'')+' · vermelho = 20% mais carentes';
