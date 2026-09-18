@@ -264,7 +264,8 @@ tbody tr.sel{background:color-mix(in srgb,var(--teal) 14%,transparent)}
 .rrow .i{font-family:var(--f-mono);font-size:11px;color:var(--dim)}
 .rrow .n{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rrow .val{font-family:var(--f-mono);font-size:12px;text-align:right}
-.hrow{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center;padding:5px 0;font-size:12px;color:var(--mut)}
+.hrow{display:grid;grid-template-columns:minmax(0,150px) 1fr minmax(64px,auto);gap:10px;align-items:center;padding:5px 0;font-size:12px;color:var(--mut)}
+.hrow>b{white-space:nowrap;text-align:right}
 .hrow b{font-family:var(--f-mono);font-size:12px;color:var(--ink);text-align:right;font-weight:500}
 /* badges */
 .tag{display:inline-block;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;padding:2px 7px;border-radius:5px;border:1px solid var(--line2);color:var(--mut);white-space:nowrap}
@@ -827,6 +828,10 @@ function corE(p){
 function paginaEstado(){
  /* indicador que depende de base ausente não vira uma tela inteira de "sem dado" */
  if(!CNEFE) delete IE.end;
+ /* mesma invariante para as bases de energia: sem o arquivo, o trilho oferecia
+    quatro botões que pintavam os 224 municípios de cinza */
+ if(!GD){delete IE.gd_pen; delete IE.gd_n; delete IE.gd_mw}
+ if(!BDGD) delete IE.uc_sem_gd;
  Object.keys(IE).forEach(k=>{const d=IE[k]; if(!d.cat) d._q=quintis(MUNF.map(f=>d.val(f.p)))});
  mapE=L.map('mapEstado',{zoomControl:false,attributionControl:false,zoomSnap:.1,zoomDelta:.5,wheelPxPerZoomLevel:120,minZoom:3,maxZoom:18}).setView(PI_VIEW[0],PI_VIEW[1]);
  L.control.zoom({position:'bottomright'}).addTo(mapE);
@@ -1392,8 +1397,15 @@ function paginaEnergia(){
  if(anosIdx.length>=3){
   const ult=anosIdx[anosIdx.length-2], pen=anosIdx[anosIdx.length-3];
   const sh=a=>100*acc[a][0]/brA[a], d=sh(ult)-sh(pen);
-  DIAG=`Participação do Piauí: <b>${PC2(sh(pen))}</b> em ${pen} → <b>${PC2(sh(ult))}</b> em ${ult}. `+
-   (d<-0.05?'O país ficou estável e o estado caiu — é <b>perda de participação</b>, não retração do mercado nacional.'
+  /* a frase anterior afirmava que "o país ficou estável" sem nunca olhar o nível
+     nacional. Se o Brasil encolhe e o Piauí encolhe mais, a participação cai do
+     mesmo jeito — e a afirmação seria falsa. Agora o país é medido. */
+  const varBR=100*(brA[ult]-brA[pen])/brA[pen];
+  const paraBR=Math.abs(varBR)<5?'ficou estável':varBR>0?`cresceu ${Math.round(varBR)}%`:`caiu ${Math.round(-varBR)}%`;
+  DIAG=`Participação do Piauí: <b>${PC2(sh(pen))}</b> em ${pen} → <b>${PC2(sh(ult))}</b> em ${ult}, `+
+   `enquanto o Brasil <b>${paraBR}</b>. `+
+   (d<-0.05?(varBR>-5?'É <b>perda de participação</b>, não retração do mercado nacional.'
+                     :'Os dois caíram — parte da queda é do mercado, não só do estado.')
     :d>0.05?'O estado <b>ganhou</b> participação.':'Participação estável.');
  }
 
@@ -1417,7 +1429,8 @@ function paginaEnergia(){
   <span class="chip real"><span class="d"></span>dado real · ANEEL ${GD.vintage}</span></div>
 
  <div class="grid g4" style="margin-bottom:14px">
-  ${kpi('Conexões no PI',N(T.n),'micro e minigeração, todas fotovoltaicas')}
+  ${kpi('Conexões no PI',N(T.n),T.solar===T.n?'micro e minigeração, todas fotovoltaicas'
+    :`micro e minigeração · ${PC2(100*T.solar/T.n)} fotovoltaicas`)}
   ${kpi('Potência instalada',MW(T.kw/1000),'soma da potência dos empreendimentos')}
   ${kpi('Penetração mediana',PC2(mediana),'conexões residenciais ÷ domicílios')}
   ${kpi('Municípios com registro',N(T.municipios_com)+' de 224','nenhum município do PI está zerado')}
@@ -1446,7 +1459,7 @@ function paginaEnergia(){
     base arbitrária.<br>${DIAG}</div></div>
 
   <div class="card" style="margin-top:14px"><h3>Tarifa vigente <span>${TAR?esc(TAR.agentes.join(', ')):'—'}</span></h3>
-   ${TAR&&TAR.residencial_b1?`
+   ${TAR&&TAR.residencial_b1&&TAR.residencial_b1_scee?`
    <div class="hrow"><span class="hl">B1 residencial · consumo comum</span><div class="bar">
      <i style="width:100%;background:var(--vd-cat-1)"></i></div>
     <b>R$ ${TAR.residencial_b1.total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</b></div>
@@ -1459,7 +1472,7 @@ function paginaEnergia(){
     <b>Payback não é calculado aqui.</b> A Lei 14.300/2022 tem transição do Fio B até 2029 e a
     regra muda com a data de conexão; publicar retorno sem isso seria inventar precisão.<br>
     Vigência ${TAR.residencial_b1.vigencia[0]} a ${TAR.residencial_b1.vigencia[1]}.</div>`
-   :'<div class="empty">dados/tarifas.json não carregou</div>'}</div>
+   :`<div class="empty">${TAR?'a tarifa B1 residencial vigente não foi encontrada — conferir DscDetalhe/SigAgente em build_tarifas.py':'dados/tarifas.json não carregou'}</div>`}</div>
 
   <div class="card" style="margin-top:14px"><h3>Minigeração: quem tem carga e não gera
     <span>BDGD · PJ em média e alta tensão</span></h3>
@@ -1473,12 +1486,22 @@ function paginaEnergia(){
       rk.map(f=>`<div class="hrow"><span class="hl">${esc(f.p.name)}</span>
         <div class="bar"><i style="width:${100*f.p.uc_sem_gd/mx}%;background:var(--vd-mag-4)"></i></div>
         <b>${N(f.p.uc_sem_gd)}</b></div>`).join('')+
+      /* o cartão prometia "bairro" e mostrava só total por município — a lista
+         por bairro já estava no JSON, sem consumidor */
+      (()=>{const bs=(BDGD.alvos_por_bairro||{})[SELMUN]||[];
+        if(!bs.length) return '';
+        const p=MUN[SELMUN]?MUN[SELMUN].p.name:SELMUN;
+        return `<div class="nota" style="border-top:none;padding-top:12px"><b>Onde estão, em ${esc(p)}</b>
+         — bairros com 3 ou mais unidades sem geração, por carga instalada:</div>`+
+         bs.map(b=>`<div class="hrow"><span class="hl">${esc(b.bairro)} · ${N(b.n)} UC</span>
+           <div class="bar"><i style="width:${100*b.carga/bs[0].carga}%;background:var(--vd-cat-3)"></i></div>
+           <b>${N(b.carga)} kW</b></div>`).join('')})()+
       `<div class="nota">Aqui o endereço é preciso: <b>CEP completo, nome do bairro e coordenada
         com 8 casas</b> — ao contrário da base tabular de geração, cujo CEP vem mascarado.<br>
         <b>Cobre só pessoa jurídica</b> em média e alta tensão: ${N(sem+com)} unidades, contra
         ${N(GD.uf_total.n)} conexões de geração no estado, quase todas residenciais. É o mercado
         de minigeração, não o de telhado.<br>
-        Leitura: ${BDGD.linhas_lidas} linhas lidas, ${BDGD.linhas_agrupadas} agrupadas.</div>`})()
+        Leitura: ${N(BDGD.linhas_lidas)} linhas, conferidas contra o agrupamento.</div>`})()
    :'<div class="empty">dados/bdgd.json não carregou</div>'}</div>
 
   <div class="card" style="margin-top:14px"><h3>Penetração por município <span>residencial ÷ domicílios</span></h3>
@@ -1518,9 +1541,14 @@ function paginaEnergia(){
  /* o último ano só está completo se a base já tiver chegado a 31/12 dele */
  const parcial = GD.conexao_mais_recente < anos[anos.length-1]+'-12-31';
  linhaGD('#gdSerie',anos,serie,rot,parcial);
- if(serieIdx.length) linhaGD('#gdIdx',anosIdx,serieIdx,v=>PC2(v),parcial);
+ /* `parcial` foi calculado sobre `anos`; este gráfico usa `anosIdx`, que pode
+    terminar antes. Aplicá-lo às cegas tracejava um ano COMPLETO. */
+ if(serieIdx.length) linhaGD('#gdIdx',anosIdx,serieIdx,v=>PC2(v),
+   parcial && anosIdx[anosIdx.length-1]===anos[anos.length-1]);
  $$('#pg-energia [data-gd]').forEach(b=>b.onclick=()=>{KGD=b.dataset.gd;paginaEnergia()});
- $$('#pg-energia .rrow').forEach(r=>r.onclick=()=>{selecionarMun(r.dataset.cd,false);paginaEnergia()});
+ /* esta tela lê MUN[SELMUN] e marca a linha por SELMUN — usar selecionarMun(),
+    que mexe em SELM, trocava a seleção do MAPA DE ESTADO e não mudava nada aqui */
+ $$('#pg-energia .rrow').forEach(r=>r.onclick=()=>{trocarMunicipio(r.dataset.cd)});
 }
 
 function paginaJanela(){

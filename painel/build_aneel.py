@@ -146,6 +146,8 @@ sem_gd = [cd for cd in mun if cd not in saida['municipios']]
 saida['municipios_sem_registro'] = sorted(sem_gd)
 saida['uf_total'] = {
     'n': sum(x['n'] for x in saida['municipios'].values()),
+    'solar': sum(x['solar'] for x in saida['municipios'].values()),
+    'res': sum(x['res'] for x in saida['municipios'].values()),
     'kw': round(sum(x['kw'] for x in saida['municipios'].values()), 2),
     'municipios_com': len(saida['municipios']),
     'municipios_sem': len(sem_gd),

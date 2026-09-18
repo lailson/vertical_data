@@ -44,7 +44,12 @@ c = duckdb.connect()
 # esquerda do código do município e o traço do CEP.
 TIPOS = "types={'MUN':'VARCHAR','CEP':'VARCHAR','BRR':'VARCHAR','CEG_GD':'VARCHAR'}"
 for nivel, arq in ARQS.items():
-    c.execute(f"""CREATE VIEW uc_{nivel} AS SELECT *, '{nivel}' AS nivel
+    # TABLE, não VIEW. Sobre uma view, um agregado com DISTINCT faz o DuckDB
+    # reexecutar o plano filho — o CSV de 160 MB é varrido DUAS vezes, e com
+    # `ignore_errors` cada varredura descarta um conjunto de linhas malformadas
+    # ligeiramente diferente. O resultado eram agregados de leituras distintas
+    # no mesmo SELECT, com dois municípios perdendo ~8% das unidades.
+    c.execute(f"""CREATE TABLE uc_{nivel} AS SELECT *, '{nivel}' AS nivel
       FROM read_csv('{os.path.join(BRUTO, arq)}', delim=';', header=true,
                     ignore_errors=true, sample_size=-1, {TIPOS})""")
 
@@ -69,7 +74,7 @@ for nivel in ARQS:
         {soma_energia(nivel)} AS energia_ano,
         TRY_CAST(POINT_X AS DOUBLE) lon, TRY_CAST(POINT_Y AS DOUBLE) lat
       FROM uc_{nivel} WHERE MUN LIKE '{UF}%'""")
-c.execute('CREATE VIEW uc AS ' + ' UNION ALL '.join(partes))
+c.execute('CREATE TABLE uc AS ' + ' UNION ALL '.join(partes))
 
 tot = c.execute('SELECT count(*) FROM uc').fetchone()[0]
 print(f'· {tot} unidades consumidoras PJ de média/alta tensão na UF {UF}')
@@ -94,13 +99,13 @@ for cd, bairro, n, carga in alvos:
     if len(por_mun[cd]) < 8:
         por_mun[cd].append({'bairro': bairro, 'n': n, 'carga': carga})
 
-# O `ignore_errors` do leitor pula linha malformada, e duas varreduras do mesmo
-# CSV de 156 MB podem pular conjuntos ligeiramente diferentes. A diferença entre
-# o que foi lido e o que foi agrupado é pequena, mas é resultado — vai declarada.
+# Com a leitura materializada em tabela, ler e agrupar passam a ver exatamente as
+# mesmas linhas. A conferência fica — se algum dia divergir, é sinal de problema
+# real, não do plano de consulta.
 agrupado = sum(r[1] for r in linhas)
 if agrupado != tot:
-    print(f'  ⚠ lidas {tot} · agrupadas {agrupado} · diferença {tot - agrupado} '
-          f'({100*(tot-agrupado)/tot:.2f}%) — linhas descartadas na leitura')
+    raise SystemExit(f'ERRO: lidas {tot}, agrupadas {agrupado}. Com a leitura '
+                     'materializada isto não deveria acontecer — investigar antes de publicar.')
 
 saida = {
     'fonte': 'ANEEL · BDGD — unidades consumidoras PJ de média e alta tensão',

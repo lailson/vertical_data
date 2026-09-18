@@ -9,7 +9,7 @@ e com a **malha municipal do PI**, base do mapa estadual de alvos.
 Baixa para dados/bruto/ e PULA arquivos já existentes e não-vazios.
 
 Uso:
-    python3 dados/baixar.py             # essencial (~250 MB, com CNEFE e ANEEL)
+    python3 dados/baixar.py             # essencial (~480 MB, com CNEFE e ANEEL)
     python3 dados/baixar.py --completo  # + INEP (537 MB) e as bases por setor
     python3 dados/baixar.py --atualizar # força rebaixar as fontes que mudam sozinhas
 """
@@ -138,6 +138,30 @@ def baixar(rel, url):
             print(f'[ok] {rel} (baixado há {idade*24:.0f}h, revalida em {limite}d)')
             return
         print(f'[revalidando] {rel} — {idade:.1f} dia(s) de idade')
+        # Idade vencida não quer dizer arquivo novo. Com If-Modified-Since o
+        # servidor responde 304 quando nada mudou, e os ~216 MB dos parquets
+        # deixam de ser rebaixados todo dia só porque o relógio virou.
+        desde = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime(os.path.getmtime(dest)))
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0',
+                                                       'If-Modified-Since': desde})
+            with urllib.request.urlopen(req, timeout=600) as r:
+                if r.status == 304:
+                    os.utime(dest, None)
+                    print(f'[ok] {rel} (304 — não mudou na origem)')
+                    return
+                dados = r.read()
+            with open(dest + '.part', 'wb') as f:
+                f.write(dados)
+            os.rename(dest + '.part', dest)
+            print(f'[novo] {rel} ({os.path.getsize(dest)//1024} KB)')
+            return
+        except urllib.error.HTTPError as e:
+            if e.code == 304:
+                os.utime(dest, None)
+                print(f'[ok] {rel} (304 — não mudou na origem)')
+                return
+            print(f'  condicional falhou ({e.code}); baixando inteiro')
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     print(f'[baixando] {rel} …')
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})

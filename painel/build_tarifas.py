@@ -39,7 +39,11 @@ c = duckdb.connect()
 c.execute(f"""CREATE VIEW tar AS SELECT * FROM read_csv('{CSV}', delim=';', header=true,
           ignore_errors=true, sample_size=-1)""")
 
-num = "CAST(replace(%s, ',', '.') AS DOUBLE)"
+# TRY_CAST: o arquivo tem 328 mil linhas nacionais lidas com ignore_errors, e a
+# projeção pode ser avaliada em linhas que o filtro de agente descartaria. Um
+# único valor em branco em qualquer distribuidora do país abortaria o build com
+# erro de conversão em vez da mensagem prevista.
+num = "TRY_CAST(replace(%s, ',', '.') AS DOUBLE)"
 linhas = c.execute(f"""
   SELECT SigAgente, DscSubGrupo, DscModalidadeTarifaria, DscClasse, DscSubClasse,
          DscDetalhe, NomPostoTarifario, DscUnidadeTerciaria,

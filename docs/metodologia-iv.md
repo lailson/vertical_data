@@ -284,16 +284,30 @@ Licença ODbL. É o que **desce abaixo do município com precisão de verdade**:
 unidade traz **CEP completo** (não mascarado), **nome do bairro**, **coordenada com 8
 casas**, CNAE, carga instalada, consumo mês a mês, e `CEG_GD` — se já tem geração.
 
-No Piauí: **4.230 unidades em 197 municípios · 945 já com geração · 3.285 sem.**
+No Piauí: **4.228 unidades em 197 municípios · 944 já com geração · 3.284 sem.**
 
 **A ressalva que define o uso:** é só **pessoa jurídica em média e alta tensão**. Contra
 as 90.528 conexões do estado, quase todas residenciais, isto é o mercado de
 **minigeração** — comércio e indústria —, não o de telhado. A tabela de baixa tensão
 (1,2 GB) também é só PJ: residência de pessoa física não é publicada, por privacidade.
 
-**Perda declarada na leitura:** 4.236 linhas lidas, 4.230 agrupadas — 6 linhas (0,14%)
-descartadas por erro de formatação no CSV. O agregador imprime a diferença em vez de
-escondê-la, e ela vai no JSON (`linhas_lidas`, `linhas_agrupadas`).
+**A diferença que eu declarei com a causa errada, e o que ela era de verdade.**
+A primeira versão dizia "4.236 lidas, 4.230 agrupadas — 6 descartadas por erro de
+formatação". Não era isso.
+
+O agregador criava `CREATE VIEW` sobre `read_csv(..., ignore_errors=true)`. Um agregado
+com `DISTINCT` faz o DuckDB **reexecutar o plano filho** — o CSV de 160 MB era varrido
+**duas vezes**, e cada varredura descartava um conjunto ligeiramente diferente de linhas
+malformadas. Dois municípios perdiam ~8% das unidades, e qual varredura alimentava qual
+agregado era indefinido.
+
+Corrigido com `CREATE TABLE`: uma leitura só, materializada. O resultado passou a ser
+**4.228 unidades, estável entre execuções** (mesmo `sha256` do JSON em execuções
+repetidas), e a conferência `lidas == agrupadas` virou **erro fatal** em vez de nota —
+se divergir agora, é problema de verdade.
+
+Vale registrar o padrão: é a segunda vez neste arquivo que eu publico uma **causa
+plausível sem medir**. A primeira foi atribuir a queda de 2025 à suspensão da ANEEL.
 
 ### 10.3 Onde cada base desce
 
