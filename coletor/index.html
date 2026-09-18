@@ -3,28 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coletor CADURB · modelo de campo</title>
+<title>Vertical Data · Coletor CADURB</title>
+<link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"%3E%3Crect width="32" height="32" rx="7" fill="%230B2545"/%3E%3Cg fill="%2312B0A0"%3E%3Crect x="5.5" y="19" width="4" height="9" rx="1.2" opacity=".55"/%3E%3Crect x="11" y="15" width="4" height="13" rx="1.2" opacity=".75"/%3E%3Crect x="16.5" y="11" width="4" height="17" rx="1.2"/%3E%3Crect x="22" y="8" width="4" height="20" rx="1.2" fill="%23EAF2F8"/%3E%3C/g%3E%3Ccircle cx="24" cy="4.6" r="2.4" fill="%2312B0A0"/%3E%3C/svg%3E'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* VD:INICIO */
+/* Vertical Data — tokens de marca. FONTE ÚNICA.
+ *
+ * Este arquivo é o original. As páginas não o importam por <link>: elas trazem
+ * uma cópia embutida entre os marcadores VD:INICIO e VD:FIM, escrita por
+ * `python3 marca/aplicar.py`. É assim porque painel e coletor são aplicações de
+ * arquivo único de propósito — abrem por file:// numa prefeitura sem wifi.
+ *
+ * Mudou uma cor? Mude AQUI e rode `python3 marca/aplicar.py`. Editar o bloco
+ * embutido à mão é o que faz as duas páginas divergirem em silêncio.
+ *
+ * As cores vêm medidas do PDF de marca (.orca/drops/Vertical-Data-Logomarcas.pdf),
+ * não estimadas de screenshot: navy #0B2545, teal #12B0A0, linha #E2E6EA,
+ * superfície #F4F6F8, texto fraco #5B6B7A, azul de apoio #12689F.
+ */
 :root{
- --bg:#F7F5F0;--papel:#FFFFFF;--tela:#F1EEE7;--line:rgba(26,46,40,.12);--line2:rgba(26,46,40,.22);
- --ink:#12241E;--mut:#4A6A5F;--dim:#5A756B;
- --teal:#04785A;--amber:#8F5A02;--red:#C8412B;--blue:#1D6FB8;--violet:#5B3FB5;
- --trilho:rgba(26,46,40,.09);
- --f-disp:'Bricolage Grotesque',sans-serif;--f-body:'IBM Plex Sans',sans-serif;--f-mono:'IBM Plex Mono',monospace;
+ /* ---- marca: os valores exatos do PDF, nunca ajustados ---- */
+ --vd-navy:#0B2545;
+ --vd-teal:#12B0A0;
+ --vd-azul:#12689F;
+
+ /* ---- superfície e tinta, tema claro ---- */
+ --vd-bg:#F4F6F8;          /* fundo da página (a superfície do PDF) */
+ --vd-painel:#FFFFFF;
+ --vd-painel2:#EDF1F5;
+ --vd-linha:rgba(11,37,69,.12);
+ --vd-linha2:rgba(11,37,69,.22);
+ --vd-tinta:#0B2545;       /* 15,4:1 sobre branco */
+ --vd-tinta2:#44586B;      /*  7,4:1 */
+ --vd-tinta3:#5B6B7A;      /*  5,5:1 — o cinza do próprio PDF */
+
+ /* O teal da marca dá 2,71:1 sobre branco: serve para FORMA (logo, barra,
+    preenchimento), não para TEXTO. Quem carrega texto e link no tema claro é
+    este irmão escurecido, a 4,58:1. Duas variáveis porque são dois usos. */
+ --vd-acento:#0D8478;      /* teal de interface — texto, link, foco */
+ --vd-acento-forma:#12B0A0;/* teal de marca — ícone, barra, preenchimento */
+
+ --vd-ambar:#8F5A02;       /* 5,8:1 */
+ --vd-vermelho:#C03A24;    /* 5,4:1 */
+ --vd-violeta:#5B3FB5;
+
+ --vd-trilho:rgba(11,37,69,.09);
+ --vd-veu:rgba(8,22,40,.5);
+ --vd-vinheta:rgba(92,110,128,.16);
+ --vd-borda-mapa:rgba(255,255,255,.85);
+ --vd-grade:rgba(11,37,69,.10);
+ --vd-grade-forte:rgba(11,37,69,.22);
+ --vd-sel:#0B2545;
+ --vd-semdado:#C6CED6;     /* ausência de dado: família própria, cinza frio */
+
+ /* ---- rampas de dado ----
+    CAR (carência): divergente, 1º quintil vermelho — o pior é o mais escuro.
+    MAG (magnitude): matiz único, a do teal da marca — IPTU baixo é o ALVO,
+    não um problema, então não pode ser pintado de vermelho.
+    A direção é semântica e não muda com a marca; só o matiz mudou. */
+ --vd-car-1:#C03A24;--vd-car-2:#C98518;--vd-car-3:#8AA64A;--vd-car-4:#3FA58F;--vd-car-5:#0D8478;
+ --vd-mag-1:#D6F0EC;--vd-mag-2:#A5DFD8;--vd-mag-3:#6CC7BD;--vd-mag-4:#2FA697;--vd-mag-5:#0B6E64;
+
+ /* ---- tipografia ---- */
+ --vd-fonte:'Inter','Helvetica Neue',Arial,sans-serif;
+ --vd-mono:'IBM Plex Mono',ui-monospace,monospace;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
- --bg:#0A1310;--papel:#0F1D18;--tela:#132520;--line:rgba(232,242,236,.09);--line2:rgba(232,242,236,.16);
- --ink:#E9F4ED;--mut:#7FA396;--dim:#54726A;
- --teal:#2FE6B0;--amber:#F5B841;--red:#FF6B57;--blue:#5CB8FF;--violet:#B79CFF;
- --trilho:rgba(232,242,236,.08);
-}}
+
+/* Tema escuro. O navy da marca vira a SUPERFÍCIE do painel, e o fundo da página
+   desce mais um degrau — senão painel e fundo encostam e a hierarquia some. */
+@media (prefers-color-scheme:dark){
+ :root:not([data-theme="light"]){
+  --vd-bg:#071A2E;
+  --vd-painel:#0B2545;
+  --vd-painel2:#123156;
+  --vd-linha:rgba(232,238,244,.10);
+  --vd-linha2:rgba(232,238,244,.18);
+  --vd-tinta:#E8EEF4;      /* 13,2:1 sobre o navy */
+  --vd-tinta2:#93AAC0;     /*  6,4:1 */
+  --vd-tinta3:#7C93A9;     /*  4,8:1 */
+  --vd-acento:#2FD5C0;     /*  8,4:1 — aqui o teal claro é que carrega texto */
+  --vd-acento-forma:#2FD5C0;
+  --vd-azul:#67B6EC;
+  --vd-ambar:#F2B544;
+  --vd-vermelho:#FF7A63;
+  --vd-violeta:#B79CFF;
+  --vd-trilho:rgba(232,238,244,.09);
+  --vd-veu:rgba(4,13,24,.82);
+  --vd-vinheta:rgba(4,13,24,.8);
+  --vd-borda-mapa:rgba(7,26,46,.85);
+  --vd-grade:rgba(232,238,244,.08);
+  --vd-grade-forte:rgba(232,238,244,.18);
+  --vd-sel:#E8EEF4;
+  --vd-semdado:#34404E;
+  --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
+  --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+ }
+}
 :root[data-theme="dark"]{
- --bg:#0A1310;--papel:#0F1D18;--tela:#132520;--line:rgba(232,242,236,.09);--line2:rgba(232,242,236,.16);
- --ink:#E9F4ED;--mut:#7FA396;--dim:#54726A;
- --teal:#2FE6B0;--amber:#F5B841;--red:#FF6B57;--blue:#5CB8FF;--violet:#B79CFF;
- --trilho:rgba(232,242,236,.08);
+ --vd-bg:#071A2E;
+ --vd-painel:#0B2545;
+ --vd-painel2:#123156;
+ --vd-linha:rgba(232,238,244,.10);
+ --vd-linha2:rgba(232,238,244,.18);
+ --vd-tinta:#E8EEF4;
+ --vd-tinta2:#93AAC0;
+ --vd-tinta3:#7C93A9;
+ --vd-acento:#2FD5C0;
+ --vd-acento-forma:#2FD5C0;
+ --vd-azul:#67B6EC;
+ --vd-ambar:#F2B544;
+ --vd-vermelho:#FF7A63;
+ --vd-violeta:#B79CFF;
+ --vd-trilho:rgba(232,238,244,.09);
+ --vd-veu:rgba(4,13,24,.82);
+ --vd-vinheta:rgba(4,13,24,.8);
+ --vd-borda-mapa:rgba(7,26,46,.85);
+ --vd-grade:rgba(232,238,244,.08);
+ --vd-grade-forte:rgba(232,238,244,.18);
+ --vd-sel:#E8EEF4;
+ --vd-semdado:#34404E;
+ --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
+ --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+}
+/* VD:FIM */
+
+/* Apelidos locais → marca. O coletor usa --papel/--tela onde o painel usa
+   --panel/--panel2; o vocabulário de cada página fica, a cor vem de um lugar só. */
+:root{
+ --bg:var(--vd-bg);--papel:var(--vd-painel);--tela:var(--vd-painel2);
+ --line:var(--vd-linha);--line2:var(--vd-linha2);
+ --ink:var(--vd-tinta);--mut:var(--vd-tinta2);--dim:var(--vd-tinta3);
+ --teal:var(--vd-acento);--amber:var(--vd-ambar);--red:var(--vd-vermelho);
+ --blue:var(--vd-azul);--violet:var(--vd-violeta);
+ --trilho:var(--vd-trilho);
+ --f-disp:var(--vd-fonte);--f-body:var(--vd-fonte);--f-mono:var(--vd-mono);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.5;
@@ -37,6 +151,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height
 
 /* ---------- cabeçalho ---------- */
 header{max-width:1180px;margin:0 auto 26px}
+.marca{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.marca .sig{width:26px;height:26px;flex:none;display:block}
+.marca span{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.marca b{color:var(--vd-acento-forma);font-weight:700}
 .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.09em;
  text-transform:uppercase;padding:6px 11px;border-radius:999px;border:1px solid var(--amber);color:var(--amber);
  background:color-mix(in srgb,var(--amber) 10%,transparent)}
@@ -57,7 +175,10 @@ header p{color:var(--mut);max-width:70ch;font-size:14px}
 /* A barra do app é superfície própria, não segue o tema: verde escuro fixo com
    texto branco. Antes usava var(--teal), que no tema escuro vira verde claro e
    deixava o texto branco ilegível. */
-.barra{background:#04785A;color:#fff;padding:11px 14px 12px}
+/* Fixos de propósito: são a moldura do aplicativo, e o branco por cima
+   precisa do mesmo contraste nos dois temas — o --vd-acento clareia no
+   escuro e o texto branco sumiria. Navy da marca, 15,4:1 com o branco. */
+.barra{background:#0B2545;color:#fff;padding:11px 14px 12px}
 .barra .t{font-family:var(--f-disp);font-size:14.5px;font-weight:700;color:#fff}
 .barra .s{font-size:11px;opacity:.9;font-family:var(--f-mono);color:#fff}
 .prog{height:4px;background:rgba(255,255,255,.3);border-radius:2px;margin-top:8px;overflow:hidden}
@@ -91,7 +212,7 @@ header p{color:var(--mut);max-width:70ch;font-size:14px}
 .vindo .sub{font-size:11.5px;color:var(--mut);font-family:var(--f-mono);margin-top:2px}
 .acoes{display:flex;gap:8px;margin-top:9px}
 .bt{flex:1;min-width:0;border:none;border-radius:9px;padding:10px;font-family:var(--f-body);font-size:13px;font-weight:600;cursor:pointer}
-.bt.ok{background:#04785A;color:#fff}   /* fixo: no tema escuro --teal clareia e o branco some */
+.bt.ok{background:#0B6E64;color:#fff}   /* teal escuro da rampa da marca: 6,1:1 com o branco */
 .bt.alt{background:transparent;border:1px solid var(--line2);color:var(--mut)}
 .foto{border:1px dashed var(--line2);border-radius:12px;padding:20px;text-align:center;color:var(--dim);
  font-size:12px;font-family:var(--f-mono)}
@@ -131,6 +252,8 @@ td.k{font-family:var(--f-mono);font-size:11.5px;color:var(--ink);white-space:now
 .so-fone .fone{position:static;max-width:470px}
 .so-fone .rolo{max-height:none}
 .so-fone header{text-align:center}
+/* a marca é flex: text-align não a centraliza, justify-content sim */
+.so-fone .marca{justify-content:center}
 .so-fone h1{font-size:22px}
 .volta{display:none;max-width:470px;margin:18px auto 0;text-align:center;
  font-family:var(--f-mono);font-size:11px}
@@ -143,6 +266,7 @@ footer{max-width:1180px;margin:40px auto 0;padding-top:16px;border-top:1px solid
 <body>
 
 <header>
+ <div class="marca"><svg class="sig" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="vdg" x1="3" y1="0" x2="29" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="var(--vd-acento-forma)"/><stop offset="1" stop-color="var(--vd-tinta)"/></linearGradient></defs><g fill="url(#vdg)"><rect x="3" y="19" width="5" height="11" rx="1.4"/><rect x="10" y="14" width="5" height="16" rx="1.4"/><rect x="17" y="9" width="5" height="21" rx="1.4"/><rect x="24" y="6" width="5" height="24" rx="1.4"/></g><circle cx="26.5" cy="2.7" r="2.7" fill="var(--vd-acento-forma)"/></svg><span>Vertical<b>Data</b></span></div>
  <span class="chip">modelo para validação · não é o sistema</span>
  <h1>Coletor de campo — o que o agente preenche</h1>
  <p>Tela de celular proposta para a coleta que alimenta a <b>remessa ao CADURB</b>. Cada campo aqui

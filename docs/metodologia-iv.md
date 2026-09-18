@@ -177,3 +177,24 @@ O painel passou a ter os dois temas. Toda cor — inclusive as duas rampas do ma
 e as cores de eixo dos gráficos — vira **token de CSS**, lido pelo JavaScript em
 tempo de desenho. Não existe paleta de CSS e outra de JavaScript. A escolha do
 leitor fica no `localStorage`; sem ele, o painel segue o tema do sistema.
+
+---
+
+## 8. Marca aplicada (18/09/2026)
+
+O projeto passou a se chamar **Vertical Data** e ganhou system design próprio
+(`marca/README.md`). Para a leitura das telas, o que importa é o que **não**
+mudou:
+
+- **A direção das rampas é a mesma.** CAR segue divergente com o 1º quintil
+  vermelho; MAG segue de matiz único, porque IPTU baixo é o alvo comercial e não
+  um problema. Trocou o matiz da MAG — era verde, virou o teal da marca.
+- **Ausência de dado continua em família própria**, agora `#C6CED6` no claro e
+  `#34404E` no escuro: cinza frio, fora das duas rampas. Os 72 municípios sem
+  RREO 2025 continuam legíveis como *sem dado*, nunca como valor baixo.
+- **Os cortes de amostra (`n_ok`, `n_ok_ent`) não foram tocados.**
+
+O que mudou de fato: o par de tons que carrega texto. O teal da marca
+(`#12B0A0`) tem 2,71:1 sobre branco e só é usado como **preenchimento**; texto,
+link e foco usam `#0D8478` (4,58:1) no claro e `#2FD5C0` (8,35:1) no escuro. A
+tabela de contraste medido está em `marca/README.md` §2.

@@ -211,30 +211,35 @@ def main():
         mx = max([v for _, v in itens] + [1])
         return ''.join(
             f'<div class="hrow"><span class="hl">{k}</span><div class="hbar"><i style="width:{100*v/mx:.0f}%;background:{c}"></i></div><span class="hv">{v:,}</span></div>'.replace(',', '.')
-            for (k, v), c in zip(itens, ['#B14B34', '#BC8A2E', '#2E6B5E', '#17453D', '#2E5C8A'] * 6))
+            for (k, v), c in zip(itens, ['#C03A24', '#C98518', '#2FA697', '#0D8478', '#12689F'] * 6))
     falhas_html = barras(falhas_por_regra.most_common(), n) if falhas_por_regra else '<p class="ok">Nenhuma falha obrigatória.</p>'
     est_html = ''.join(
-        f'<div class="hrow"><span class="hl">{k}</span><div class="hbar"><i style="width:{100*v/n:.0f}%;background:#2E6B5E"></i></div><span class="hv">{100*v/n:.1f}%</span></div>'
+        f'<div class="hrow"><span class="hl">{k}</span><div class="hbar"><i style="width:{100*v/n:.0f}%;background:#2FA697"></i></div><span class="hv">{100*v/n:.1f}%</span></div>'
         for k, v in estrategicos.most_common())
-    cor_pct = '#17453D' if pct_ok >= 80 else ('#BC8A2E' if pct_ok >= 40 else '#B14B34')
+    cor_pct = '#0D8478' if pct_ok >= 80 else ('#8F5A02' if pct_ok >= 40 else '#C03A24')
     html = f"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
-<title>Laudo de Completude Cadastral — IBGE {ibge}</title>
+<title>Laudo de Completude Cadastral — IBGE {ibge} · Vertical Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{{--paper:#F0EDE3;--ink:#20261F;--teal:#17453D;--ochre:#BC8A2E;--terra:#B14B34;--slate:#6E7266;--line:#D9D4C4}}
-*{{box-sizing:border-box}}body{{margin:0;font-family:'IBM Plex Sans',-apple-system,sans-serif;background:var(--paper);color:var(--ink);padding:36px}}
+/* Tokens da marca (marca/vertical-data.css). O laudo é o artefato que o
+   cliente recebe e imprime — por isso é claro e fixo, sem alternância de tema. */
+:root{{--paper:#F4F6F8;--ink:#0B2545;--teal:#0D8478;--marca:#12B0A0;--ochre:#8F5A02;--terra:#C03A24;--slate:#5B6B7A;--line:#E2E6EA}}
+*{{box-sizing:border-box}}body{{margin:0;font-family:Inter,-apple-system,sans-serif;background:var(--paper);color:var(--ink);padding:36px}}
 .head{{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--teal);padding-bottom:14px;margin-bottom:22px}}
-h1{{font:600 24px Georgia,serif;margin:0}} .sub{{color:var(--slate);font-size:13px;margin-top:4px}}
+h1{{font:700 24px Inter,sans-serif;letter-spacing:-.02em;margin:0}} .sub{{color:var(--slate);font-size:13px;margin-top:4px}}
 .chip{{background:var(--teal);color:#fff;font-size:11px;font-weight:600;padding:6px 12px;border-radius:99px;letter-spacing:.04em}}
 .kpis{{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}}
 .k{{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}}
-.k .l{{font-size:11.5px;color:var(--slate)}} .k .v{{font:600 30px Georgia,serif;margin-top:4px}}
-h2{{font:600 16px Georgia,serif;margin:22px 0 8px}} p.ok{{color:var(--teal);font-weight:600}}
+.k .l{{font-size:11.5px;color:var(--slate)}} .k .v{{font:600 30px 'IBM Plex Mono',monospace;margin-top:4px;font-variant-numeric:tabular-nums}}
+h2{{font:700 16px Inter,sans-serif;margin:22px 0 8px}} p.ok{{color:var(--teal);font-weight:600}}
 .hrow{{display:grid;grid-template-columns:230px 1fr 64px;gap:10px;align-items:center;font-size:13px;padding:5px 0}}
 .hl{{color:var(--slate)}} .hbar{{height:8px;background:var(--line);border-radius:4px;overflow:hidden}} .hbar i{{display:block;height:100%}}
 .hv{{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}}
+.marca{{display:flex;align-items:center;gap:7px;margin-bottom:9px;font-size:14px;font-weight:700;letter-spacing:-.02em}}
+.marca b{{color:var(--marca);font-weight:700}}
 .foot{{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--slate);line-height:1.6}}
 </style></head><body>
-<div class="head"><div><h1>Laudo de Completude Cadastral</h1>
+<div class="head"><div><div class="marca"><svg viewBox="0 0 32 32" width="21" height="21" aria-hidden="true"><defs><linearGradient id="vdl" x1="3" y1="0" x2="29" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#12B0A0"/><stop offset="1" stop-color="#0B2545"/></linearGradient></defs><g fill="url(#vdl)"><rect x="3" y="19" width="5" height="11" rx="1.4"/><rect x="10" y="14" width="5" height="16" rx="1.4"/><rect x="17" y="9" width="5" height="21" rx="1.4"/><rect x="24" y="6" width="5" height="24" rx="1.4"/></g><circle cx="26.5" cy="2.7" r="2.7" fill="#12B0A0"/></svg><span>Vertical<b>Data</b></span></div><h1>Laudo de Completude Cadastral</h1>
 <div class="sub">Município IBGE {ibge} · base: {os.path.basename(path)} · {len(rows)} imóveis · gerado em {__import__('datetime').date.today().isoformat()}</div></div>
 <span class="chip">DIAGNÓSTICO CADURB · SINTER/RFB</span></div>
 <div class="kpis">

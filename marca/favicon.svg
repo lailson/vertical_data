@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<!-- Favicon: fundo navy fixo. Aba de navegador não herda o tema da página,
+     e o símbolo sem fundo some numa aba clara. -->
+<rect width="32" height="32" rx="7" fill="#0B2545"/>
+<g fill="#12B0A0">
+ <rect x="5.5"  y="19" width="4" height="9"  rx="1.2" opacity=".55"/>
+ <rect x="11"   y="15" width="4" height="13" rx="1.2" opacity=".75"/>
+ <rect x="16.5" y="11" width="4" height="17" rx="1.2"/>
+ <rect x="22"   y="8"  width="4" height="20" rx="1.2" fill="#EAF2F8"/>
+</g>
+<circle cx="24" cy="4.6" r="2.4" fill="#12B0A0"/>
+</svg>

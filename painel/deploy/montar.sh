@@ -6,6 +6,11 @@ set -euo pipefail
 raiz="$(cd "$(dirname "$0")/../.." && pwd)"
 saida="$raiz/painel/deploy/publico"
 
+# Os tokens de marca são embutidos nas páginas por marca/aplicar.py. Editar o
+# bloco à mão faz o publicado divergir de marca/vertical-data.css sem deixar
+# rastro — então confere antes de montar, e recusa se divergir.
+python3 "$raiz/marca/aplicar.py" --conferir
+
 rm -rf "$saida"
 mkdir -p "$saida/m0-conector"
 

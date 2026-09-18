@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Vertical Data">
+<!-- Quatro barras que sobem (vertical) e formam um gráfico (data); o ponto
+     destacado no topo da mais alta lê como marcador de mapa. A silhueta é o
+     que sobrevive a 16px — por isso o ponto é separado da barra. -->
+<defs>
+ <linearGradient id="vd" x1="3" y1="0" x2="29" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#12B0A0"/><stop offset="1" stop-color="#0B2545"/>
+ </linearGradient>
+</defs>
+<g fill="url(#vd)">
+ <rect x="3"  y="19" width="5" height="11" rx="1.4"/>
+ <rect x="10" y="14" width="5" height="16" rx="1.4"/>
+ <rect x="17" y="9"  width="5" height="21" rx="1.4"/>
+ <rect x="24" y="6"  width="5" height="24" rx="1.4"/>
+</g>
+<circle cx="26.5" cy="2.7" r="2.7" fill="#12B0A0"/>
+</svg>

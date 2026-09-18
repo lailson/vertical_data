@@ -12,9 +12,9 @@
 
 ## Cobertura de campos estratégicos (opcionais na spec, valiosos no cadastro)
 
-- % titularidade: 5 imóveis (100.0%)
 - área construída: 5 imóveis (100.0%)
 - valor venal: 5 imóveis (100.0%)
+- % titularidade: 5 imóveis (100.0%)
 - titular (nome): 4 imóveis (80.0%)
 - titular (NI): 4 imóveis (80.0%)
 - bairro: 4 imóveis (80.0%)

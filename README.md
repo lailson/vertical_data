@@ -96,6 +96,23 @@ Cloudflare Pages com basic auth em `functions/_middleware.js`. ⚠️ O wrangler
 autenticação, em silêncio**. O script recusa rodar se o middleware não estiver ali.
 Detalhes e como criar o token: `painel/deploy/LEIAME.md`.
 
+### Marca e system design
+
+`marca/` é a fonte única de cor, tipografia e símbolo — cores **medidas** do PDF
+de logomarcas, não estimadas de screenshot. O contrato completo está em
+[`marca/README.md`](marca/README.md).
+
+```bash
+python3 marca/aplicar.py              # reescreve os tokens embutidos nas páginas
+python3 marca/aplicar.py --conferir    # acusa divergência (montar.sh roda isto)
+```
+
+O teal da marca (`#12B0A0`) dá 2,71:1 sobre branco: serve para **forma**, não
+para texto. Quem carrega texto no tema claro é `#0D8478`, a 4,58:1. São duas
+variáveis porque são dois usos.
+
+---
+
 ### Grafo de conhecimento
 
 `graphify-out/` traz o corpus inteiro — 108 arquivos, 278 mil palavras — como grafo
@@ -121,8 +138,9 @@ INFERRED ou AMBIGUOUS, com o arquivo de origem.
 3. **Credencial nunca entra no repositório.** Nem valor, nem mensagem de commit, nem
    issue. As do deploy vivem em `~/.cerurb-cf.env` (chmod 600) e como secrets do Pages.
 4. **A cor tem direção declarada.** Duas paletas: carência (1º quintil vermelho) e
-   magnitude (rampa de matiz único — IPTU baixo é o *alvo*, não um problema). Ver
-   `docs/metodologia-iv.md` §6.
+   magnitude (rampa de matiz único — IPTU baixo é o *alvo*, não um problema). A
+   marca trocou o matiz; a direção é da metodologia (`docs/metodologia-iv.md` §6)
+   e não muda. Ausência de dado é família própria, fora das duas rampas.
 5. **Toda mudança relevante passa por revisão em laço**, até a revisão não apontar mais
    correção. Uma passada só não fecha.
 

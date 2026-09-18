@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 230 64" role="img" aria-label="Vertical Data — Geotecnologia Municipal">
+<!-- Lockup horizontal para fundo claro. O texto fica como texto (não vetorizado)
+     de propósito: o arquivo é editável e pesa 1 KB. Onde a Inter não carregar,
+     a pilha cai para a grotesca do sistema, que é a leitura de fallback aceita. -->
+<defs>
+ <linearGradient id="vdl" x1="6" y1="0" x2="58" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#12B0A0"/><stop offset="1" stop-color="#0B2545"/>
+ </linearGradient>
+</defs>
+<g fill="url(#vdl)" transform="translate(0,4)">
+ <rect x="6"  y="38" width="10" height="22" rx="2.8"/>
+ <rect x="20" y="28" width="10" height="32" rx="2.8"/>
+ <rect x="34" y="18" width="10" height="42" rx="2.8"/>
+ <rect x="48" y="12" width="10" height="48" rx="2.8"/>
+</g>
+<circle cx="53" cy="9.4" r="5.4" fill="#12B0A0"/>
+<g font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-weight="700" font-size="25" letter-spacing="-.6">
+ <text x="74" y="31" fill="#0B2545">Vertical</text>
+ <text x="74" y="57" fill="#12B0A0">Data</text>
+</g>
+</svg>

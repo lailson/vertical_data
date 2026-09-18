@@ -25,3 +25,6 @@ tmp/
 graphify-out/.graphify_*
 graphify-out/cost.json
 graphify-out/cache/
+
+# duplicata byte a byte do PDF de logomarcas — o arquivo segue no disco
+*copy.pdf

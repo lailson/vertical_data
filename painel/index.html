@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel CERURB · Piauí</title>
+<title>Vertical Data · Piauí</title>
+<link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"%3E%3Crect width="32" height="32" rx="7" fill="%230B2545"/%3E%3Cg fill="%2312B0A0"%3E%3Crect x="5.5" y="19" width="4" height="9" rx="1.2" opacity=".55"/%3E%3Crect x="11" y="15" width="4" height="13" rx="1.2" opacity=".75"/%3E%3Crect x="16.5" y="11" width="4" height="17" rx="1.2"/%3E%3Crect x="22" y="8" width="4" height="20" rx="1.2" fill="%23EAF2F8"/%3E%3C/g%3E%3Ccircle cx="24" cy="4.6" r="2.4" fill="%2312B0A0"/%3E%3C/svg%3E'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Leaflet vendorizado: o painel roda sem internet (demonstração em prefeitura não depende de wifi) -->
 <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <script src="vendor/leaflet/leaflet.js"></script>
@@ -13,46 +14,143 @@
 /* Tema CLARO na raiz; o escuro é redefinido nos dois blocos abaixo. Toda cor
    usada pelo mapa e pelos gráficos também é token — o JS lê daqui, para não
    existir uma paleta de CSS e outra de JavaScript. */
+/* VD:INICIO */
+/* Vertical Data — tokens de marca. FONTE ÚNICA.
+ *
+ * Este arquivo é o original. As páginas não o importam por <link>: elas trazem
+ * uma cópia embutida entre os marcadores VD:INICIO e VD:FIM, escrita por
+ * `python3 marca/aplicar.py`. É assim porque painel e coletor são aplicações de
+ * arquivo único de propósito — abrem por file:// numa prefeitura sem wifi.
+ *
+ * Mudou uma cor? Mude AQUI e rode `python3 marca/aplicar.py`. Editar o bloco
+ * embutido à mão é o que faz as duas páginas divergirem em silêncio.
+ *
+ * As cores vêm medidas do PDF de marca (.orca/drops/Vertical-Data-Logomarcas.pdf),
+ * não estimadas de screenshot: navy #0B2545, teal #12B0A0, linha #E2E6EA,
+ * superfície #F4F6F8, texto fraco #5B6B7A, azul de apoio #12689F.
+ */
 :root{
- --bg:#F7F5F0;--panel:#FFFFFF;--panel2:#F1EEE7;--line:rgba(26,46,40,.12);--line2:rgba(26,46,40,.22);
- --ink:#12241E;--mut:#4A6A5F;--dim:#5A756B;
- /* medido sobre o painel branco: 5,0:1 no --dim, 4,6:1 no teal e 4,7:1 no âmbar.
-    Os tons do tema escuro não servem no claro — leem como cinza sobre papel. */
- --teal:#04785A;--amber:#8F5A02;--red:#C8412B;--blue:#1D6FB8;--violet:#5B3FB5;
- --trilho:rgba(26,46,40,.09);        /* fundo de barra e de trilho */
- --vinheta:rgba(120,130,125,.16);    /* sombra interna do mapa */
- --veu:rgba(30,40,36,.5);            /* fundo do modal */
- --borda-mapa:rgba(255,255,255,.85); /* contorno dos polígonos */
- --eixo:#5A756B;                     /* texto de eixo em SVG */
- --grade:rgba(26,46,40,.10);         /* linhas de grade em SVG */
- --grade-forte:rgba(26,46,40,.22);
- --sel:#12241E;                      /* realce do selecionado */
- --semdado:#C9CFCB;
- --car-1:#C8412B;--car-2:#D08A1E;--car-3:#8AA64A;--car-4:#3FA582;--car-5:#0E9E77;
- --mag-1:#CFE8DE;--mag-2:#9BD2C0;--mag-3:#5FB89D;--mag-4:#2E9B7C;--mag-5:#0E6B54;
- --f-disp:'Bricolage Grotesque',sans-serif;--f-body:'IBM Plex Sans',sans-serif;--f-mono:'IBM Plex Mono',monospace;
+ /* ---- marca: os valores exatos do PDF, nunca ajustados ---- */
+ --vd-navy:#0B2545;
+ --vd-teal:#12B0A0;
+ --vd-azul:#12689F;
+
+ /* ---- superfície e tinta, tema claro ---- */
+ --vd-bg:#F4F6F8;          /* fundo da página (a superfície do PDF) */
+ --vd-painel:#FFFFFF;
+ --vd-painel2:#EDF1F5;
+ --vd-linha:rgba(11,37,69,.12);
+ --vd-linha2:rgba(11,37,69,.22);
+ --vd-tinta:#0B2545;       /* 15,4:1 sobre branco */
+ --vd-tinta2:#44586B;      /*  7,4:1 */
+ --vd-tinta3:#5B6B7A;      /*  5,5:1 — o cinza do próprio PDF */
+
+ /* O teal da marca dá 2,71:1 sobre branco: serve para FORMA (logo, barra,
+    preenchimento), não para TEXTO. Quem carrega texto e link no tema claro é
+    este irmão escurecido, a 4,58:1. Duas variáveis porque são dois usos. */
+ --vd-acento:#0D8478;      /* teal de interface — texto, link, foco */
+ --vd-acento-forma:#12B0A0;/* teal de marca — ícone, barra, preenchimento */
+
+ --vd-ambar:#8F5A02;       /* 5,8:1 */
+ --vd-vermelho:#C03A24;    /* 5,4:1 */
+ --vd-violeta:#5B3FB5;
+
+ --vd-trilho:rgba(11,37,69,.09);
+ --vd-veu:rgba(8,22,40,.5);
+ --vd-vinheta:rgba(92,110,128,.16);
+ --vd-borda-mapa:rgba(255,255,255,.85);
+ --vd-grade:rgba(11,37,69,.10);
+ --vd-grade-forte:rgba(11,37,69,.22);
+ --vd-sel:#0B2545;
+ --vd-semdado:#C6CED6;     /* ausência de dado: família própria, cinza frio */
+
+ /* ---- rampas de dado ----
+    CAR (carência): divergente, 1º quintil vermelho — o pior é o mais escuro.
+    MAG (magnitude): matiz único, a do teal da marca — IPTU baixo é o ALVO,
+    não um problema, então não pode ser pintado de vermelho.
+    A direção é semântica e não muda com a marca; só o matiz mudou. */
+ --vd-car-1:#C03A24;--vd-car-2:#C98518;--vd-car-3:#8AA64A;--vd-car-4:#3FA58F;--vd-car-5:#0D8478;
+ --vd-mag-1:#D6F0EC;--vd-mag-2:#A5DFD8;--vd-mag-3:#6CC7BD;--vd-mag-4:#2FA697;--vd-mag-5:#0B6E64;
+
+ /* ---- tipografia ---- */
+ --vd-fonte:'Inter','Helvetica Neue',Arial,sans-serif;
+ --vd-mono:'IBM Plex Mono',ui-monospace,monospace;
 }
+
+/* Tema escuro. O navy da marca vira a SUPERFÍCIE do painel, e o fundo da página
+   desce mais um degrau — senão painel e fundo encostam e a hierarquia some. */
 @media (prefers-color-scheme:dark){
  :root:not([data-theme="light"]){
-  --bg:#0A1310;--panel:#0F1D18;--panel2:#132520;--line:rgba(232,242,236,.09);--line2:rgba(232,242,236,.16);
-  --ink:#E9F4ED;--mut:#7FA396;--dim:#54726A;
-  --teal:#2FE6B0;--amber:#F5B841;--red:#FF6B57;--blue:#5CB8FF;--violet:#B79CFF;
-  --trilho:rgba(232,242,236,.08);--vinheta:rgba(10,19,16,.8);--veu:rgba(10,19,16,.82);
-  --borda-mapa:rgba(10,19,16,.85);--eixo:#54726A;--grade:rgba(232,242,236,.07);
-  --grade-forte:rgba(232,242,236,.18);--sel:#E9F4ED;--semdado:#39414A;
-  --car-1:#FF6B57;--car-2:#F5B841;--car-3:#8FB06E;--car-4:#57C9A2;--car-5:#2FE6B0;
-  --mag-1:#144036;--mag-2:#1A6353;--mag-3:#218A70;--mag-4:#28B48E;--mag-5:#2FE6B0;
+  --vd-bg:#071A2E;
+  --vd-painel:#0B2545;
+  --vd-painel2:#123156;
+  --vd-linha:rgba(232,238,244,.10);
+  --vd-linha2:rgba(232,238,244,.18);
+  --vd-tinta:#E8EEF4;      /* 13,2:1 sobre o navy */
+  --vd-tinta2:#93AAC0;     /*  6,4:1 */
+  --vd-tinta3:#7C93A9;     /*  4,8:1 */
+  --vd-acento:#2FD5C0;     /*  8,4:1 — aqui o teal claro é que carrega texto */
+  --vd-acento-forma:#2FD5C0;
+  --vd-azul:#67B6EC;
+  --vd-ambar:#F2B544;
+  --vd-vermelho:#FF7A63;
+  --vd-violeta:#B79CFF;
+  --vd-trilho:rgba(232,238,244,.09);
+  --vd-veu:rgba(4,13,24,.82);
+  --vd-vinheta:rgba(4,13,24,.8);
+  --vd-borda-mapa:rgba(7,26,46,.85);
+  --vd-grade:rgba(232,238,244,.08);
+  --vd-grade-forte:rgba(232,238,244,.18);
+  --vd-sel:#E8EEF4;
+  --vd-semdado:#34404E;
+  --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
+  --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
  }
 }
 :root[data-theme="dark"]{
- --bg:#0A1310;--panel:#0F1D18;--panel2:#132520;--line:rgba(232,242,236,.09);--line2:rgba(232,242,236,.16);
- --ink:#E9F4ED;--mut:#7FA396;--dim:#54726A;
- --teal:#2FE6B0;--amber:#F5B841;--red:#FF6B57;--blue:#5CB8FF;--violet:#B79CFF;
- --trilho:rgba(232,242,236,.08);--vinheta:rgba(10,19,16,.8);--veu:rgba(10,19,16,.82);
- --borda-mapa:rgba(10,19,16,.85);--eixo:#54726A;--grade:rgba(232,242,236,.07);
- --grade-forte:rgba(232,242,236,.18);--sel:#E9F4ED;--semdado:#39414A;
- --car-1:#FF6B57;--car-2:#F5B841;--car-3:#8FB06E;--car-4:#57C9A2;--car-5:#2FE6B0;
- --mag-1:#144036;--mag-2:#1A6353;--mag-3:#218A70;--mag-4:#28B48E;--mag-5:#2FE6B0;
+ --vd-bg:#071A2E;
+ --vd-painel:#0B2545;
+ --vd-painel2:#123156;
+ --vd-linha:rgba(232,238,244,.10);
+ --vd-linha2:rgba(232,238,244,.18);
+ --vd-tinta:#E8EEF4;
+ --vd-tinta2:#93AAC0;
+ --vd-tinta3:#7C93A9;
+ --vd-acento:#2FD5C0;
+ --vd-acento-forma:#2FD5C0;
+ --vd-azul:#67B6EC;
+ --vd-ambar:#F2B544;
+ --vd-vermelho:#FF7A63;
+ --vd-violeta:#B79CFF;
+ --vd-trilho:rgba(232,238,244,.09);
+ --vd-veu:rgba(4,13,24,.82);
+ --vd-vinheta:rgba(4,13,24,.8);
+ --vd-borda-mapa:rgba(7,26,46,.85);
+ --vd-grade:rgba(232,238,244,.08);
+ --vd-grade-forte:rgba(232,238,244,.18);
+ --vd-sel:#E8EEF4;
+ --vd-semdado:#34404E;
+ --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
+ --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+}
+/* VD:FIM */
+
+/* Apelidos locais → marca. Declarados UMA vez: os `--vd-*` já trocam sozinhos
+   entre claro e escuro, então não existe mais um bloco de tema por página.
+   O JS lê estes mesmos nomes por getComputedStyle — uma paleta só. */
+:root{
+ --bg:var(--vd-bg);--panel:var(--vd-painel);--panel2:var(--vd-painel2);
+ --line:var(--vd-linha);--line2:var(--vd-linha2);
+ --ink:var(--vd-tinta);--mut:var(--vd-tinta2);--dim:var(--vd-tinta3);
+ --teal:var(--vd-acento);--amber:var(--vd-ambar);--red:var(--vd-vermelho);
+ --blue:var(--vd-azul);--violet:var(--vd-violeta);
+ --trilho:var(--vd-trilho);--vinheta:var(--vd-vinheta);--veu:var(--vd-veu);
+ --borda-mapa:var(--vd-borda-mapa);--eixo:var(--vd-tinta3);
+ --grade:var(--vd-grade);--grade-forte:var(--vd-grade-forte);
+ --sel:var(--vd-sel);--semdado:var(--vd-semdado);
+ --car-1:var(--vd-car-1);--car-2:var(--vd-car-2);--car-3:var(--vd-car-3);--car-4:var(--vd-car-4);--car-5:var(--vd-car-5);
+ --mag-1:var(--vd-mag-1);--mag-2:var(--vd-mag-2);--mag-3:var(--vd-mag-3);--mag-4:var(--vd-mag-4);--mag-5:var(--vd-mag-5);
+ --f-disp:var(--vd-fonte);--f-body:var(--vd-fonte);--f-mono:var(--vd-mono);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -64,7 +162,9 @@ a{color:var(--teal)}
 /* header */
 header{grid-column:1/3;display:flex;align-items:center;gap:18px;padding:0 20px;border-bottom:1px solid var(--line);background:var(--panel)}
 .logo{display:flex;align-items:center;gap:12px}
-.logo .sig{width:34px;height:34px;border:1.5px solid var(--teal);border-radius:8px;display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;color:var(--teal);font-size:13px;box-shadow:0 0 18px transparent inset}
+.logo .sig{width:30px;height:30px;flex:none;display:block}
+.logo h1{letter-spacing:-.02em}
+.logo h1 span{color:var(--vd-acento-forma)}
 .logo h1{font-family:var(--f-disp);font-size:18px;font-weight:800}
 .logo .sub{font-size:10px;color:var(--mut);font-family:var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
 .munpick{display:flex;align-items:center;gap:8px;margin-left:12px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
@@ -289,7 +389,7 @@ footer .led{width:6px;height:6px;border-radius:50%;background:var(--teal);box-sh
 
 <div class="app">
 <header>
- <div class="logo"><div class="sig">CIB</div><div><h1>Painel CERURB</h1><div class="sub">Piauí · 224 municípios</div></div></div>
+ <div class="logo"><svg class="sig" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="vdg" x1="3" y1="0" x2="29" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="var(--vd-acento-forma)"/><stop offset="1" stop-color="var(--vd-tinta)"/></linearGradient></defs><g fill="url(#vdg)"><rect x="3" y="19" width="5" height="11" rx="1.4"/><rect x="10" y="14" width="5" height="16" rx="1.4"/><rect x="17" y="9" width="5" height="21" rx="1.4"/><rect x="24" y="6" width="5" height="24" rx="1.4"/></g><circle cx="26.5" cy="2.7" r="2.7" fill="var(--vd-acento-forma)"/></svg><div><h1>Vertical<span>Data</span></h1><div class="sub">Piauí · 224 municípios</div></div></div>
  <div class="munpick"><label>Município</label><select id="munSel"></select></div>
  <button class="btn ghost" id="tema" title="alternar tema" aria-label="alternar tema">tema</button>
  <div class="hk" id="hk"></div>

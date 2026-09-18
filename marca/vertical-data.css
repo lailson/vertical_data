@@ -1,0 +1,118 @@
+/* Vertical Data — tokens de marca. FONTE ÚNICA.
+ *
+ * Este arquivo é o original. As páginas não o importam por <link>: elas trazem
+ * uma cópia embutida entre os marcadores VD:INICIO e VD:FIM, escrita por
+ * `python3 marca/aplicar.py`. É assim porque painel e coletor são aplicações de
+ * arquivo único de propósito — abrem por file:// numa prefeitura sem wifi.
+ *
+ * Mudou uma cor? Mude AQUI e rode `python3 marca/aplicar.py`. Editar o bloco
+ * embutido à mão é o que faz as duas páginas divergirem em silêncio.
+ *
+ * As cores vêm medidas do PDF de marca (.orca/drops/Vertical-Data-Logomarcas.pdf),
+ * não estimadas de screenshot: navy #0B2545, teal #12B0A0, linha #E2E6EA,
+ * superfície #F4F6F8, texto fraco #5B6B7A, azul de apoio #12689F.
+ */
+:root{
+ /* ---- marca: os valores exatos do PDF, nunca ajustados ---- */
+ --vd-navy:#0B2545;
+ --vd-teal:#12B0A0;
+ --vd-azul:#12689F;
+
+ /* ---- superfície e tinta, tema claro ---- */
+ --vd-bg:#F4F6F8;          /* fundo da página (a superfície do PDF) */
+ --vd-painel:#FFFFFF;
+ --vd-painel2:#EDF1F5;
+ --vd-linha:rgba(11,37,69,.12);
+ --vd-linha2:rgba(11,37,69,.22);
+ --vd-tinta:#0B2545;       /* 15,4:1 sobre branco */
+ --vd-tinta2:#44586B;      /*  7,4:1 */
+ --vd-tinta3:#5B6B7A;      /*  5,5:1 — o cinza do próprio PDF */
+
+ /* O teal da marca dá 2,71:1 sobre branco: serve para FORMA (logo, barra,
+    preenchimento), não para TEXTO. Quem carrega texto e link no tema claro é
+    este irmão escurecido, a 4,58:1. Duas variáveis porque são dois usos. */
+ --vd-acento:#0D8478;      /* teal de interface — texto, link, foco */
+ --vd-acento-forma:#12B0A0;/* teal de marca — ícone, barra, preenchimento */
+
+ --vd-ambar:#8F5A02;       /* 5,8:1 */
+ --vd-vermelho:#C03A24;    /* 5,4:1 */
+ --vd-violeta:#5B3FB5;
+
+ --vd-trilho:rgba(11,37,69,.09);
+ --vd-veu:rgba(8,22,40,.5);
+ --vd-vinheta:rgba(92,110,128,.16);
+ --vd-borda-mapa:rgba(255,255,255,.85);
+ --vd-grade:rgba(11,37,69,.10);
+ --vd-grade-forte:rgba(11,37,69,.22);
+ --vd-sel:#0B2545;
+ --vd-semdado:#C6CED6;     /* ausência de dado: família própria, cinza frio */
+
+ /* ---- rampas de dado ----
+    CAR (carência): divergente, 1º quintil vermelho — o pior é o mais escuro.
+    MAG (magnitude): matiz único, a do teal da marca — IPTU baixo é o ALVO,
+    não um problema, então não pode ser pintado de vermelho.
+    A direção é semântica e não muda com a marca; só o matiz mudou. */
+ --vd-car-1:#C03A24;--vd-car-2:#C98518;--vd-car-3:#8AA64A;--vd-car-4:#3FA58F;--vd-car-5:#0D8478;
+ --vd-mag-1:#D6F0EC;--vd-mag-2:#A5DFD8;--vd-mag-3:#6CC7BD;--vd-mag-4:#2FA697;--vd-mag-5:#0B6E64;
+
+ /* ---- tipografia ---- */
+ --vd-fonte:'Inter','Helvetica Neue',Arial,sans-serif;
+ --vd-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+
+/* Tema escuro. O navy da marca vira a SUPERFÍCIE do painel, e o fundo da página
+   desce mais um degrau — senão painel e fundo encostam e a hierarquia some. */
+@media (prefers-color-scheme:dark){
+ :root:not([data-theme="light"]){
+  --vd-bg:#071A2E;
+  --vd-painel:#0B2545;
+  --vd-painel2:#123156;
+  --vd-linha:rgba(232,238,244,.10);
+  --vd-linha2:rgba(232,238,244,.18);
+  --vd-tinta:#E8EEF4;      /* 13,2:1 sobre o navy */
+  --vd-tinta2:#93AAC0;     /*  6,4:1 */
+  --vd-tinta3:#7C93A9;     /*  4,8:1 */
+  --vd-acento:#2FD5C0;     /*  8,4:1 — aqui o teal claro é que carrega texto */
+  --vd-acento-forma:#2FD5C0;
+  --vd-azul:#67B6EC;
+  --vd-ambar:#F2B544;
+  --vd-vermelho:#FF7A63;
+  --vd-violeta:#B79CFF;
+  --vd-trilho:rgba(232,238,244,.09);
+  --vd-veu:rgba(4,13,24,.82);
+  --vd-vinheta:rgba(4,13,24,.8);
+  --vd-borda-mapa:rgba(7,26,46,.85);
+  --vd-grade:rgba(232,238,244,.08);
+  --vd-grade-forte:rgba(232,238,244,.18);
+  --vd-sel:#E8EEF4;
+  --vd-semdado:#34404E;
+  --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
+  --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+ }
+}
+:root[data-theme="dark"]{
+ --vd-bg:#071A2E;
+ --vd-painel:#0B2545;
+ --vd-painel2:#123156;
+ --vd-linha:rgba(232,238,244,.10);
+ --vd-linha2:rgba(232,238,244,.18);
+ --vd-tinta:#E8EEF4;
+ --vd-tinta2:#93AAC0;
+ --vd-tinta3:#7C93A9;
+ --vd-acento:#2FD5C0;
+ --vd-acento-forma:#2FD5C0;
+ --vd-azul:#67B6EC;
+ --vd-ambar:#F2B544;
+ --vd-vermelho:#FF7A63;
+ --vd-violeta:#B79CFF;
+ --vd-trilho:rgba(232,238,244,.09);
+ --vd-veu:rgba(4,13,24,.82);
+ --vd-vinheta:rgba(4,13,24,.8);
+ --vd-borda-mapa:rgba(7,26,46,.85);
+ --vd-grade:rgba(232,238,244,.08);
+ --vd-grade-forte:rgba(232,238,244,.18);
+ --vd-sel:#E8EEF4;
+ --vd-semdado:#34404E;
+ --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
+ --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+}
