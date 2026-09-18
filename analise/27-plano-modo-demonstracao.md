@@ -1,5 +1,14 @@
 # Plano — modo demonstração ("as possibilidades", com dado fictício)
 
+> ⚠️ **SUPERADO EM PARTE, 18/09/2026.** O município inventado foi cancelado: nada de
+> ficção. O caminho passou a ser completar o dado que falta e prever a partir do que
+> existe — ver **`analise/28-plano-repositorio-e-predicao.md`**.
+>
+> O que continua valendo deste documento: o simulador (§6), o modelo de risco (§11.3), a
+> regra de consulta fechada do chat (§11.5) e os onze achados da revisão (§12).
+> O que caiu: §4 inteira, o regime de "maquete" e o sistema de contenção da §7 —
+> sem ficção, não há o que conter.
+
 **Data:** 2026-09-18 · **Status:** plano, aguardando execução
 **Origem:** pedido do parceiro — *"Tem como aqui tu colocar as possibilidades com dados
 imaginários?"*, sobre o protótipo `painel-gestao-municipal (1).html`
