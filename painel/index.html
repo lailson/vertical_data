@@ -612,7 +612,7 @@ function mostrarCsv(nome,texto,motivo){
 const cs=v=>v==null?'':String(v).replace(/;/g,',');
 
 /* ============================================================ estado global */
-let META, CNEFE=null, GD=null, MUNF=[], MUN={}, SELMUN='2211001', SELM=null, KE='segmento';
+let META, CNEFE=null, GD=null, TAR=null, BDGD=null, MUNF=[], MUN={}, SELMUN='2211001', SELM=null, KE='segmento';
 let BAIRROS={}, FEATS=[], SELB=null, KT='renda_med';
 let mapE=null, layE=null, mapT=null, layT=null, layFcu=null, fcuOn=true;
 let hlPil=true, hlFox=false;
@@ -647,6 +647,7 @@ const IE={
  gd_pen:{l:'Penetração de GD',full:'Conexões de geração distribuída ÷ domicílios do Censo 2022 (%) — mercado já atendido',val:p=>p.gd_pen,fmt:PC2,dir:1,mag:1,gd:1},
  gd_n:{l:'Conexões de GD',full:'Empreendimentos de micro e minigeração conectados (ANEEL, município é o menor recorte)',val:p=>p.gd_n,fmt:N,dir:1,mag:1,gd:1},
  gd_mw:{l:'Potência instalada',full:'Potência instalada de geração distribuída, em MW (ANEEL)',val:p=>p.gd_mw,fmt:MW,dir:1,mag:1,gd:1},
+ uc_sem_gd:{l:'UC sem geração',full:'Unidades consumidoras PJ de média/alta tensão sem geração própria (BDGD) — mercado de minigeração',val:p=>p.uc_sem_gd,fmt:N,dir:1,mag:1,gd:1},
  bairros:{l:'Bairros no Censo',full:'Bairros oficiais na malha CD2022 — define se o painel territorial funciona',val:p=>p.bairros,fmt:N,dir:1,censo:1,mag:1},
 };
 /* indicadores do mapa municipal ------------------------------------------ */
@@ -663,12 +664,15 @@ const IT={
 
 /* ============================================================ carga */
 async function carregar(){
- const [meta,mun,cne,gd]=await Promise.all([
+ const [meta,mun,cne,gd,tar,bd]=await Promise.all([
    fetch('dados/meta.json').then(r=>r.json()),
    fetch('dados/municipios.json').then(r=>r.json()),
    fetch('dados/cnefe.json').then(r=>r.json()).catch(()=>null),
-   fetch('dados/aneel.json').then(r=>r.json()).catch(()=>null)]);
- META=meta; CNEFE=cne; GD=gd; MUNF=mun.features.map(f=>({p:f.properties,geo:f.geometry}));
+   fetch('dados/aneel.json').then(r=>r.json()).catch(()=>null),
+   fetch('dados/tarifas.json').then(r=>r.json()).catch(()=>null),
+   fetch('dados/bdgd.json').then(r=>r.json()).catch(()=>null)]);
+ META=meta; CNEFE=cne; GD=gd; TAR=tar; BDGD=bd;
+ MUNF=mun.features.map(f=>({p:f.properties,geo:f.geometry}));
  /* o CNEFE entra como propriedade do município: é volume de cadastro, que é a
     unidade em que a remessa ao CADURB é medida e precificada */
  if(CNEFE) MUNF.forEach(f=>{const c=CNEFE.municipios[f.p.cd]; if(c) Object.assign(f.p,{
@@ -679,6 +683,10 @@ async function carregar(){
  if(GD) MUNF.forEach(f=>{const g=GD.municipios[f.p.cd]; if(g) Object.assign(f.p,{
    gd_n:g.n, gd_kw:g.kw, gd_mw:g.kw/1000, gd_pen:g.pen, gd_solar:g.solar,
    gd_micro:g.micro, gd_ano:g.ano, gd_classe:g.classe, gd_ultima:g.ultima})});
+ /* BDGD: unidades consumidoras PJ de média e alta tensão. Mercado de
+    MINIgeração — comércio e indústria —, não o residencial. */
+ if(BDGD) MUNF.forEach(f=>{const b=BDGD.municipios[f.p.cd]; if(b) Object.assign(f.p,{
+   uc_mt:b.uc, uc_carga:b.carga_kw, uc_com_gd:b.com_gd, uc_sem_gd:b.sem_gd})});
  MUNF.forEach(f=>MUN[f.p.cd]=f);
  $('#stamp').textContent='dados de '+META.gerado_em+' · série local, sem servidor';
  aplicarTema(lerTema(),false);
@@ -1437,6 +1445,42 @@ function paginaEnergia(){
     o estado vira uma reta rente ao zero. Participação põe os dois numa grandeza só, sem
     base arbitrária.<br>${DIAG}</div></div>
 
+  <div class="card" style="margin-top:14px"><h3>Tarifa vigente <span>${TAR?esc(TAR.agentes.join(', ')):'—'}</span></h3>
+   ${TAR&&TAR.residencial_b1?`
+   <div class="hrow"><span class="hl">B1 residencial · consumo comum</span><div class="bar">
+     <i style="width:100%;background:var(--vd-cat-1)"></i></div>
+    <b>R$ ${TAR.residencial_b1.total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</b></div>
+   <div class="hrow"><span class="hl">B1 residencial · regime SCEE</span><div class="bar">
+     <i style="width:${100*TAR.residencial_b1_scee.total/TAR.residencial_b1.total}%;background:var(--vd-cat-3)"></i></div>
+    <b>R$ ${TAR.residencial_b1_scee.total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</b></div>
+   <div class="nota">Valores por <b>MWh</b>, TUSD + TE, sem tributos. O <b>SCEE</b> é o regime de
+    quem tem geração própria — as duas linhas são <b>alternativas, não parcelas</b>: somá-las
+    produz um número que não existe.<br>
+    <b>Payback não é calculado aqui.</b> A Lei 14.300/2022 tem transição do Fio B até 2029 e a
+    regra muda com a data de conexão; publicar retorno sem isso seria inventar precisão.<br>
+    Vigência ${TAR.residencial_b1.vigencia[0]} a ${TAR.residencial_b1.vigencia[1]}.</div>`
+   :'<div class="empty">dados/tarifas.json não carregou</div>'}</div>
+
+  <div class="card" style="margin-top:14px"><h3>Minigeração: quem tem carga e não gera
+    <span>BDGD · PJ em média e alta tensão</span></h3>
+   ${BDGD?(()=>{const t=Object.values(BDGD.municipios);
+     const sem=t.reduce((a,x)=>a+x.sem_gd,0), com=t.reduce((a,x)=>a+x.com_gd,0);
+     const rk=MUNF.filter(f=>f.p.uc_sem_gd).sort((a,b)=>b.p.uc_sem_gd-a.p.uc_sem_gd).slice(0,8);
+     const mx=rk.length?rk[0].p.uc_sem_gd:1;
+     return `<div class="grid g2" style="margin-bottom:10px">
+      ${kpi('Sem geração própria',N(sem),'unidades PJ de média/alta tensão')}
+      ${kpi('Já com geração',N(com),'de '+N(sem+com)+' no estado')}</div>`+
+      rk.map(f=>`<div class="hrow"><span class="hl">${esc(f.p.name)}</span>
+        <div class="bar"><i style="width:${100*f.p.uc_sem_gd/mx}%;background:var(--vd-mag-4)"></i></div>
+        <b>${N(f.p.uc_sem_gd)}</b></div>`).join('')+
+      `<div class="nota">Aqui o endereço é preciso: <b>CEP completo, nome do bairro e coordenada
+        com 8 casas</b> — ao contrário da base tabular de geração, cujo CEP vem mascarado.<br>
+        <b>Cobre só pessoa jurídica</b> em média e alta tensão: ${N(sem+com)} unidades, contra
+        ${N(GD.uf_total.n)} conexões de geração no estado, quase todas residenciais. É o mercado
+        de minigeração, não o de telhado.<br>
+        Leitura: ${BDGD.linhas_lidas} linhas lidas, ${BDGD.linhas_agrupadas} agrupadas.</div>`})()
+   :'<div class="empty">dados/bdgd.json não carregou</div>'}</div>
+
   <div class="card" style="margin-top:14px"><h3>Penetração por município <span>conexões ÷ domicílios</span></h3>
    <div>${rank.map((f,i)=>`
     <div class="rrow${f.p.cd===SELMUN?' sel':''}" data-cd="${f.p.cd}">
@@ -1446,22 +1490,24 @@ function paginaEnergia(){
      <span class="val">${PC2(f.p.gd_pen)}</span></div>`).join('')}</div>
    <div class="nota">Mediana do estado: <b>${PC2(mediana)}</b>. Penetração alta significa
     mercado já atendido — e é onde a próxima venda é mais difícil, não mais fácil.</div></div>
- </div>
-
- <div class="grid g2" style="margin-top:14px">
-  <div class="card"><h3>Quem instala <span>classe de consumo · estado</span></h3>
+ 
+  <div class="card" style="margin-top:14px"><h3>Quem instala <span>classe de consumo · estado</span></h3>
    ${linhasCl.map(([k,n,cor])=>`
     <div class="hrow"><span class="hl">${esc(k)}</span>
      <div class="bar"><i style="width:${100*n/totCl}%;background:${cor}"></i></div>
      <b>${N(n)}</b></div>`).join('')}
    <div class="nota">Ordem fixa e rótulo em toda barra: a cor acompanha a classe, nunca a posição.</div></div>
 
-  <div class="card"><h3>O que esta base sustenta — e o que não</h3>
+  <div class="card" style="margin-top:14px"><h3>O que esta base sustenta — e o que não</h3>
    <div class="prosa">
     <p><b>Sustenta:</b> quanto já foi instalado, por município, com data. É desfecho observado —
      serve de rótulo para prever onde a adoção cresce.</p>
-    <p><b>Não sustenta:</b> número por bairro (a base para em município), nem leitura de
-     "hoje" (a conexão mais recente é de ${GD.conexao_mais_recente}).</p>
+    <p><b>Não sustenta:</b> contagem de geração <b>por bairro</b>, nem leitura de "hoje"
+     (a conexão mais recente é de ${GD.conexao_mais_recente}).</p>
+    <p><b>O que desce abaixo do município, e quanto:</b> a camada de pontos do <b>SIGEL</b>
+     dá coordenada com ~1,1 km e 79% de cobertura — superfície de densidade. O <b>BDGD</b>
+     dá CEP completo, bairro e coordenada exata, mas só para pessoa jurídica em média e
+     alta tensão. O residencial em massa continua sem recorte submunicipal publicado.</p>
     <p class="fonte">${esc(GD.fonte)} · licença ${esc(GD.licenca)} ·
      carga ${GD.vintage} · <a href="${GD.url}" target="_blank" rel="noopener">fonte</a></p>
    </div></div>

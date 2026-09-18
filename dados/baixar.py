@@ -34,6 +34,10 @@ CNEFE = ('https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estat
 #   /api/3/action/package_show?id=relacao-de-empreendimentos-de-geracao-distribuida
 ANEEL = ('https://dadosabertos.aneel.gov.br/dataset/5e0fafd2-21b9-4d5b-b622-40438d40aba2'
          '/resource/%s/download/%s')
+ANEEL_TAR = ('https://dadosabertos.aneel.gov.br/dataset/5a583f3e-1646-4f67-bf0f-69db4203e89e'
+             '/resource/%s/download/%s')
+ANEEL_BDGD = ('https://dadosabertos.aneel.gov.br/dataset/4459e483-451f-4444-8022-bd8b5eac05c5'
+              '/resource/%s/download/%s')
 
 B = AGREG + '/Agregados_por_Bairro_csv'
 M = AGREG + '/Agregados_por_Municipio_csv'
@@ -80,6 +84,20 @@ ESSENCIAIS = {
         '703c4cb8-b7e2-4f27-a9bb-7e55324a88a4',
         'empreendimento-gd-informacoes-tecnicas-fotovoltaica.parquet'),
 
+    # Tarifas homologadas. Sem tarifa não se calcula payback, e payback é o que
+    # decide adoção de geração — é a variável causal que falta ao modelo.
+    'aneel/tarifas.csv': ANEEL_TAR % (
+        'fcf2906c-7c32-4b9b-a637-054e7a5234f4',
+        'tarifas-homologadas-distribuidoras-energia-eletrica.csv'),
+
+    # BDGD — unidades consumidoras de ALTA e MÉDIA tensão (pessoa jurídica).
+    # É o mercado de minigeração: comércio e indústria. A tabela de BAIXA tensão
+    # (ucbt_pj.zip) tem 1,2 GB e fica fora até haver uso que a justifique.
+    'aneel/bdgd_ucat_pj.csv': ANEEL_BDGD % (
+        '4318d38a-0bcd-421d-afb1-fb88b0c92a87', 'ucat_pj.csv'),
+    'aneel/bdgd_ucmt_pj.csv': ANEEL_BDGD % (
+        'f6671cba-f269-42ef-8eb3-62cb3bfa0b98', 'ucmt_pj.csv'),
+
     # --- RFB/Sinter (nomes mudam por mês — ajustar se 404) ---
     'sinter/adesoes.xls': SINTER + '/adesoes_setembro_2026_2.xls',
     'sinter/inscricoes.csv': SINTER + '/inscricoes_ativas_setembro_2026_2.csv',
@@ -102,6 +120,9 @@ EXTRAS = {
 REVALIDAR_DIAS = {
     'aneel/gd_empreendimentos.parquet': 1,
     'aneel/gd_fotovoltaica_tecnica.parquet': 1,
+    'aneel/tarifas.csv': 7,     # homologações são episódicas; uma semana basta
+    'aneel/bdgd_ucat_pj.csv': 30,
+    'aneel/bdgd_ucmt_pj.csv': 30,
 }
 
 

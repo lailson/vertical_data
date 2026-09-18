@@ -250,3 +250,58 @@ cinza num preenchimento, então o slot 3 usa o teal de forma. No tema escuro os 
 são **escolhidos**, não invertidos — a faixa de luminosidade para gráfico é L 0,48–0,67,
 mais escura que a dos tokens de interface. Validado em faixa, cromo, separação sob
 daltonismo e contraste, nos dois temas.
+
+---
+
+## 10. ANEEL — tarifas e BDGD (18/09/2026)
+
+Duas fontes que entraram juntas, porque respondem à mesma pergunta por lados opostos:
+quanto vale gerar, e quem tem carga para gerar.
+
+### 10.1 Tarifas homologadas · `painel/build_tarifas.py`
+
+Licença ODbL. Uma distribuidora responde por **99,65%** das conexões do Piauí —
+**Equatorial PI** —, o que torna o cruzamento por município quase trivial.
+
+**A armadilha do arquivo.** A mesma tarifa aparece duas vezes por subgrupo:
+
+| `DscDetalhe` | o que é | B1 residencial convencional |
+|---|---|---|
+| `Não se aplica` | consumo comum | TUSD 647,22 + TE 299,47 = **R$ 946,69/MWh** |
+| `SCEE` | regime de quem tem geração própria | TUSD 647,22 + TE 36,61 = **R$ 683,83/MWh** |
+
+São **alternativas, não parcelas**. A primeira leitura somou as duas e produziu
+R$ 1.630,52/MWh — um valor que não existe. O filtro correto exige `DscDetalhe`,
+`NomPostoTarifario`, `DscModalidadeTarifaria`, `DscClasse` e `DscSubClasse` juntos.
+
+**Payback não é calculado.** A Lei 14.300/2022 tem cronograma de transição do Fio B até
+2029 e a regra varia com a data de conexão. Publicar retorno sem essa transição seria
+inventar precisão — a tela mostra a tarifa e diz o que falta.
+
+### 10.2 BDGD — unidades consumidoras PJ · `painel/build_bdgd.py`
+
+Licença ODbL. É o que **desce abaixo do município com precisão de verdade**: cada
+unidade traz **CEP completo** (não mascarado), **nome do bairro**, **coordenada com 8
+casas**, CNAE, carga instalada, consumo mês a mês, e `CEG_GD` — se já tem geração.
+
+No Piauí: **4.230 unidades em 197 municípios · 945 já com geração · 3.285 sem.**
+
+**A ressalva que define o uso:** é só **pessoa jurídica em média e alta tensão**. Contra
+as 90.528 conexões do estado, quase todas residenciais, isto é o mercado de
+**minigeração** — comércio e indústria —, não o de telhado. A tabela de baixa tensão
+(1,2 GB) também é só PJ: residência de pessoa física não é publicada, por privacidade.
+
+**Perda declarada na leitura:** 4.236 linhas lidas, 4.230 agrupadas — 6 linhas (0,14%)
+descartadas por erro de formatação no CSV. O agregador imprime a diferença em vez de
+escondê-la, e ela vai no JSON (`linhas_lidas`, `linhas_agrupadas`).
+
+### 10.3 Onde cada base desce
+
+| base | menor recorte | ressalva |
+|---|---|---|
+| ANEEL MMGD (tabular) | município | CEP mascarado nos 3 últimos dígitos |
+| SIGEL (pontos) | coordenada **~1,1 km** | 79% de cobertura, ~0,9% grosseiramente fora |
+| BDGD (UC MT/AT) | **coordenada exata + bairro + CEP** | só PJ de média e alta tensão |
+
+O residencial em massa continua sem recorte submunicipal publicado — e é por isso que a
+tela não pinta geração por bairro.
