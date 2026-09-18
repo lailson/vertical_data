@@ -86,6 +86,16 @@ for cd, ano, n, kw in serie:
     if ano and ano > 2009:
         por_ano.setdefault(str(cd), {})[str(ano)] = [n, kw]
 
+# Série nacional, para comparação. Sem ela o Piauí sozinho é ambíguo: uma queda
+# pode ser o mercado inteiro encolhendo ou só este estado perdendo participação —
+# e são conclusões comerciais opostas.
+br = c.execute(f"""
+  SELECT year(f.DatConexao) ano, count(*) n
+  FROM read_parquet('{EMP}') e
+  LEFT JOIN read_parquet('{FOT}') f ON e.CodEmpreendimento = f.CodGeracaoDistribuida
+  WHERE f.DatConexao IS NOT NULL AND year(f.DatConexao) BETWEEN 2010 AND 2100
+  GROUP BY 1 ORDER BY 1""").fetchall()
+
 # domicílios do Censo: transforma contagem em penetração, que é o número que decide
 mun = {f['properties']['cd']: f['properties']
        for f in json.load(open(os.path.join(DADOS, 'municipios.json'), encoding='utf-8'))['features']}
@@ -106,6 +116,7 @@ saida = {
     'nota_lacuna': ('a ANEEL suspendeu a atualização entre 23/09 e 13/11/2025 na migração '
                     'SISGD → MMGD; o vale de 2025 na série reflete isso'),
     'uf': UF, 'municipios': {},
+    'br_ano': {str(ano): n for ano, n in br},
 }
 for cd, nome, n, kw, micro, solar, kw_solar, c0, c1 in linhas:
     k = str(cd)

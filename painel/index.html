@@ -1306,7 +1306,11 @@ function serieEstado(){
 }
 function linhaGD(id,anos,series,rotulo,parcial){
  const s=$(id); if(!s) return;
- const W=300,H=140,pl=34,pr=10,pt=12,pb=20; s.innerHTML='';
+ /* as dimensões saem do viewBox do próprio elemento. Fixá-las na função fazia o
+    desenho vazar em qualquer <svg> com outra altura — foi o que cortou o eixo do
+    gráfico de participação, que tem 130 e recebia traçado de 140. */
+ const vb=(s.getAttribute('viewBox')||'0 0 300 140').split(/\s+/).map(Number);
+ const W=vb[2]||300, H=vb[3]||140, pl=34,pr=10,pt=12,pb=20; s.innerHTML='';
  const mk=(t,a,txt)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);
    for(const k in a)e.setAttribute(k,a[k]); if(txt!=null)e.textContent=txt; s.appendChild(e); return e};
  const vals=series.flatMap(se=>se.v).filter(v=>v!=null);
@@ -1349,7 +1353,11 @@ function linhaGD(id,anos,series,rotulo,parcial){
     'paint-order':'stroke','stroke-linejoin':'round'},se.nome);
  });
 }
-const fmtCurto=v=>v>=1e6?(v/1e6).toFixed(1).replace('.',',')+'M':v>=1e3?Math.round(v/1e3)+'k':String(Math.round(v));
+/* o eixo serve tanto a contagem (22k) quanto a percentual (2,44): abaixo de 10
+   arredondar para inteiro apagaria a variação inteira da série */
+const fmtCurto=v=>v>=1e6?(v/1e6).toFixed(1).replace('.',',')+'M'
+ :v>=1e3?Math.round(v/1e3)+'k'
+ :v>=10?String(Math.round(v)):v.toFixed(2).replace('.',',');
 
 function paginaEnergia(){
  if(!GD){$('#pg-energia').innerHTML='<div class="topbar"><div><h2>Energia distribuída</h2>'+
@@ -1363,6 +1371,23 @@ function paginaEnergia(){
  if(p&&p.gd_ano) serie.push({nome:p.name,cor:tok('--vd-cat-3'),
    v:anos.map(a=>p.gd_ano[a]?(KGD==='n'?p.gd_ano[a][0]:p.gd_ano[a][1]/1000):null)});
  const rot=KGD==='n'?(v=>N(v)+' conexões'):(v=>MW(v));
+
+ /* Participação, não índice. Indexar a 2019 mede crescimento DESDE 2019 e é
+    dominado pelo boom inicial — chegava a dizer que o Piauí "acompanhou o país"
+    justamente no ano em que perdeu 29%. Participação responde à pergunta que
+    interessa, é UMA série e não depende de base arbitrária. */
+ const brA=GD.br_ano||{};
+ const anosIdx=anos.filter(a=>brA[a]&&acc[a]&&a>='2019');
+ const serieIdx=anosIdx.length?[{nome:'',cor:tok('--vd-cat-1'),
+   v:anosIdx.map(a=>100*acc[a][0]/brA[a])}]:[];
+ let DIAG='';
+ if(anosIdx.length>=3){
+  const ult=anosIdx[anosIdx.length-2], pen=anosIdx[anosIdx.length-3];
+  const sh=a=>100*acc[a][0]/brA[a], d=sh(ult)-sh(pen);
+  DIAG=`Participação do Piauí: <b>${PC2(sh(pen))}</b> em ${pen} → <b>${PC2(sh(ult))}</b> em ${ult}. `+
+   (d<-0.05?'O país ficou estável e o estado caiu — é <b>perda de participação</b>, não retração do mercado nacional.'
+    :d>0.05?'O estado <b>ganhou</b> participação.':'Participação estável.');
+ }
 
  const rank=MUNF.filter(f=>f.p.gd_pen!=null).sort((a,b)=>b.p.gd_pen-a.p.gd_pen).slice(0,14);
  const mx=rank.length?rank[0].p.gd_pen:1;
@@ -1399,14 +1424,20 @@ function paginaEnergia(){
    </div>
    <svg id="gdSerie" viewBox="0 0 300 140" style="width:100%"></svg>
    <div class="nota">Um eixo por vez, de propósito: conexões e MW não dividem escala.<br>
-    <b>O último ponto é tracejado e vazado porque o ano está pela metade</b> — a conexão
-    mais recente na base é de <b>${GD.conexao_mais_recente}</b>. Lido como ano inteiro,
-    ele pareceria retração.<br>
-    O vale de 2025 tem outra causa: a ANEEL <b>suspendeu a atualização entre 23/09 e
-    13/11/2025</b> na migração SISGD → MMGD. Atualização diária não é o mesmo que dado
-    do dia.</div></div>
+    <b>O último ponto é tracejado e vazado porque o ano está pela metade</b> — a base vai
+    até <b>${GD.conexao_mais_recente}</b>, fecha em trimestre. Lido como ano inteiro,
+    pareceria retração.<br>
+    <b>A queda de 2025 é real</b> e não é efeito da suspensão da ANEEL: aquela migração
+    derrubou <i>um mês</i> (outubro/2025, 300 conexões contra ~1.100 nos vizinhos), não o
+    ano. Ver a comparação com o Brasil ao lado.</div></div>
 
-  <div class="card"><h3>Penetração por município <span>conexões ÷ domicílios</span></h3>
+  <div class="card"><h3>Participação do Piauí no Brasil <span>% das conexões do ano</span></h3>
+   <svg id="gdIdx" viewBox="0 0 300 130" style="width:100%"></svg>
+   <div class="nota">Brasil faz 900 mil conexões por ano e o Piauí, 20 mil — no mesmo eixo
+    o estado vira uma reta rente ao zero. Participação põe os dois numa grandeza só, sem
+    base arbitrária.<br>${DIAG}</div></div>
+
+  <div class="card" style="margin-top:14px"><h3>Penetração por município <span>conexões ÷ domicílios</span></h3>
    <div>${rank.map((f,i)=>`
     <div class="rrow${f.p.cd===SELMUN?' sel':''}" data-cd="${f.p.cd}">
      <span class="i">${i+1}</span>
@@ -1439,6 +1470,7 @@ function paginaEnergia(){
  /* o último ano só está completo se a base já tiver chegado a 31/12 dele */
  const parcial = GD.conexao_mais_recente < anos[anos.length-1]+'-12-31';
  linhaGD('#gdSerie',anos,serie,rot,parcial);
+ if(serieIdx.length) linhaGD('#gdIdx',anosIdx,serieIdx,v=>PC2(v),parcial);
  $$('#pg-energia [data-gd]').forEach(b=>b.onclick=()=>{KGD=b.dataset.gd;paginaEnergia()});
  $$('#pg-energia .rrow').forEach(r=>r.onclick=()=>{selecionarMun(r.dataset.cd,false);paginaEnergia()});
 }

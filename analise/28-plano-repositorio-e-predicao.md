@@ -92,13 +92,36 @@ Verificado na fonte em 18/09/2026, não de memória:
 
 | base | traz | granularidade | custo / ressalva |
 |---|---|---|---|
-| **ANEEL — MMGD** ([portal](https://dadosabertos.aneel.gov.br/dataset/relacao-de-empreendimentos-de-geracao-distribuida)) | cada empreendimento de micro/minigeração: fonte, potência em kW, **data de conexão**, classe, distribuidora | **município** | CSV e **Parquet**, atualização **diária**. ⚠️ houve **interrupção de 23/09 a 13/11/2025** na migração SISGD → MMGD: buraco na série que precisa aparecer no gráfico, não ser interpolado |
+| **ANEEL — MMGD** ([portal](https://dadosabertos.aneel.gov.br/dataset/relacao-de-empreendimentos-de-geracao-distribuida)) | cada empreendimento de micro/minigeração: fonte, potência em kW, **data de conexão**, classe, distribuidora | **município** (a camada de pontos do SIGEL dá coordenada — §4-bis) | CSV e **Parquet**, atualização **diária**. ⚠️ houve **interrupção de 23/09 a 13/11/2025** na migração SISGD → MMGD: buraco na série que precisa aparecer no gráfico, não ser interpolado |
 | **LABREN / INPE — Atlas Solar** ([portal](https://labren.ccst.inpe.br/atlas_2017.html)) | irradiação global horizontal, direta normal, plano inclinado, difusa | grade + **sedes municipais** | CSV e SHP. ⚠️ **licença restringe reprodução para fim comercial sem autorização do INPE** — usar como *insumo* citando a fonte é permitido; republicar a base, não. Isto precisa de decisão antes de virar produto pago |
 | **SNIS / SINISA** ([resultados](https://www.gov.br/cidades/pt-br/acesso-a-informacao/acoes-e-programas/saneamento/sinisa/resultados-sinisa/resultados-sinisa-2025)) | água, esgoto, resíduos, drenagem, gestão — **série desde 1995** | município, **autodeclarado pelo prestador** | O SNIS encerrou em 2023; o **SINISA** assumiu em 2024. Em 2024, **3.396 de 5.570** municípios têm todos os componentes — ausência é a regra, não a exceção |
 | **ANEEL — SIGEL / SIGET** ([portal](https://dadosabertos-aneel.opendata.arcgis.com/)) | subestações, linhas de transmissão, usinas | **geometria** | SHP/GeoJSON/KML. É o que torna possível falar de usina em solo |
 | **CNEFE 2022** (já no repositório) | 1,89 mi de endereços no PI, coordenada, **tipo de edificação** | **endereço** | já baixado e agregado |
 | **Censo 2022** (já no repositório) | renda, domicílios, entorno | bairro / município | já baixado |
 | **SICONFI / RREO** (já no repositório) | IPTU, ITBI, RCL, 2023–2025 | município | já baixado |
+
+### 4-bis. Revisão de 18/09 — o que faltava, e o que mudou
+
+**Entra por cima de tudo: BDGD** (`base-de-dados-geografica-da-distribuidora-bdgd`, ODbL).
+É a rede de **distribuição** georreferenciada — transformador, alimentador, unidade
+consumidora. Telhado não se conecta a linha de transmissão, conecta-se ao transformador da
+esquina: para geração distribuída ela vale mais que o SIGEL de transmissão.
+
+**Entra junto: tarifas homologadas** (`tarifas-distribuidoras-energia-eletrica`,
+atualizada diariamente). **Sem tarifa não há payback, e payback é o que decide adoção.**
+É a variável que faz o modelo sair do descritivo — prever com causa, não com correlação.
+
+**Também no catálogo:** `siga-…` (usinas, versão diária) e `atendimento-mmgd`.
+
+**Correção sobre granularidade.** O plano dizia "município e só". Vale para a base
+tabular. O SIGEL publica camada de **pontos** de GD com lat/lon — 71.558 no Piauí. Mas
+arredondadas em **duas casas (~1,1 km)**, com ~0,9% grosseiramente fora do município
+declarado e **79% de cobertura** contra a tabular. Dá **superfície de densidade**, não
+contagem por bairro. Detalhe em `analise/29-analise-fontes-propostas.md`.
+
+**Projeção.** Nada de UTM 23S para o estado: a zona vai de −48° a −42° e o Piauí vai a
+−40,58°, cruzando para a zona 24. SIRGAS 2000 geográfico (EPSG:4674) com cálculo
+geodésico, e projeção equivalente em área quando o cálculo exigir.
 
 Candidatas para depois, na ordem em que provavelmente pagam: **INEP** (Censo Escolar,
 já mapeado), **CNES/DATASUS** (saúde), **MapBiomas** (uso do solo, para aptidão de
@@ -171,6 +194,25 @@ não 224 linhas.
   prevê T+1. Validação aleatória num processo com difusão espacial e temporal infla o
   resultado e é o erro clássico deste tipo de dado.
 
+**O alvo é censurado à direita, e isso precisa de regra — não de aviso.** Medido na série
+trimestral do Piauí:
+
+| | |
+|---|---|
+| último trimestre presente | **2026T2**, e a base fecha em **30/06/2026** |
+| 2026T3 em diante | **ausente**, não zero |
+| outubro/2025 | **300** conexões contra ~1.100 nos meses vizinhos — resíduo da migração SISGD → MMGD |
+
+Um modelo treinado sobre isso aprende colapso. **Regra: só entram trimestres fechados
+pela defasagem, e outubro/2025 entra marcado como observação degradada** — nem descartado
+em silêncio, nem tratado como medição boa.
+
+**E a queda de 2025 não é artefato.** O Piauí caiu de 22.177 para 15.721 conexões (−29%)
+enquanto o Brasil ficou estável (909.303 → 906.480). A suspensão do sistema explica cerca
+de um mês, não o ano. **É perda de participação do estado** — 2,44% para 1,73% —, e isso é
+um fato comercial, não um defeito de dado. A tela de energia foi corrigida: ela afirmava a
+causa errada.
+
 ### 6.2 O que ganhou base agora e estava congelado
 
 **Série histórica.** Estava congelada porque *"o Censo tem uma medição"* — verdade, e
@@ -207,9 +249,14 @@ e é aí que a recomendação tem de ser mais disciplinada, não menos.
 sustenta com fonte, e a premissa que, se falsa, derruba a recomendação. Sem a terceira,
 é palpite com tipografia boa.
 
-> Priorizar GD em **Piripiri**: 34.533 endereços, 8.200 com telhado próprio e sem
-> geração, irradiação 5,7 kWh/m²·dia. *Premissa: tarifa do grupo B mantida; se a
-> distribuidora reclassificar, a conta muda.*
+> Priorizar GD em **Barras**: **17.827** domicílios em casa (CNEFE, tipo 101/102) contra
+> **634** conexões de geração distribuída (ANEEL) — **3,56%**, a menor penetração entre os
+> municípios de porte do estado, contra 13,20% em Teresina.
+> *Premissa: tarifa do grupo B mantida; se a distribuidora reclassificar, a conta muda.*
+
+Todos os números acima são medidos, não ilustrativos — a versão anterior deste plano
+trazia um exemplo com valores inventados, o que é exatamente o que a regra da casa proíbe.
+No estado inteiro são **1.246.467** domicílios em casa sem geração.
 
 Camadas novas de tela, em ordem de valor:
 1. **mapa de aptidão** (usina) e **mapa de mercado endereçável** (telhado)
@@ -226,10 +273,11 @@ gasto**, não por elegância:
 
 | # | entrega | dias | por quê nesta posição |
 |---|---|---|---|
-| 1 | **ANEEL MMGD ingerida** + tela de adoção de GD no PI | 1 | dado real, atualização diária, e é o assunto que ele quer ver. Prova o conceito sem prometer nada |
+| ~~1~~ | ~~ANEEL MMGD + tela de adoção~~ | ✅ | **feito em 18/09.** 90.528 conexões, 872,7 MW, 224/224 municípios |
+| 1 | **BDGD + tarifas homologadas** | 1,5 | a rede de distribuição e o preço da energia. Sem os dois, o modelo correlaciona; com eles, explica |
 | 2 | **Repositório em DuckDB/Parquet** com proveniência e linhagem | 1,5 | sem isto, cada base nova é um script órfão. É a fundação, e cobrar dela agora é mais barato que refazer depois |
 | 3 | **LABREN + mercado endereçável de telhado** (CNEFE × irradiação × ANEEL) | 1,5 | primeira resposta que ninguém mais no mercado dá |
-| 4 | **Modelo de adoção de GD** com validação temporal | 2 | a predição com rótulo real |
+| 4 | **Modelo de adoção de GD** com validação temporal | 2 | a predição com rótulo real — agora com tarifa entre as preditoras, que é a variável causal |
 | 5 | **SIGEL + aptidão para usina** com pesos declarados | 2 | produto distinto, cliente distinto |
 | 6 | SNIS/SINISA: série histórica e custo unitário | 1 | descongela duas coisas do plano 27 |
 
@@ -250,8 +298,13 @@ a etapa 1 já responde com dado real — e responde melhor do que qualquer maque
    Teste: agregações sobre coluna com nulo devolvem nulo, nunca zero.
 5. O modelo de GD é validado por **corte temporal**, e a tela mostra o erro fora da
    amostra junto do resultado.
-6. O buraco da ANEEL (23/09–13/11/2025) aparece como **falha na série**, nunca
-   interpolado.
+6. O resíduo da migração da ANEEL (outubro/2025) aparece **marcado**, nunca interpolado,
+   e a queda de 2025 é apresentada como **fato medido**, não atribuída à migração.
+9. **Deriva de esquema falha alto.** Toda fonte guarda o hash da lista de colunas; se a
+   coluna mudar, a carga **para** em vez de seguir com campo faltando. A ANEEL trocou de
+   sistema (SISGD → MMGD) no meio de 2025 — fonte pública muda de forma, e descobrir isso
+   por um número errado na tela é caro demais.
+10. O alvo do modelo usa **apenas trimestres fechados** pela defasagem da fonte.
 7. O painel continua abrindo **sem internet**, com o recorte JSON de hoje.
 8. A licença do LABREN está resolvida por escrito antes de qualquer uso comercial.
 
@@ -261,7 +314,9 @@ a etapa 1 já responde com dado real — e responde melhor do que qualquer maque
 
 | risco | tamanho | o que fazer |
 |---|---|---|
-| **Licença do LABREN** veda reprodução comercial sem autorização | alto — pode travar produto pago | pedir autorização ao INPE agora, em paralelo; ter alternativa (Global Solar Atlas, NASA POWER) mapeada |
+| **Licença do LABREN** veda reprodução comercial sem autorização | alto — pode travar produto pago | pedir autorização ao INPE agora, em paralelo |
+| **LABREN indisponível e formato não confirmado** | médio, subiu na revisão | em 18/09 o site recusou conexão em 80 e 443. A lista de fontes afirma NetCDF/GeoTIFF; a evidência anterior indicava CSV e SHP. **Confirmar antes de planejar `xarray`.** Alternativas com licença melhor para uso comercial: **Global Solar Atlas** (CC-BY) e **NASA POWER** (domínio público) |
+| Irradiação pode não discriminar dentro do PI | médio | o estado é uniformemente de alta irradiação; se a variação intraestadual for pequena, ela **não ordena municípios** e sai do caminho crítico do produto do Piauí. Medir antes de depender dela |
 | Repositório vira fim em si e a janela do CIB fecha | alto | a ordem da §8 existe para isso: etapa 1 em um dia, mostra, decide |
 | ANEEL só desce a município e a tela sugere bairro | médio | marcação obrigatória (critério 3); modelado ≠ medido |
 | SINISA autodeclarado tratado como medição | médio | duas séries, dois traços, nunca emendadas |

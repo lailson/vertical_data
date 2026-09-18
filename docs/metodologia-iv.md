@@ -232,8 +232,13 @@ coincide com `DthAtualizaCadastralEmpreend` em todos os registros.
    recente é de **30/06/2026** — quase três meses de defasagem. Por isso o último ano
    da série aparece **tracejado e com marcador vazado**: lido como ano inteiro,
    pareceria retração de mercado.
-3. **O vale de 2025 tem causa conhecida.** A ANEEL suspendeu a atualização entre
-   23/09 e 13/11/2025 na migração SISGD → MMGD.
+3. **A queda de 2025 é real — e eu atribuí a causa errada primeiro.** A tela dizia que o
+   vale era efeito da suspensão da ANEEL (23/09 a 13/11/2025, migração SISGD → MMGD).
+   Medido depois: a suspensão derrubou **um mês** — outubro/2025 tem **300** conexões
+   contra ~1.100 nos vizinhos. O ano inteiro caiu de **22.177 para 15.721 (−29%)**
+   enquanto o **Brasil ficou estável** (909.303 → 906.480). É **perda de participação do
+   Piauí**: de **2,44%** das conexões nacionais em 2024 para **1,73%** em 2025.
+   Corrigido em 18/09/2026; a tela ganhou o gráfico de participação.
 
 **Dado pessoal:** o arquivo traz `NumCPFCNPJ` e `NomTitularEmpreendimento` de cada
 titular. Nenhum dos dois sai do `build_aneel.py` — a leitura seleciona coluna a
