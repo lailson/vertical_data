@@ -28,3 +28,6 @@ graphify-out/cache/
 
 # duplicata byte a byte do PDF de logomarcas — o arquivo segue no disco
 *copy.pdf
+
+# cache do wrangler — local, regenerável
+painel/deploy/.wrangler/
