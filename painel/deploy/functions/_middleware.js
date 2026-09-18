@@ -1,5 +1,5 @@
 /**
- * Basic auth para o Painel CERURB no Cloudflare Pages.
+ * Basic auth para o Vertical Data no Cloudflare Pages.
  *
  * Roda antes de qualquer arquivo — HTML, JSON de dados, Leaflet. Sem o
  * cabeçalho certo, nada sai. Usuário e senha vêm de variáveis de ambiente do
@@ -30,10 +30,10 @@ function igual(a, b) {
 }
 
 const NEGADO = () =>
-  new Response('Acesso restrito ao Painel CERURB.', {
+  new Response('Acesso restrito — Vertical Data.', {
     status: 401,
     headers: {
-      'WWW-Authenticate': 'Basic realm="Painel CERURB", charset="UTF-8"',
+      'WWW-Authenticate': 'Basic realm="Vertical Data", charset="UTF-8"',
       'Cache-Control': 'no-store',
       'Content-Type': 'text/plain; charset=utf-8',
     },
@@ -46,7 +46,7 @@ export async function onRequest({ request, env, next }) {
   // Sem credencial configurada o site não sobe aberto por acidente.
   if (!usuario || !senha) {
     return new Response(
-      'Painel sem credencial configurada. Defina PAINEL_USUARIO e PAINEL_SENHA no projeto.',
+      'Vertical Data sem credencial configurada. Defina PAINEL_USUARIO e PAINEL_SENHA no projeto.',
       { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
     );
   }
