@@ -43,8 +43,8 @@ Chrome. O login expira sempre. Use API token, que é offline:
 
 ```bash
 # crie no editor, não pelo histórico do shell
-$EDITOR ~/.cerurb-cf.env
-chmod 600 ~/.cerurb-cf.env
+$EDITOR ~/.vertical-data.env
+chmod 600 ~/.vertical-data.env
 ```
 
 ```
@@ -61,7 +61,7 @@ cd ~/projetos/projeto-cerurb
 ```
 
 Sem as variáveis de senha, o site responde **503** — ele não abre desprotegido.
-Defina as duas no painel da Cloudflare, em *Workers & Pages → painel-cerurb →
+Defina as duas no painel da Cloudflare, em *Workers & Pages → vertical-data →
 Settings → Variables and secrets*, tipo **Secret**:
 
 | Nome | Valor |
@@ -71,10 +71,10 @@ Settings → Variables and secrets*, tipo **Secret**:
 
 Depois de salvar, republique (`./painel/deploy/publicar-cf.sh`) para a função
 enxergar os valores. Pela linha de comando o equivalente é
-`npx wrangler pages secret put PAINEL_SENHA --project-name painel-cerurb`, que
+`npx wrangler pages secret put PAINEL_SENHA --project-name vertical-data`, que
 pede o valor no terminal — use se preferir não abrir o navegador.
 
-Sai uma URL `https://painel-cerurb.pages.dev`, já com HTTPS e já pedindo senha.
+Sai uma URL `https://vertical-data.pages.dev`, já com HTTPS e já pedindo senha.
 Domínio próprio é opcional — *Custom domains* no projeto, se um dia houver um.
 
 Guarde usuário e senha no seu gerenciador de senhas. **Não há credencial neste
@@ -84,7 +84,7 @@ repositório**, e não deve haver.
 
 ```bash
 ./painel/deploy/montar.sh
-cd painel/deploy && npx wrangler pages deploy publico --project-name painel-cerurb
+cd painel/deploy && npx wrangler pages deploy publico --project-name vertical-data
 ```
 
 Regerar os dados antes, se o ETL mudou: `.venv/bin/python painel/build_dados.py`.
@@ -113,3 +113,27 @@ novo `secret put`. Se o painel passar a circular entre prefeituras e parceiros, 
 caminho é o Cloudflare Access (gratuito até 50 pessoas): cada um entra com o
 próprio e-mail, você revoga individualmente e fica registro de quem abriu. A
 função aqui continua valendo como segunda porta.
+
+---
+
+## Mudança de nome, 18/09/2026
+
+O projeto passou a se chamar **Vertical Data**, e o Pages **não renomeia
+projeto**: a URL sai do nome, então o caminho foi criar `vertical-data` e
+publicar nele. O antigo `painel-cerurb` continua no ar.
+
+Os dois não compartilham nada — nem deployment, nem variável. Por isso, **num
+projeto novo o painel sobe sem credencial** e o middleware devolve 503 a tudo,
+que é a falha na direção certa. Para liberar:
+
+1. Workers & Pages → **vertical-data** → Settings → Variables and Secrets
+2. `PAINEL_USUARIO` e `PAINEL_SENHA`, tipo **Secret**, ambiente **Production**
+3. variável nova só vale no próximo deploy — rode `publicar-cf.sh` de novo
+
+**Aposentar o antigo é decisão à parte.** O link `painel-cerurb.pages.dev` já
+foi compartilhado; apagar o projeto quebra esse link para quem o tiver salvo.
+Enquanto os dois existirem, os dois pedem senha — não há vazamento em manter.
+
+A credencial da Cloudflare **não mudou de arquivo**: o script aceita
+`~/.vertical-data.env` e, se não existir, o `~/.cerurb-cf.env` antigo. Renomear
+um arquivo de segredo só para alinhar nomenclatura é trocar risco por estética.

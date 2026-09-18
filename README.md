@@ -136,7 +136,7 @@ INFERRED ou AMBIGUOUS, com o arquivo de origem.
 2. **Ausência não é zero.** 72 municípios sem RREO ≠ 72 municípios com IPTU zero — e
    outros 13 declararam IPTU = 0, o que *é* dado.
 3. **Credencial nunca entra no repositório.** Nem valor, nem mensagem de commit, nem
-   issue. As do deploy vivem em `~/.cerurb-cf.env` (chmod 600) e como secrets do Pages.
+   issue. As do deploy vivem em `~/.vertical-data.env` (chmod 600) e como secrets do Pages.
 4. **A cor tem direção declarada.** Duas paletas: carência (1º quintil vermelho) e
    magnitude (rampa de matiz único — IPTU baixo é o *alvo*, não um problema). A
    marca trocou o matiz; a direção é da metodologia (`docs/metodologia-iv.md` §6)

@@ -6,16 +6,27 @@
 # não alcança esse localhost — o login expira sempre.
 #
 # Espera um arquivo com o token, fora do repositório:
-#   ~/.cerurb-cf.env   (chmod 600)
+#   ~/.vertical-data.env   (chmod 600)
 #     CLOUDFLARE_API_TOKEN=...
 #     CLOUDFLARE_ACCOUNT_ID=...
+#
+# O nome antigo (~/.cerurb-cf.env) continua valendo: o projeto mudou de nome,
+# a credencial é a mesma, e obrigar a renomear um arquivo de segredo só para
+# alinhar nomenclatura é trocar risco por estética.
 set -euo pipefail
 
-projeto="${1:-painel-cerurb}"
+projeto="${1:-vertical-data}"
 aqui="$(cd "$(dirname "$0")" && pwd)"
-env_file="${CERURB_CF_ENV:-$HOME/.cerurb-cf.env}"
+env_file="${VERTICAL_DATA_ENV:-}"
+if [[ -z $env_file ]]; then
+	for c in "$HOME/.vertical-data.env" "$HOME/.cerurb-cf.env"; do
+		[[ -f $c ]] && { env_file="$c"; break; }
+	done
+	env_file="${env_file:-$HOME/.vertical-data.env}"
+fi
 
 [[ -f $env_file ]] || { echo "faltando $env_file — veja painel/deploy/LEIAME.md" >&2; exit 1; }
+echo "· credencial $env_file"
 set -a; # shellcheck disable=SC1090
 source "$env_file"; set +a
 [[ -n ${CLOUDFLARE_API_TOKEN:-} ]] || { echo "CLOUDFLARE_API_TOKEN vazio em $env_file" >&2; exit 1; }
@@ -60,3 +71,18 @@ fi
 
 echo "· publicando"
 npx --yes wrangler@latest pages deploy publico --project-name "$projeto" --commit-dirty=true
+
+# O middleware devolve 503 quando PAINEL_USUARIO/PAINEL_SENHA não existem — falha
+# fechada, nunca aberta. Num projeto recém-criado elas AINDA NÃO EXISTEM, e não
+# saem daqui: segredo se digita no painel da Cloudflare, não em script.
+cat <<'FIM'
+
+Se este é um projeto novo, ele está no ar SEM credencial cadastrada — e o
+middleware responde 503 a tudo até que ela exista. Para liberar:
+
+  Workers & Pages → <projeto> → Settings → Variables and Secrets
+  PAINEL_USUARIO e PAINEL_SENHA (tipo Secret), ambiente Production
+
+Variável nova só vale no PRÓXIMO deploy. Depois de salvar, rode este script
+outra vez.
+FIM
