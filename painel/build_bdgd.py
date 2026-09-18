@@ -55,7 +55,11 @@ def soma_energia(nivel):
     alvo = [x for x in cols if x.startswith('ENE_') and x[-2:].isdigit()]
     if not alvo:
         return 'NULL'
-    return '(' + ' + '.join(f'COALESCE(TRY_CAST({x} AS DOUBLE), 0)' for x in alvo) + ')'
+    # COALESCE(...,0) em todas as parcelas faria uma UC sem NENHUMA leitura somar
+    # zero, que é o oposto de "ausência não é zero". Só soma quem tem ao menos uma.
+    soma = ' + '.join(f'COALESCE(TRY_CAST({x} AS DOUBLE), 0)' for x in alvo)
+    tem = ' OR '.join(f'TRY_CAST({x} AS DOUBLE) IS NOT NULL' for x in alvo)
+    return f'(CASE WHEN {tem} THEN ({soma}) ELSE NULL END)'
 
 
 partes = []

@@ -644,7 +644,7 @@ const IE={
  agua:{l:'Água da rede',full:'Domicílios com água da rede geral (%)',val:p=>p.agua,fmt:PC,dir:1,censo:1},
  pav:{l:'Pavimentação',full:'Domicílios em face com via pavimentada (%)',val:p=>p.pav,fmt:PC,dir:1,censo:1},
  ilum:{l:'Iluminação',full:'Domicílios em face com iluminação pública (%)',val:p=>p.ilum,fmt:PC,dir:1,censo:1},
- gd_pen:{l:'Penetração de GD',full:'Conexões de geração distribuída ÷ domicílios do Censo 2022 (%) — mercado já atendido',val:p=>p.gd_pen,fmt:PC2,dir:1,mag:1,gd:1},
+ gd_pen:{l:'Penetração de GD',full:'Conexões RESIDENCIAIS de geração distribuída ÷ domicílios do Censo 2022 (%) — mercado já atendido',val:p=>p.gd_pen,fmt:PC2,dir:1,mag:1,gd:1},
  gd_n:{l:'Conexões de GD',full:'Empreendimentos de micro e minigeração conectados (ANEEL, município é o menor recorte)',val:p=>p.gd_n,fmt:N,dir:1,mag:1,gd:1},
  gd_mw:{l:'Potência instalada',full:'Potência instalada de geração distribuída, em MW (ANEEL)',val:p=>p.gd_mw,fmt:MW,dir:1,mag:1,gd:1},
  uc_sem_gd:{l:'UC sem geração',full:'Unidades consumidoras PJ de média/alta tensão sem geração própria (BDGD) — mercado de minigeração',val:p=>p.uc_sem_gd,fmt:N,dir:1,mag:1,gd:1},
@@ -1419,7 +1419,7 @@ function paginaEnergia(){
  <div class="grid g4" style="margin-bottom:14px">
   ${kpi('Conexões no PI',N(T.n),'micro e minigeração, todas fotovoltaicas')}
   ${kpi('Potência instalada',MW(T.kw/1000),'soma da potência dos empreendimentos')}
-  ${kpi('Penetração mediana',PC2(mediana),'conexões ÷ domicílios do Censo 2022')}
+  ${kpi('Penetração mediana',PC2(mediana),'conexões residenciais ÷ domicílios')}
   ${kpi('Municípios com registro',N(T.municipios_com)+' de 224','nenhum município do PI está zerado')}
  </div>
 
@@ -1481,7 +1481,7 @@ function paginaEnergia(){
         Leitura: ${BDGD.linhas_lidas} linhas lidas, ${BDGD.linhas_agrupadas} agrupadas.</div>`})()
    :'<div class="empty">dados/bdgd.json não carregou</div>'}</div>
 
-  <div class="card" style="margin-top:14px"><h3>Penetração por município <span>conexões ÷ domicílios</span></h3>
+  <div class="card" style="margin-top:14px"><h3>Penetração por município <span>residencial ÷ domicílios</span></h3>
    <div>${rank.map((f,i)=>`
     <div class="rrow${f.p.cd===SELMUN?' sel':''}" data-cd="${f.p.cd}">
      <span class="i">${i+1}</span>
@@ -1489,7 +1489,9 @@ function paginaEnergia(){
       <i style="width:${100*f.p.gd_pen/mx}%;background:var(--vd-mag-4)"></i></div></span>
      <span class="val">${PC2(f.p.gd_pen)}</span></div>`).join('')}</div>
    <div class="nota">Mediana do estado: <b>${PC2(mediana)}</b>. Penetração alta significa
-    mercado já atendido — e é onde a próxima venda é mais difícil, não mais fácil.</div></div>
+    mercado já atendido — e é onde a próxima venda é mais difícil, não mais fácil.<br>
+    <b>Só conexões residenciais</b> (classes RE e REBR) no numerador: comércio, rural e
+    indústria não moram em domicílio, e incluí-los inflava a conta em 1 a 2 pontos.</div></div>
  
   <div class="card" style="margin-top:14px"><h3>Quem instala <span>classe de consumo · estado</span></h3>
    ${linhasCl.map(([k,n,cor])=>`

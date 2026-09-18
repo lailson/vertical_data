@@ -156,3 +156,29 @@ prefeitura sem wifi.
 4. **Resolver a licença do LABREN por escrito** antes que ele entre em produto pago.
 5. **Não adicionar GEE nem BigQuery** sem decisão explícita de custo e de dependência
    de nuvem.
+
+---
+
+## 8. Rodada 10 — tentativa de revisão externa (18/09/2026)
+
+| eixo | ferramenta | resultado |
+|---|---|---|
+| negócio | GLM 5.3 · Z.ai Coding Plan | **Weekly/Monthly Limit Exhausted** — volta em **22/09/2026 00:08** |
+| técnico | DeepSeek `deepseek-v4-pro` | **HTTP 402** — chave sem saldo |
+| técnico | Kimi | **403** — cota mensal esgotada |
+
+Pacote pronto e versionado em `analise/pacote-r10-glm.md`. **Cinco perguntas de negócio
+seguem sem resposta externa** — e são as que eu menos consigo responder sozinho, porque
+sou parte interessada:
+
+1. Vale parar 1,5 dia para construir fundação com 104 dias de prazo?
+2. **Energia é negócio ou distração?** O contrato que se vende é conformidade cadastral
+   com prazo legal; geração distribuída é outro comprador e outro ciclo.
+3. A lista do BDGD — 3.285 unidades PJ com carga e sem geração, com endereço — vale mais
+   que o painel? E se vale, vende-se para prefeitura, para integrador solar ou para a
+   distribuidora?
+4. A perda de participação do Piauí é argumento **a favor** de entrar nesse mercado ou
+   **contra**?
+5. Risco comercial não listado.
+
+Nada foi cobrado de crédito de provedor que serve cliente.

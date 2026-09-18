@@ -66,6 +66,10 @@ linhas = c.execute(f"""
          count(*) n, round(sum(e.MdaPotenciaInstaladaKW), 2) kw,
          sum(CASE WHEN e.DscPorte ILIKE 'micro%' THEN 1 ELSE 0 END) micro,
          sum(CASE WHEN e.DscFonteGeracao ILIKE '%solar%' THEN 1 ELSE 0 END) solar,
+         -- residencial (RE) + baixa renda (REBR): é o numerador que combina com
+         -- um denominador de domicílios. Comércio, rural e indústria não moram
+         -- em domicílio, e somá-los inflava a penetração em 1 a 2 pontos.
+         sum(CASE WHEN e.CodClasseConsumo IN ('RE','REBR') THEN 1 ELSE 0 END) res,
          round(sum(CASE WHEN e.DscFonteGeracao ILIKE '%solar%'
                         THEN e.MdaPotenciaInstaladaKW ELSE 0 END), 2) kw_solar,
          min(f.DatConexao) c0, max(f.DatConexao) c1
@@ -111,6 +115,10 @@ saida = {
     'conexao_mais_recente': str(conexao_max),
     'nota_defasagem': ('atualização diária, mas a conexão mais recente fica meses atrás '
                        'da data de carga — frequência de atualização não é atualidade do dado'),
+    'nota_penetracao': ('penetração = conexões RESIDENCIAIS (classes RE e REBR) ÷ domicílios '
+                        'do Censo 2022. Usar todas as classes sobre o mesmo denominador '
+                        'inflava o número em 1 a 2 pontos, porque comércio, rural e indústria '
+                        'não moram em domicílio'),
     'nota_granularidade': ('município é o menor recorte: o CEP vem mascarado nos 3 últimos '
                            'dígitos. Número por bairro seria modelagem, não medição'),
     'nota_lacuna': ('a ANEEL suspendeu a atualização entre 23/09 e 13/11/2025 na migração '
@@ -118,16 +126,18 @@ saida = {
     'uf': UF, 'municipios': {},
     'br_ano': {str(ano): n for ano, n in br},
 }
-for cd, nome, n, kw, micro, solar, kw_solar, c0, c1 in linhas:
+for cd, nome, n, kw, micro, solar, res, kw_solar, c0, c1 in linhas:
     k = str(cd)
     p = mun.get(k) or {}
     dom = p.get('dom')
     saida['municipios'][k] = {
         'nome': nome, 'n': n, 'kw': kw, 'micro': micro,
-        'solar': solar, 'kw_solar': kw_solar,
+        'solar': solar, 'kw_solar': kw_solar, 'res': res,
         'primeira': str(c0) if c0 else None, 'ultima': str(c1) if c1 else None,
-        # penetração só existe onde há denominador; sem domicílio fica nulo, não zero
-        'pen': round(100 * n / dom, 3) if dom else None,
+        # penetração só existe onde há denominador; sem domicílio fica nulo, não zero.
+        # Numerador é só residencial, para casar com o denominador de domicílios.
+        'pen': round(100 * res / dom, 3) if dom else None,
+        'pen_todas': round(100 * n / dom, 3) if dom else None,
         'classe': por_classe.get(k, {}),
         'ano': por_ano.get(k, {}),
     }
