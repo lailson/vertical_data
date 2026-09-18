@@ -198,3 +198,42 @@ O que mudou de fato: o par de tons que carrega texto. O teal da marca
 (`#12B0A0`) tem 2,71:1 sobre branco e só é usado como **preenchimento**; texto,
 link e foco usam `#0D8478` (4,58:1) no claro e `#2FD5C0` (8,35:1) no escuro. A
 tabela de contraste medido está em `marca/README.md` §2.
+
+---
+
+## 9. ANEEL — geração distribuída (18/09/2026)
+
+Primeira base de energia no repositório. `painel/build_aneel.py` agrega
+`dados/bruto/aneel/*.parquet` em `painel/dados/aneel.json`.
+
+**Fonte:** ANEEL, *Relação de empreendimentos de micro e minigeração distribuída*,
+licença **ODbL** — uso comercial permitido, com atribuição. Atualização **diária**;
+4,6 milhões de linhas nacionais, **90.528 no Piauí**, todas fotovoltaicas.
+
+**A junção.** A data de conexão **não** está no arquivo principal: está no de
+informações técnicas fotovoltaicas, e casa por `CodEmpreendimento` →
+`CodGeracaoDistribuida`. No Piauí casa **90.528 de 90.528**, e a `DatConexao`
+coincide com `DthAtualizaCadastralEmpreend` em todos os registros.
+
+**Três ressalvas que a tela precisa carregar, e carrega:**
+
+1. **Município é o menor recorte.** O `CodCEP` existe, mas vem mascarado nos três
+   últimos dígitos (`64066***`): sobra o prefixo de cinco, o mesmo recorte que já se
+   usa para validar CEP. Qualquer número por bairro aqui seria modelagem, não medição.
+2. **Atualização diária não é dado do dia.** A carga é de 18/09/2026 e a conexão mais
+   recente é de **30/06/2026** — quase três meses de defasagem. Por isso o último ano
+   da série aparece **tracejado e com marcador vazado**: lido como ano inteiro,
+   pareceria retração de mercado.
+3. **O vale de 2025 tem causa conhecida.** A ANEEL suspendeu a atualização entre
+   23/09 e 13/11/2025 na migração SISGD → MMGD.
+
+**Dado pessoal:** o arquivo traz `NumCPFCNPJ` e `NomTitularEmpreendimento` de cada
+titular. Nenhum dos dois sai do `build_aneel.py` — a leitura seleciona coluna a
+coluna e a saída é agregada por município.
+
+**Cor.** A tela estreou os tokens `--vd-cat-1..5`, categóricos **de gráfico**, que não
+são os de interface: o teal de texto (`--vd-acento`) tem cromo abaixo do piso e lê como
+cinza num preenchimento, então o slot 3 usa o teal de forma. No tema escuro os passos
+são **escolhidos**, não invertidos — a faixa de luminosidade para gráfico é L 0,48–0,67,
+mais escura que a dos tokens de interface. Validado em faixa, cromo, separação sob
+daltonismo e contraste, nos dois temas.

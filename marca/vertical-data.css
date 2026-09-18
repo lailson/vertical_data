@@ -55,6 +55,15 @@
  --vd-car-1:#C03A24;--vd-car-2:#C98518;--vd-car-3:#8AA64A;--vd-car-4:#3FA58F;--vd-car-5:#0D8478;
  --vd-mag-1:#D6F0EC;--vd-mag-2:#A5DFD8;--vd-mag-3:#6CC7BD;--vd-mag-4:#2FA697;--vd-mag-5:#0B6E64;
 
+ /* ---- categórica de gráfico ----
+    Ordem FIXA, nunca ciclada: a 6ª série vira "outros", não uma cor nova.
+    Não são os tokens de interface: o teal de texto (--vd-acento) tem cromo
+    baixo demais e lê como cinza num preenchimento, então o slot 3 usa o teal
+    de FORMA. Validado: faixa de luminosidade, piso de cromo, separação sob
+    daltonismo (pior par ΔE 19,7) e contraste. O slot 3 fica em 2,71:1 sobre
+    branco — por isso toda série leva rótulo direto e existe visão de tabela. */
+ --vd-cat-1:#12689F;--vd-cat-2:#8F5A02;--vd-cat-3:#12B0A0;--vd-cat-4:#5B3FB5;--vd-cat-5:#C03A24;
+
  /* ---- tipografia ---- */
  --vd-fonte:'Inter','Helvetica Neue',Arial,sans-serif;
  --vd-mono:'IBM Plex Mono',ui-monospace,monospace;
@@ -88,6 +97,10 @@
   --vd-semdado:#34404E;
   --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
   --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+  /* Passos de gráfico no escuro são ESCOLHIDOS, não invertidos: a faixa de
+     luminosidade para gráfico é L 0,48–0,67, mais escura que a dos tokens de
+     interface (0,70–0,81). Usar os de interface aqui reprova. */
+  --vd-cat-1:#4695CB;--vd-cat-2:#BD8A2E;--vd-cat-3:#1CA392;--vd-cat-4:#8F73D9;--vd-cat-5:#DE5D43;
  }
 }
 :root[data-theme="dark"]{
@@ -115,4 +128,5 @@
  --vd-semdado:#34404E;
  --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
  --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+ --vd-cat-1:#4695CB;--vd-cat-2:#BD8A2E;--vd-cat-3:#1CA392;--vd-cat-4:#8F73D9;--vd-cat-5:#DE5D43;
 }

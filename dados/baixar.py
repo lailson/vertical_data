@@ -9,8 +9,9 @@ e com a **malha municipal do PI**, base do mapa estadual de alvos.
 Baixa para dados/bruto/ e PULA arquivos já existentes e não-vazios.
 
 Uso:
-    python3 dados/baixar.py             # essencial (~50 MB, com o CNEFE)
+    python3 dados/baixar.py             # essencial (~250 MB, com CNEFE e ANEEL)
     python3 dados/baixar.py --completo  # + INEP (537 MB) e as bases por setor
+    python3 dados/baixar.py --atualizar # força rebaixar as fontes que mudam sozinhas
 """
 import os, sys, urllib.request, time
 
@@ -28,6 +29,11 @@ SINTER = ('https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-p
           'programas-e-atividades/sinter/municipios')
 CNEFE = ('https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/'
          'Censo_Demografico_2022/Arquivos_CNEFE')
+# ANEEL — dados abertos, licença ODbL (uso comercial permitido, com atribuição).
+# Os identificadores de recurso saem da API CKAN e são estáveis:
+#   /api/3/action/package_show?id=relacao-de-empreendimentos-de-geracao-distribuida
+ANEEL = ('https://dadosabertos.aneel.gov.br/dataset/5e0fafd2-21b9-4d5b-b622-40438d40aba2'
+         '/resource/%s/download/%s')
 
 B = AGREG + '/Agregados_por_Bairro_csv'
 M = AGREG + '/Agregados_por_Municipio_csv'
@@ -65,6 +71,15 @@ ESSENCIAIS = {
     'cnefe/22_PI.zip': CNEFE + '/CSV/UF/22_PI.zip',
     'cnefe/dicionario_cnefe.xls': CNEFE + '/CSV/Dicionario_CNEFE_Censo_2022.xls',
 
+    # --- ANEEL: micro e minigeração distribuída, atualizada DIARIAMENTE ---
+    # Cada empreendimento com fonte, potência, data de conexão e município.
+    # Desce a MUNICÍPIO e só: bairro é modelagem, não medição.
+    'aneel/gd_empreendimentos.parquet': ANEEL % (
+        'cd29f6eb-e08d-4db7-b6fb-ed6e3b682d27', 'empreendimento-geracao-distribuida.parquet'),
+    'aneel/gd_fotovoltaica_tecnica.parquet': ANEEL % (
+        '703c4cb8-b7e2-4f27-a9bb-7e55324a88a4',
+        'empreendimento-gd-informacoes-tecnicas-fotovoltaica.parquet'),
+
     # --- RFB/Sinter (nomes mudam por mês — ajustar se 404) ---
     'sinter/adesoes.xls': SINTER + '/adesoes_setembro_2026_2.xls',
     'sinter/inscricoes.csv': SINTER + '/inscricoes_ativas_setembro_2026_2.csv',
@@ -82,11 +97,26 @@ EXTRAS = {
 }
 
 
+# Fontes que mudam sozinhas: pular por "já existe" congelaria o painel numa
+# vintage antiga sem avisar ninguém. Estas revalidam por idade.
+REVALIDAR_DIAS = {
+    'aneel/gd_empreendimentos.parquet': 1,
+    'aneel/gd_fotovoltaica_tecnica.parquet': 1,
+}
+
+
 def baixar(rel, url):
     dest = os.path.join(AQUI, 'bruto', rel)
     if os.path.exists(dest) and os.path.getsize(dest) > 1024:
-        print(f'[ok] {rel} (já existe)')
-        return
+        limite = REVALIDAR_DIAS.get(rel)
+        if limite is None:
+            print(f'[ok] {rel} (já existe)')
+            return
+        idade = (time.time() - os.path.getmtime(dest)) / 86400
+        if idade < limite and '--atualizar' not in sys.argv:
+            print(f'[ok] {rel} (baixado há {idade*24:.0f}h, revalida em {limite}d)')
+            return
+        print(f'[revalidando] {rel} — {idade:.1f} dia(s) de idade')
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     print(f'[baixando] {rel} …')
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})

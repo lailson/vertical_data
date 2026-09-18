@@ -72,6 +72,15 @@
  --vd-car-1:#C03A24;--vd-car-2:#C98518;--vd-car-3:#8AA64A;--vd-car-4:#3FA58F;--vd-car-5:#0D8478;
  --vd-mag-1:#D6F0EC;--vd-mag-2:#A5DFD8;--vd-mag-3:#6CC7BD;--vd-mag-4:#2FA697;--vd-mag-5:#0B6E64;
 
+ /* ---- categórica de gráfico ----
+    Ordem FIXA, nunca ciclada: a 6ª série vira "outros", não uma cor nova.
+    Não são os tokens de interface: o teal de texto (--vd-acento) tem cromo
+    baixo demais e lê como cinza num preenchimento, então o slot 3 usa o teal
+    de FORMA. Validado: faixa de luminosidade, piso de cromo, separação sob
+    daltonismo (pior par ΔE 19,7) e contraste. O slot 3 fica em 2,71:1 sobre
+    branco — por isso toda série leva rótulo direto e existe visão de tabela. */
+ --vd-cat-1:#12689F;--vd-cat-2:#8F5A02;--vd-cat-3:#12B0A0;--vd-cat-4:#5B3FB5;--vd-cat-5:#C03A24;
+
  /* ---- tipografia ---- */
  --vd-fonte:'Inter','Helvetica Neue',Arial,sans-serif;
  --vd-mono:'IBM Plex Mono',ui-monospace,monospace;
@@ -105,6 +114,10 @@
   --vd-semdado:#34404E;
   --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
   --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+  /* Passos de gráfico no escuro são ESCOLHIDOS, não invertidos: a faixa de
+     luminosidade para gráfico é L 0,48–0,67, mais escura que a dos tokens de
+     interface (0,70–0,81). Usar os de interface aqui reprova. */
+  --vd-cat-1:#4695CB;--vd-cat-2:#BD8A2E;--vd-cat-3:#1CA392;--vd-cat-4:#8F73D9;--vd-cat-5:#DE5D43;
  }
 }
 :root[data-theme="dark"]{
@@ -132,6 +145,7 @@
  --vd-semdado:#34404E;
  --vd-car-1:#FF7A63;--vd-car-2:#F2B544;--vd-car-3:#8FB06E;--vd-car-4:#4FC9B5;--vd-car-5:#35D6C2;
  --vd-mag-1:#0E3A35;--vd-mag-2:#14574F;--vd-mag-3:#1A7A6E;--vd-mag-4:#23A796;--vd-mag-5:#35D6C2;
+ --vd-cat-1:#4695CB;--vd-cat-2:#BD8A2E;--vd-cat-3:#1CA392;--vd-cat-4:#8F73D9;--vd-cat-5:#DE5D43;
 }
 /* VD:FIM */
 
@@ -201,9 +215,9 @@ main{overflow-y:auto;position:relative}
 .chip .d{width:7px;height:7px;border-radius:2px}
 .chip.real{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 50%,transparent);background:color-mix(in srgb,var(--teal) 11%,transparent)}
 .chip.real .d{background:var(--teal)}
-.chip.hip{color:var(--amber);border-color:rgba(245,184,65,.35);background:rgba(245,184,65,.07)}
+.chip.hip{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 40%,transparent);background:color-mix(in srgb,var(--amber) 9%,transparent)}
 .chip.hip .d{background:var(--amber)}
-.chip.frz{color:var(--red);border-color:rgba(255,107,87,.3);background:rgba(255,107,87,.06)}
+.chip.frz{color:var(--red);border-color:color-mix(in srgb,var(--red) 35%,transparent);background:color-mix(in srgb,var(--red) 8%,transparent)}
 .chip.frz .d{background:var(--red)}
 /* cards / grids */
 .grid{display:grid;gap:14px}
@@ -212,6 +226,11 @@ main{overflow-y:auto;position:relative}
 .card h3{font-family:var(--f-disp);font-size:14.5px;font-weight:700;display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
 .card h3 span{font-size:10px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.07em;font-weight:400;text-align:right}
 .card p.desc{font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:10px}
+/* legenda sob gráfico: o que o leitor precisa saber para não ler errado */
+.nota{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:11px;line-height:1.6;color:var(--dim)}
+.nota b{color:var(--mut)}
+.card .ctl{display:flex;gap:6px;margin-bottom:6px}
+.btn.ghost.on{background:color-mix(in srgb,var(--teal) 18%,transparent);color:var(--ink)}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
 .kpi .l{font-size:9.5px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.11em;text-transform:uppercase}
 .kpi .v{font-family:var(--f-mono);font-size:23px;font-weight:600;margin-top:4px}
@@ -251,10 +270,10 @@ tbody tr.sel{background:color-mix(in srgb,var(--teal) 14%,transparent)}
 .tag{display:inline-block;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;padding:2px 7px;border-radius:5px;border:1px solid var(--line2);color:var(--mut);white-space:nowrap}
 .tag.a{color:var(--blue);border-color:rgba(92,184,255,.35)}
 .tag.b{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 45%,transparent)}
-.tag.f{color:var(--amber);border-color:rgba(245,184,65,.35)}
-.tag.fox{color:var(--red);border-color:rgba(255,107,87,.3)}
+.tag.f{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 40%,transparent)}
+.tag.fox{color:var(--red);border-color:color-mix(in srgb,var(--red) 35%,transparent)}
 .tag.pil{color:var(--violet);border-color:rgba(183,156,255,.4)}
-.tag.warn{color:var(--amber);border-color:rgba(245,184,65,.3);background:rgba(245,184,65,.06)}
+.tag.warn{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 35%,transparent);background:color-mix(in srgb,var(--amber) 8%,transparent)}
 /* mapa */
 .maplay{display:grid;grid-template-columns:230px 1fr 320px;height:100%}
 .maprail{border-right:1px solid var(--line);padding:14px 12px;overflow-y:auto;background:var(--panel)}
@@ -409,6 +428,7 @@ footer .led{width:6px;height:6px;border-radius:50%;background:var(--teal);box-sh
  <button data-pg="estado">Mapa de alvos <span class="c">224</span></button>
  <button data-pg="carteira">Carteira e qualificação</button>
  <button data-pg="janela">Janela de 31/12</button>
+ <button data-pg="energia">Energia distribuída</button>
  <div class="nav-l">Município</div>
  <button data-pg="territorio">Território <span class="c" id="nvTer"></span></button>
  <button data-pg="ranking">Ranking de bairros</button>
@@ -451,6 +471,7 @@ footer .led{width:6px;height:6px;border-radius:50%;background:var(--teal);box-sh
 
  <section class="page" id="pg-carteira"></section>
  <section class="page" id="pg-janela"></section>
+ <section class="page" id="pg-energia"></section>
 
  <section class="page full" id="pg-territorio">
   <div class="maplay">
@@ -501,6 +522,8 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const N=v=>v==null?'—':Math.round(v).toLocaleString('pt-BR');
 const P1=v=>v==null?'—':v.toLocaleString('pt-BR',{maximumFractionDigits:1});
 const PC=v=>v==null?'—':P1(v)+'%';
+const PC2=v=>v==null?'—':v.toFixed(2).replace('.',',')+'%';
+const MW=v=>v==null?'—':v.toLocaleString('pt-BR',{maximumFractionDigits:1})+' MW';
 const RS=v=>v==null?'—':'R$ '+N(v);
 /* per capita abaixo de R$ 10 perde o sentido com uma casa: P1(3,03) imprime "3" */
 const RS2=v=>v==null?'—':'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -589,7 +612,7 @@ function mostrarCsv(nome,texto,motivo){
 const cs=v=>v==null?'':String(v).replace(/;/g,',');
 
 /* ============================================================ estado global */
-let META, CNEFE=null, MUNF=[], MUN={}, SELMUN='2211001', SELM=null, KE='segmento';
+let META, CNEFE=null, GD=null, MUNF=[], MUN={}, SELMUN='2211001', SELM=null, KE='segmento';
 let BAIRROS={}, FEATS=[], SELB=null, KT='renda_med';
 let mapE=null, layE=null, mapT=null, layT=null, layFcu=null, fcuOn=true;
 let hlPil=true, hlFox=false;
@@ -621,6 +644,9 @@ const IE={
  agua:{l:'Água da rede',full:'Domicílios com água da rede geral (%)',val:p=>p.agua,fmt:PC,dir:1,censo:1},
  pav:{l:'Pavimentação',full:'Domicílios em face com via pavimentada (%)',val:p=>p.pav,fmt:PC,dir:1,censo:1},
  ilum:{l:'Iluminação',full:'Domicílios em face com iluminação pública (%)',val:p=>p.ilum,fmt:PC,dir:1,censo:1},
+ gd_pen:{l:'Penetração de GD',full:'Conexões de geração distribuída ÷ domicílios do Censo 2022 (%) — mercado já atendido',val:p=>p.gd_pen,fmt:PC2,dir:1,mag:1,gd:1},
+ gd_n:{l:'Conexões de GD',full:'Empreendimentos de micro e minigeração conectados (ANEEL, município é o menor recorte)',val:p=>p.gd_n,fmt:N,dir:1,mag:1,gd:1},
+ gd_mw:{l:'Potência instalada',full:'Potência instalada de geração distribuída, em MW (ANEEL)',val:p=>p.gd_mw,fmt:MW,dir:1,mag:1,gd:1},
  bairros:{l:'Bairros no Censo',full:'Bairros oficiais na malha CD2022 — define se o painel territorial funciona',val:p=>p.bairros,fmt:N,dir:1,censo:1,mag:1},
 };
 /* indicadores do mapa municipal ------------------------------------------ */
@@ -637,16 +663,22 @@ const IT={
 
 /* ============================================================ carga */
 async function carregar(){
- const [meta,mun,cne]=await Promise.all([
+ const [meta,mun,cne,gd]=await Promise.all([
    fetch('dados/meta.json').then(r=>r.json()),
    fetch('dados/municipios.json').then(r=>r.json()),
-   fetch('dados/cnefe.json').then(r=>r.json()).catch(()=>null)]);
- META=meta; CNEFE=cne; MUNF=mun.features.map(f=>({p:f.properties,geo:f.geometry}));
+   fetch('dados/cnefe.json').then(r=>r.json()).catch(()=>null),
+   fetch('dados/aneel.json').then(r=>r.json()).catch(()=>null)]);
+ META=meta; CNEFE=cne; GD=gd; MUNF=mun.features.map(f=>({p:f.properties,geo:f.geometry}));
  /* o CNEFE entra como propriedade do município: é volume de cadastro, que é a
     unidade em que a remessa ao CADURB é medida e precificada */
  if(CNEFE) MUNF.forEach(f=>{const c=CNEFE.municipios[f.p.cd]; if(c) Object.assign(f.p,{
    end:c.end, end_dom:c.dom, end_estab:c.estab, end_obra:c.obra, end_agro:c.agro,
    end_urb:c.na_malha, end_fora:c.fora_da_malha, end_apto:c.apto})});
+ /* ANEEL: geração distribuída. Município é o menor recorte que a base tem —
+    o CEP dela vem mascarado nos 3 últimos dígitos. Nada disto desce a bairro. */
+ if(GD) MUNF.forEach(f=>{const g=GD.municipios[f.p.cd]; if(g) Object.assign(f.p,{
+   gd_n:g.n, gd_kw:g.kw, gd_mw:g.kw/1000, gd_pen:g.pen, gd_solar:g.solar,
+   gd_micro:g.micro, gd_ano:g.ano, gd_classe:g.classe, gd_ultima:g.ultima})});
  MUNF.forEach(f=>MUN[f.p.cd]=f);
  $('#stamp').textContent='dados de '+META.gerado_em+' · série local, sem servidor';
  aplicarTema(lerTema(),false);
@@ -658,7 +690,7 @@ async function carregar(){
  const pedido=new URLSearchParams(location.search).get('m');
  if(pedido&&MUN[pedido]) SELMUN=pedido;
  montarSeletor(); montarHeader(); montarNav();
- paginaEstado(); paginaCarteira(); paginaJanela(); paginaMetodologia(); paginaCongelado();
+ paginaEstado(); paginaCarteira(); paginaJanela(); paginaEnergia(); paginaMetodologia(); paginaCongelado();
  await trocarMunicipio(SELMUN,true);
  const h=location.hash.replace('#','')||'estado'; ir(h);
  $('#boot').remove();
@@ -692,7 +724,7 @@ function montarNav(){
  $$('nav button[data-pg]').forEach(b=>b.onclick=()=>ir(b.dataset.pg));
  $('#navfoot').innerHTML=`${META.bairros_total} bairros · ${META.fcu_total} FCU<br>malha oficial CD 2022<br>ETL: painel/build_dados.py`;
 }
-const PAGINAS=['estado','carteira','janela','territorio','ranking','saneamento',
+const PAGINAS=['estado','carteira','janela','energia','territorio','ranking','saneamento',
  'viario','perfis','relatorios','metodologia','congelado'];
 function ir(pg){
  /* o hash vem da URL: qualquer coisa que não seja identificador CSS faria o
@@ -1252,6 +1284,163 @@ function renderCarteira(){
 }
 
 /* ============================================================ JANELA */
+/* ---------------------------------------------------------------- energia
+   Adoção de geração distribuída (ANEEL). Três decisões de leitura:
+
+   1. UM eixo por gráfico. Conexões e MW são grandezas diferentes; dois eixos
+      no mesmo gráfico deixam o leitor escolher a conclusão. Aqui é um botão
+      que troca a série, não um segundo eixo.
+   2. A cor de classe é categórica, de ordem FIXA — a 6ª classe vira "outras",
+      nunca uma cor nova. Toda série leva rótulo direto, porque o teal da marca
+      fica em 2,71:1 sobre branco e cor sozinha não pode carregar identidade.
+   3. Município é o menor recorte da base. Nada aqui desce a bairro. */
+let KGD='n';
+const CLASSE_ORD=['Residencial','Comercial','Rural','Poder Público','Industrial'];
+function corClasse(i){return tok('--vd-cat-'+((i%5)+1))}
+
+function serieEstado(){
+ const acc={};
+ MUNF.forEach(f=>{const a=f.p.gd_ano||{};
+  for(const ano in a){acc[ano]=acc[ano]||[0,0];acc[ano][0]+=a[ano][0];acc[ano][1]+=a[ano][1]}});
+ return acc;
+}
+function linhaGD(id,anos,series,rotulo,parcial){
+ const s=$(id); if(!s) return;
+ const W=300,H=140,pl=34,pr=10,pt=12,pb=20; s.innerHTML='';
+ const mk=(t,a,txt)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);
+   for(const k in a)e.setAttribute(k,a[k]); if(txt!=null)e.textContent=txt; s.appendChild(e); return e};
+ const vals=series.flatMap(se=>se.v).filter(v=>v!=null);
+ const hi=Math.max(1,...vals);
+ const sx=i=>pl+(anos.length<2?0:i/(anos.length-1))*(W-pl-pr);
+ const sy=v=>H-pb-(v/hi)*(H-pb-pt);
+ for(let g=0;g<=3;g++){const v=hi*g/3;
+  mk('line',{x1:pl,x2:W-pr,y1:sy(v),y2:sy(v),stroke:tok('--grade'),'stroke-width':1});
+  mk('text',{x:pl-4,y:sy(v)+3,'text-anchor':'end','font-size':7,fill:tok('--eixo')},fmtCurto(v));}
+ anos.forEach((a,i)=>{ if(i%2===0||i===anos.length-1)
+   mk('text',{x:sx(i),y:H-6,'text-anchor':'middle','font-size':7,
+     fill:i===anos.length-1&&parcial?tok('--amber'):tok('--eixo')},"'"+a.slice(2))});
+ mk('text',{x:W-pr,y:H-6,'text-anchor':'end','font-size':7,fill:tok('--eixo')},'');
+ series.forEach(se=>{
+  const pts=se.v.map((v,i)=>v==null?null:[sx(i),sy(v)]);
+  /* o vale de 2025 é a suspensão da ANEEL, não queda de mercado: a linha
+     continua, mas o trecho ganha traço interrompido e nota */
+  const cheios=parcial?pts.slice(0,-1):pts;
+  let d='',aberto=false;
+  cheios.forEach(pp=>{ if(!pp){aberto=false;return} d+=(aberto?'L':'M')+pp[0]+' '+pp[1]+' '; aberto=true});
+  mk('path',{d,fill:'none',stroke:se.cor,'stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'});
+  /* ano parcial não pode ser linha cheia: afirmaria um ano que não terminou.
+     O tracejado é o que separa "medido" de "medido pela metade". */
+  if(parcial){
+   const a=pts[pts.length-2], b2=pts[pts.length-1];
+   if(a&&b2) mk('path',{d:`M${a[0]} ${a[1]}L${b2[0]} ${b2[1]}`,fill:'none',stroke:se.cor,
+     'stroke-width':2,'stroke-dasharray':'3 3','stroke-linecap':'round'});
+  }
+  pts.forEach((pp,i)=>{ if(!pp) return;
+   const ultimo=i===pts.length-1, vazado=ultimo&&parcial;
+   const c=mk('circle',{cx:pp[0],cy:pp[1],r:ultimo?4:2.6,
+     fill:vazado?tok('--panel'):se.cor, stroke:vazado?se.cor:tok('--panel'),'stroke-width':2});
+   c.appendChild(document.createElementNS('http://www.w3.org/2000/svg','title'))
+    .textContent=`${se.nome} · ${anos[i]}${vazado?' (parcial)':''} · ${rotulo(se.v[i])}`});
+  const ult=pts.filter(Boolean).pop();
+  /* rótulo direto por cima da linha: sem o contorno na cor da superfície o
+     texto e a curva se misturam justamente onde as séries se aproximam */
+  if(ult) mk('text',{x:ult[0]-3,y:ult[1]-11,'text-anchor':'end','font-size':7.5,
+    fill:tok('--mut'),'font-weight':600,stroke:tok('--panel'),'stroke-width':3,
+    'paint-order':'stroke','stroke-linejoin':'round'},se.nome);
+ });
+}
+const fmtCurto=v=>v>=1e6?(v/1e6).toFixed(1).replace('.',',')+'M':v>=1e3?Math.round(v/1e3)+'k':String(Math.round(v));
+
+function paginaEnergia(){
+ if(!GD){$('#pg-energia').innerHTML='<div class="topbar"><div><h2>Energia distribuída</h2>'+
+   '<div class="meta">dados/aneel.json não carregou — rode <code>.venv/bin/python painel/build_aneel.py</code></div></div></div>';return}
+ const T=GD.uf_total, p=MUN[SELMUN]?MUN[SELMUN].p:null;
+ const pen=MUNF.map(f=>f.p.gd_pen).filter(v=>v!=null).sort((a,b)=>a-b);
+ const mediana=pen.length?pen[Math.floor(pen.length/2)]:null;
+ const acc=serieEstado();
+ const anos=Object.keys(acc).sort().filter(a=>+a>=2016);
+ const serie=[{nome:'Piauí',cor:tok('--vd-cat-1'),v:anos.map(a=>acc[a]?(KGD==='n'?acc[a][0]:acc[a][1]/1000):null)}];
+ if(p&&p.gd_ano) serie.push({nome:p.name,cor:tok('--vd-cat-3'),
+   v:anos.map(a=>p.gd_ano[a]?(KGD==='n'?p.gd_ano[a][0]:p.gd_ano[a][1]/1000):null)});
+ const rot=KGD==='n'?(v=>N(v)+' conexões'):(v=>MW(v));
+
+ const rank=MUNF.filter(f=>f.p.gd_pen!=null).sort((a,b)=>b.p.gd_pen-a.p.gd_pen).slice(0,14);
+ const mx=rank.length?rank[0].p.gd_pen:1;
+
+ const cl={};
+ MUNF.forEach(f=>{const c=f.p.gd_classe||{}; for(const k in c) cl[k]=(cl[k]||0)+c[k]});
+ const ordenadas=CLASSE_ORD.filter(k=>cl[k]);
+ const outras=Object.keys(cl).filter(k=>!CLASSE_ORD.includes(k)).reduce((a,k)=>a+cl[k],0);
+ const linhasCl=ordenadas.map((k,i)=>[k,cl[k],corClasse(i)]);
+ if(outras) linhasCl.push(['outras classes',outras,tok('--semdado')]);
+ const totCl=linhasCl.reduce((a,x)=>a+x[1],0)||1;
+
+ $('#pg-energia').innerHTML=`
+ <div class="topbar"><div><h2>Energia distribuída · Piauí</h2>
+  <div class="meta">Micro e minigeração conectada à rede, por município. <b>Município é o menor recorte desta base</b> —
+   o CEP da ANEEL vem mascarado nos três últimos dígitos, então nada aqui desce a bairro.</div></div>
+  <span class="chip real"><span class="d"></span>dado real · ANEEL ${GD.vintage}</span></div>
+
+ <div class="grid g4" style="margin-bottom:14px">
+  ${kpi('Conexões no PI',N(T.n),'micro e minigeração, todas fotovoltaicas')}
+  ${kpi('Potência instalada',MW(T.kw/1000),'soma da potência dos empreendimentos')}
+  ${kpi('Penetração mediana',PC2(mediana),'conexões ÷ domicílios do Censo 2022')}
+  ${kpi('Municípios com registro',N(T.municipios_com)+' de 224','nenhum município do PI está zerado')}
+ </div>
+
+ <div class="grid g2">
+  <div class="card"><h3>Adoção ao longo do tempo
+    <span>${anos[0]}–${anos[anos.length-1]} · por data de conexão</span></h3>
+   <div class="ctl" style="margin-bottom:6px">
+    <button class="btn ghost${KGD==='n'?' on':''}" data-gd="n">conexões</button>
+    <button class="btn ghost${KGD==='kw'?' on':''}" data-gd="kw">potência (MW)</button>
+   </div>
+   <svg id="gdSerie" viewBox="0 0 300 140" style="width:100%"></svg>
+   <div class="nota">Um eixo por vez, de propósito: conexões e MW não dividem escala.<br>
+    <b>O último ponto é tracejado e vazado porque o ano está pela metade</b> — a conexão
+    mais recente na base é de <b>${GD.conexao_mais_recente}</b>. Lido como ano inteiro,
+    ele pareceria retração.<br>
+    O vale de 2025 tem outra causa: a ANEEL <b>suspendeu a atualização entre 23/09 e
+    13/11/2025</b> na migração SISGD → MMGD. Atualização diária não é o mesmo que dado
+    do dia.</div></div>
+
+  <div class="card"><h3>Penetração por município <span>conexões ÷ domicílios</span></h3>
+   <div>${rank.map((f,i)=>`
+    <div class="rrow${f.p.cd===SELMUN?' sel':''}" data-cd="${f.p.cd}">
+     <span class="i">${i+1}</span>
+     <span class="n">${esc(f.p.name)}<div class="bar" style="margin-top:3px">
+      <i style="width:${100*f.p.gd_pen/mx}%;background:var(--vd-mag-4)"></i></div></span>
+     <span class="val">${PC2(f.p.gd_pen)}</span></div>`).join('')}</div>
+   <div class="nota">Mediana do estado: <b>${PC2(mediana)}</b>. Penetração alta significa
+    mercado já atendido — e é onde a próxima venda é mais difícil, não mais fácil.</div></div>
+ </div>
+
+ <div class="grid g2" style="margin-top:14px">
+  <div class="card"><h3>Quem instala <span>classe de consumo · estado</span></h3>
+   ${linhasCl.map(([k,n,cor])=>`
+    <div class="hrow"><span class="hl">${esc(k)}</span>
+     <div class="bar"><i style="width:${100*n/totCl}%;background:${cor}"></i></div>
+     <b>${N(n)}</b></div>`).join('')}
+   <div class="nota">Ordem fixa e rótulo em toda barra: a cor acompanha a classe, nunca a posição.</div></div>
+
+  <div class="card"><h3>O que esta base sustenta — e o que não</h3>
+   <div class="prosa">
+    <p><b>Sustenta:</b> quanto já foi instalado, por município, com data. É desfecho observado —
+     serve de rótulo para prever onde a adoção cresce.</p>
+    <p><b>Não sustenta:</b> número por bairro (a base para em município), nem leitura de
+     "hoje" (a conexão mais recente é de ${GD.conexao_mais_recente}).</p>
+    <p class="fonte">${esc(GD.fonte)} · licença ${esc(GD.licenca)} ·
+     carga ${GD.vintage} · <a href="${GD.url}" target="_blank" rel="noopener">fonte</a></p>
+   </div></div>
+ </div>`;
+
+ /* o último ano só está completo se a base já tiver chegado a 31/12 dele */
+ const parcial = GD.conexao_mais_recente < anos[anos.length-1]+'-12-31';
+ linhaGD('#gdSerie',anos,serie,rot,parcial);
+ $$('#pg-energia [data-gd]').forEach(b=>b.onclick=()=>{KGD=b.dataset.gd;paginaEnergia()});
+ $$('#pg-energia .rrow').forEach(r=>r.onclick=()=>{selecionarMun(r.dataset.cd,false);paginaEnergia()});
+}
+
 function paginaJanela(){
  const B=MUNF.filter(f=>f.p.segmento==='B'), A=MUNF.filter(f=>f.p.segmento==='A');
  const FR=MUNF.filter(f=>f.p.segmento==='fronteira');
@@ -1601,7 +1790,7 @@ function redesenhar(){
  /* FCU e a camada do modo sem-bairro guardam a cor de quando nasceram:
     remontar o território é o que faz as duas seguirem o tema */
  if(mapT) montarTerritorio();
- paginaCarteira(); paginaJanela(); paginaRanking(); paginaSaneamento();
+ paginaCarteira(); paginaJanela(); paginaEnergia(); paginaRanking(); paginaSaneamento();
  paginaViario(); paginaPerfis(); paginaRelatorios();
  ir(location.hash.replace('#','')||'estado');
 }
