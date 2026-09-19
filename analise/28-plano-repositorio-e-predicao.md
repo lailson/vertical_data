@@ -322,3 +322,93 @@ a etapa 1 já responde com dado real — e responde melhor do que qualquer maque
 | SINISA autodeclarado tratado como medição | médio | duas séries, dois traços, nunca emendadas |
 | Prometer "IA" e entregar regressão | médio | é o oposto: chamar regressão de regressão é o diferencial perante TCE |
 | Volume: dezenas de bases × histórico | baixo | Parquet e DuckDB resolvem; o gargalo é geografia, não bytes |
+
+---
+
+## 13. Rodada 10 — a revisão que mudou o plano (18/09/2026)
+
+Dois revisores independentes, ambos sem crédito de cliente: **qwen3-coder:30b** local
+(custo zero) e **DeepSeek v4-pro** pelo OpenRouter, na chave própria do usuário
+(~US$ 0,004). GLM segue fora até 22/09.
+
+### 13.1 Onde os dois convergiram — e eu também
+
+**A fundação em DuckDB não vale agora.** Três leituras independentes chegaram ao mesmo
+lugar. O DeepSeek foi o mais direto: *"resolve um problema que você ainda não tem. O
+problema real agora é vender, não engenheirar. Quando tiver 3 contratos e 10 fontes, aí
+o custo da desorganização supera o de construir."*
+
+**Aceito.** A etapa 2 do §8 sai do caminho crítico. O que sobrevive dela é pequeno e
+entra quando a próxima fonte chegar: um carregador compartilhado com proveniência e
+conferência de deriva de esquema — que teria evitado o defeito do `CREATE VIEW` de hoje.
+Não um armazém.
+
+**Energia é segundo produto, não extensão do primeiro.** Também três vozes.
+O DeepSeek desenhou a separação melhor do que eu: *"o comprador do art. 266 é prefeito
+com medo de improbidade; o comprador de GD é integrador solar ou distribuidora — outro
+ciclo, outro orçamento, outro decisor."* E fechou: *"guarde os dados, volte em janeiro."*
+
+**Aceito.** O que já está construído fica: quatro fontes ingeridas, uma tela, tudo
+documentado. **Não se constrói mais energia antes da janela de assinatura fechar.**
+
+### 13.2 O achado sobre o BDGD, que corrige meu entusiasmo
+
+*"Vale mais — para a distribuidora, não para a prefeitura. O art. 266 fala de imóvel
+urbano, não de unidade consumidora de energia. Para a prefeitura, zero interesse."*
+
+Correto, e é a distinção que eu não tinha feito com clareza. A lista de 3.284 PJ sem
+geração é **lead qualificado para a Equatorial**, não argumento para secretaria de
+finanças. Reforça 13.1: persegui-la é vender outro produto a outro comprador.
+
+### 13.3 O achado 5 — a premissa está errada, o raciocínio sobrevive
+
+O DeepSeek levantou o melhor ponto da revisão: *"sua restrição não é técnica, é
+orçamentária. Se o município arrecada R$ 80 mil de IPTU no ano inteiro e está em
+novembro, o orçamento já foi empenhado."* E concluiu que o mercado não seriam 224
+municípios, mas os ~30 que arrecadam acima de R$ 100 mil.
+
+**A conclusão está errada, e dá para medir.** IPTU não é capacidade de pagar — RCL é, e
+o próprio painel diz isso na definição do indicador:
+
+| segmento | n | RCL mediana | menor RCL |
+|---|---|---|---|
+| A | 9 | R$ 327,7 mi | R$ 193,4 mi |
+| fronteira | 21 | R$ 96,1 mi | R$ 42,2 mi |
+| **B** | **194** | **R$ 41,3 mi** | R$ 5,6 mi |
+
+Um contrato no limite de dispensa de 2026 — **R$ 65.492,11**, não os R$ 59,9 mil de 2025
+que ele citou — representa **0,16% da RCL mediana do segmento B**, e 1,17% no pior caso.
+**O dinheiro existe.**
+
+**Mas o raciocínio por trás sobrevive, e fica mais afiado do que ele o formulou.**
+Acessível não é o mesmo que disponível: a pergunta não é se cabe na RCL, é se há
+**dotação não empenhada em novembro**. Isso **não se responde com dado aberto** — é
+pergunta para secretário, na primeira ligação.
+
+E há um segundo achado que saiu da mesma medição: **só 122 dos 194 municípios do
+segmento B têm RCL reportada.** Os outros 72 são justamente os que não entregaram RREO
+2025. Ou seja, **os municípios que mais precisam do produto são os que eu não consigo
+qualificar** — a não-entrega é ao mesmo tempo a justificativa da venda e o ponto cego da
+qualificação.
+
+### 13.4 Onde ele errou na premissa por falta de um número
+
+*"Perda de participação do Piauí é sinal de mercado fraco."* — mesma premissa do revisor
+local, e refutada pela medição da §11 da metodologia: a penetração residencial do Piauí é
+**7,42% contra 5,19% do Brasil**, 43% acima. O pacote de revisão foi escrito antes dessa
+medição existir; nenhum dos dois tinha o número.
+
+**Mas o conselho de comunicação dele é certo mesmo com a premissa errada:** *"prefeito
+ouve 'Piauí perdeu participação' e pensa 'então aqui também não tem mercado'. Use
+internamente, nunca em slide de venda."* Vale.
+
+### 13.5 O que muda no plano
+
+| era | fica |
+|---|---|
+| etapa 2 — repositório DuckDB, 1,5 dia | **adiado.** Um carregador compartilhado quando a próxima fonte chegar |
+| etapas 3 a 6 — LABREN, modelo, SIGEL, SNIS | **congeladas até a janela fechar.** Volta em janeiro |
+| ordem por valor por dia | **a pergunta orçamentária vem antes de qualquer código** |
+
+**Próxima ação, e não é técnica:** descobrir em quantos municípios do segmento B existe
+dotação disponível para contratar ainda em 2026. É uma ligação, não um script.
