@@ -34,6 +34,8 @@ cne = json.load(open(os.path.join(D, 'cnefe.json'), encoding='utf-8'))['municipi
 # TCE-PI: tem o fiscal dos 72 que o SICONFI não tem, e o elemento 3.3.90.39
 _tce = os.path.join(D, 'tce.json')
 tce = json.load(open(_tce, encoding='utf-8'))['municipios'] if os.path.exists(_tce) else {}
+_bd = os.path.join(D, 'bdgd.json')
+bdgd_mun = json.load(open(_bd, encoding='utf-8'))['municipios'] if os.path.exists(_bd) else {}
 # mural de licitações: quem tem certame MARCADO tem máquina de compra viva
 _lic = os.path.join(D, 'tce_licitacoes.json')
 lic = json.load(open(_lic, encoding='utf-8'))['municipios'] if os.path.exists(_lic) else {}
@@ -97,6 +99,22 @@ def ficha(x):
                        f'<b>pergunte qual está certa</b>, é boa abertura de conversa.</div>')
     pj = T.get('terceiros_pj') or {}
     emp = pj.get('empenhada')
+    # Ideia da rodada 10 (GLM): unidade consumidora PJ de média/alta tensão é
+    # imóvel ECONÔMICO. Muitas delas com IPTU quase nulo é indício de imóvel
+    # fora do cadastro — e converte o argumento de "prazo legal" (medo) em
+    # "receita" (ganho), que vende melhor.
+    B = bdgd_mun.get(x['cd']) or {}
+    economico = ''
+    if B.get('uc', 0) >= 8 and iptu is not None and (iptu / max(B['uc'], 1)) < 6000:
+        economico = (
+            f'<div class="forte"><b>Abertura por receita, não por prazo.</b> O município tem '
+            f'<b>{N_(B["uc"])} estabelecimentos</b> com ligação de média ou alta tensão '
+            f'({N_(B.get("carga_kw"))} kW de carga instalada) e arrecadou <b>{RS(iptu)}</b> de '
+            f'IPTU no ano — <b>{RS(iptu/B["uc"])} por estabelecimento</b>.<br>'
+            f'<span class="miudo">Ligação de média tensão é comércio ou indústria, não '
+            f'residência. Pergunte quantos desses estão no cadastro imobiliário. '
+            f'Ressalva: a base é só PJ de média/alta tensão, e IPTU baixo também pode ser '
+            f'política de isenção — por isso é <b>pergunta</b>, não acusação.</span></div>')
     L = lic.get(x['cd']) or {}
     # certame marcado é a evidência mais próxima de "há processo de compra andando"
     if L.get('certames'):
@@ -158,6 +176,7 @@ def ficha(x):
  {certame}
  {diverge}
 
+ {economico}
  {zerado}
  {f'<div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da '
   f'prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro '

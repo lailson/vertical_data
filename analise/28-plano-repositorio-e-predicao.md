@@ -412,3 +412,70 @@ internamente, nunca em slide de venda."* Vale.
 
 **Próxima ação, e não é técnica:** descobrir em quantos municípios do segmento B existe
 dotação disponível para contratar ainda em 2026. É uma ligação, não um script.
+
+---
+
+## 14. Rodada 10, segunda volta — o GLM entrou pelo OpenRouter (19/09/2026)
+
+O plano do Z.ai segue esgotado até 22/09, mas **o motivo de não usar OpenRouter caiu**:
+o CLAUDE.md o desaconselha porque *"o plano cobre; pagar por token é desperdício"* — e o
+plano não está cobrindo. A restrição dos termos do Coding Plan vale para chamar **o
+endpoint da Z.ai** de script próprio, não para o OpenRouter, que é outro provedor.
+
+Custo: **US$ 0,013**. A falha documentada apareceu como previsto — **12.408 caracteres de
+raciocínio para 1.830 de resposta**. Com `max_tokens` folgado (6.000) a resposta veio
+inteira; com o padrão, teria voltado vazia.
+
+### 14.1 Onde ele confirmou o que já se sabia
+
+**Fundação e energia como produto: terceira e quarta confirmações.** Acrescentou um
+detalhe prático: *"1,5 dia com 5 scripts legados vira 3–4 na prática"*. E sobre a queda de
+participação, repetiu o conselho do DeepSeek — **não colocar no pitch**, usar como
+evidência interna.
+
+### 14.2 A ideia que ninguém tinha tido, e que já virou ficha
+
+> *"O único uso que acelera a venda atual é cruzar as 4.230 unidades PJ do BDGD com o
+> cadastro municipal: imóveis econômicos fora do IPTU = receita recuperável, convertendo o
+> pitch de 'prazo legal' (medo) em 'dinheiro' (ganho)."*
+
+**Testado no dado, e o resultado é forte:**
+
+| município | UC PJ de média/alta tensão | carga | IPTU no ano |
+|---|---|---|---|
+| **Geminiano** | 59 | 338 kW | **R$ 0** |
+| **Simões** | 13 | 92 kW | **R$ 0** |
+| **Santa Filomena** | 14 | **912 kW** | **R$ 780** |
+| Cajueiro da Praia | 27 | 1.496 kW | R$ 22.047 |
+| Ribeiro Gonçalves | 26 | 1.824 kW | R$ 32.663 |
+
+Ligação de média tensão é **comércio ou indústria**, não residência. A mediana estadual é
+R$ 13.251 de IPTU por unidade dessas; nos casos acima é zero ou quase.
+
+**Entrou nas fichas** como *"abertura por receita, não por prazo"*, com as duas ressalvas
+coladas: a base é **só PJ de média e alta tensão**, e IPTU baixo **também pode ser política
+de isenção**. Por isso a ficha manda **perguntar**, não acusar.
+
+### 14.3 Onde ele errou — o mesmo erro do DeepSeek
+
+*"194 municípios com IPTU < R$ 100 mil dificilmente têm dotação"*. Já medido e refutado
+(§13.3): IPTU não é capacidade de pagar. A RCL mediana do segmento B é **R$ 41,3 milhões**
+e o contrato é **0,16%** dela. Dois revisores independentes cometeram o mesmo erro, o que
+sugere que **a confusão IPTU × capacidade é intuitiva** — e que o material de venda
+precisa desarmá-la explicitamente.
+
+### 14.4 Os dois riscos novos, e o segundo é o mais sério do dia
+
+1. **O art. 266 tem sanção efetiva?** Se a obrigação não traz penalidade, o prazo não
+   compele, e o produto inteiro apoia-se num "deve" sem consequência. **Não verificado.**
+2. **E se o estado, ou a APPM, fizer convênio em bloco?** *"Se fizer, seus 224 clientes
+   viram 1."*
+
+O segundo inverte uma leitura do projeto. O consórcio aparecia como **oportunidade** — o
+art. 75 §2º dobra o limite de dispensa para consórcios públicos, o que favorecia o canal
+APPM. Ninguém tinha olhado o mesmo fato como **ameaça**: o mesmo mecanismo que dobra o
+contrato pode consolidar a demanda num comprador só, com poder de preço.
+
+**Recomendação:** as duas viram pergunta da primeira ligação à APPM — antes de qualquer
+esforço de canal. E a sanção do art. 266 é leitura de texto legal, não pesquisa de campo:
+resolve-se numa tarde.

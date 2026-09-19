@@ -1,0 +1,9 @@
+1. **Fundação: não pare agora.** A janela de assinatura é ~60 dias úteis; dia de engenharia interna compete com dia de venda. Proveniência por coluna com sha256 não aparece em nenhuma proposta — README + hash por arquivo cobre auditoria em 2 horas. E "1,5 dia" com 5 scripts legados vira 3–4 na prática. Construa quando a fonte nº 10 quebrar algo ou quando cliente pagar por rastreabilidade.
+
+2. **Energia: insumo, não produto.** O único uso que acelera a venda atual é cruzar as 4.230 unidades PJ do BDGD com o cadastro municipal: imóveis econômicos fora do IPTU = receita recuperável, convertendo o pitch de "prazo legal" (medo) em "dinheiro" (ganho). Como linha de produto (GD, meio ambiente) é outro comprador, outro ciclo, sem urgência comprável — não abra essa frente em nov–dez.
+
+3. **Lista BDGD: commodity, não ativo.** ODbL significa que qualquer integrador solar baixa a mesma lista amanhã; a distribuidora é dona do dado; prefeitura não compra leads de energia. Não muda o modelo de negócio — vale como anexo de reunião e prova de capacidade analítica, no máximo.
+
+4. **Queda 2,44% → 1,73%: argumento contra energia, não a favor.** −29% local com Brasil estável = mercado piauiense de GD contraindo (efeito pós-Lei 14.300), não demanda reprimida. Para a prefeitura, no produto CIB, o número é irrelevante. Use como evidência interna para não desviar; não coloque no pitch.
+
+5. **O risco real é capacidade de pagamento, não dado.** 194 municípios com IPTU < R$ 100 mil/ano dificilmente têm dotação para CIB em 2025, e dezembro municipal é fechamento de exercício — urgência legal pode não virar empenho. Antes de qualquer DuckDB: ligue para 10 prefeituras perguntando se existe dotação este ano. E verifique se o art. 266 tem sanção efetiva e se o estado não fará convênio em bloco — se fizer, seus 224 clientes viram 1.
