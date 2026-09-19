@@ -1456,7 +1456,14 @@ function paginaEnergia(){
    <svg id="gdIdx" viewBox="0 0 300 130" style="width:100%"></svg>
    <div class="nota">Brasil faz 900 mil conexões por ano e o Piauí, 20 mil — no mesmo eixo
     o estado vira uma reta rente ao zero. Participação põe os dois numa grandeza só, sem
-    base arbitrária.<br>${DIAG}</div></div>
+    base arbitrária.<br>${DIAG}
+    ${GD.penetracao?`<br><b>E a queda não é mercado fraco.</b> A penetração residencial
+    acumulada do Piauí é <b>${PC2(GD.penetracao.uf)}</b> contra <b>${PC2(GD.penetracao.br)}</b>
+    do Brasil — <b>${(GD.penetracao.uf/GD.penetracao.br).toFixed(2).replace('.',',')}×</b> a
+    média nacional. O estado adotou antes e mais rápido, e agora desacelera de uma base mais
+    alta: é saturação do segmento fácil, não falta de demanda. A consequência comercial é
+    direta — o telhado residencial aqui está mais colhido que no resto do país, o que torna
+    a lista de minigeração ao lado <i>mais</i> valiosa, não menos.`:''}</div></div>
 
   <div class="card" style="margin-top:14px"><h3>Tarifa vigente <span>${TAR?esc(TAR.agentes.join(', ')):'—'}</span></h3>
    ${TAR&&TAR.residencial_b1&&TAR.residencial_b1_scee?`

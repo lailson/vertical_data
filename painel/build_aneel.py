@@ -24,7 +24,7 @@ Entrada: dados/bruto/aneel/*.parquet  ·  painel/dados/municipios.json
 Saída:   painel/dados/aneel.json
 Uso:     .venv/bin/python painel/build_aneel.py [--uf 22]
 """
-import json, os, sys
+import csv, io as _io, json, os, sys, zipfile
 from datetime import date
 
 import duckdb
@@ -144,6 +144,35 @@ for cd, nome, n, kw, micro, solar, res, kw_solar, c0, c1 in linhas:
 
 sem_gd = [cd for cd in mun if cd not in saida['municipios']]
 saida['municipios_sem_registro'] = sorted(sem_gd)
+# Penetração nacional, para dar escala à do estado. Sem ela, "o Piauí caiu 29%"
+# é ambíguo: pode ser mercado fraco ou mercado adiantado desacelerando — e as
+# duas conclusões comerciais são opostas.
+def domicilios_br():
+    z = os.path.join(RAIZ, 'dados', 'bruto', 'ibge', 'municipios_domicilio1_BR.zip')
+    if not os.path.exists(z):
+        return None, None
+    with zipfile.ZipFile(z) as zf:
+        nome = next(n for n in zf.namelist() if n.lower().endswith('.csv'))
+        with zf.open(nome) as fh:
+            r = csv.reader(_io.TextIOWrapper(fh, encoding='latin-1'), delimiter=';')
+            h = next(r)
+            iM, iD = h.index('CD_MUN'), h.index('V00001')
+            br = uf = 0.0
+            for row in r:
+                try:
+                    d = float(row[iD].replace(',', '.'))
+                except (ValueError, IndexError):
+                    continue
+                br += d
+                if row[iM].startswith(UF):
+                    uf += d
+    return br, uf
+
+
+dom_br, dom_uf = domicilios_br()
+res_br = c.execute(f"""SELECT count(*) FROM read_parquet('{EMP}')
+  WHERE CodClasseConsumo IN ('RE','REBR')""").fetchone()[0]
+
 saida['uf_total'] = {
     'n': sum(x['n'] for x in saida['municipios'].values()),
     'solar': sum(x['solar'] for x in saida['municipios'].values()),
@@ -152,6 +181,17 @@ saida['uf_total'] = {
     'municipios_com': len(saida['municipios']),
     'municipios_sem': len(sem_gd),
 }
+res_uf = saida['uf_total']['res']
+if dom_br and dom_uf:
+    saida['penetracao'] = {
+        'br': round(100 * res_br / dom_br, 2),
+        'uf': round(100 * res_uf / dom_uf, 2),
+        'dom_br': int(dom_br), 'dom_uf': int(dom_uf),
+        'res_br': res_br, 'res_uf': res_uf,
+        'nota': ('penetração residencial acumulada: conexões das classes RE e REBR ÷ '
+                 'domicílios do Censo 2022 (V00001). O denominador nacional sai do mesmo '
+                 'arquivo do IBGE que alimenta o painel'),
+    }
 
 cam = os.path.join(DADOS, 'aneel.json')
 with open(cam, 'w', encoding='utf-8') as fh:

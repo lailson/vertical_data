@@ -319,3 +319,36 @@ plausível sem medir**. A primeira foi atribuir a queda de 2025 à suspensão da
 
 O residencial em massa continua sem recorte submunicipal publicado — e é por isso que a
 tela não pinta geração por bairro.
+
+---
+
+## 11. A queda de 2025 é saturação, não fraqueza (18/09/2026)
+
+Terceira leitura da mesma série, e a que finalmente tem base.
+
+| leitura | quem disse | veredito |
+|---|---|---|
+| "o vale é efeito da suspensão da ANEEL" | eu, na primeira versão da tela | **errado** — a suspensão derrubou um mês (out/2025: 300 conexões contra ~1.100 nos vizinhos), não o ano |
+| "é perda de participação, argumento de venda" | eu, na segunda versão | **incompleto** — verdadeiro como aritmética, mas sem causa |
+| "é sinal de mercado fraco, alerta contra entrar" | revisor externo (qwen3-coder local) | **errado na premissa** |
+
+O que decide entre as três é um número que ninguém tinha: a **penetração residencial
+acumulada**, Piauí contra Brasil. Medida com o mesmo arquivo do IBGE que alimenta o
+painel (`municipios_domicilio1_BR.zip`, V00001) e o parquet nacional da ANEEL:
+
+| | domicílios | conexões residenciais | penetração |
+|---|---|---|---|
+| **Brasil** | 72.438.953 | 3.761.741 | **5,19%** |
+| **Piauí** | 1.071.452 | 79.484 | **7,42%** |
+
+**O Piauí está 43% acima da média nacional.** Não é um mercado fraco que ficou para trás
+— é um mercado que adotou antes e mais rápido, e agora desacelera de uma base mais alta.
+Isso é **saturação do segmento fácil**, não falta de demanda.
+
+**Consequência comercial, e ela é o oposto da leitura do revisor:** o telhado residencial
+no Piauí está mais colhido que no resto do país, o que torna o mercado de **minigeração**
+— comércio e indústria, os 3.284 do BDGD sem geração — proporcionalmente *mais* valioso,
+não menos.
+
+**Padrão a guardar:** as três leituras erradas ou incompletas eram todas *plausíveis*. O
+que separou foi medir o denominador que faltava, não argumentar melhor.
