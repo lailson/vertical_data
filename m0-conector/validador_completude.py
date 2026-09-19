@@ -42,12 +42,25 @@ MAPEAR = {  # coluna do CSV -> campo do CADURB
 }
 
 
+def _sem_acento(s):
+    import unicodedata
+    return ''.join(c for c in unicodedata.normalize('NFD', str(s).strip().lower())
+                   if unicodedata.category(c) != 'Mn')
+
+
 try:
     import json as _json, os as _os
     _dom = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'spec', 'dominios.json'), encoding='utf-8'))
     TL_DOM = {int(k): v for k, v in _dom.get('tipoLogradouro', {}).items()}
-    TL_NOME = {v.strip().lower(): k for k, v in TL_DOM.items()}
-except Exception:
+    # índice reverso por NOME, sem acento: a planilha do município traz
+    # "Praça" e a tabela traz "Praça" — bater por string crua perde o acento
+    # em metade dos encodings que chegam do mundo real.
+    TL_NOME = {_sem_acento(v): k for k, v in TL_DOM.items()}
+except (OSError, ValueError) as _e:
+    # Só falta de arquivo ou JSON inválido. `except Exception` escondia erro de
+    # código: um NameError aqui zerava a tabela de domínios em silêncio e o
+    # laudo seguia aprovando tudo, sem conferir um só tipo de logradouro.
+    print(f'AVISO: domínios não carregados ({_e}) — checagem de tabela desativada', file=sys.stderr)
     TL_DOM, TL_NOME = {}, {}
 
 def ni_valido(ni):
@@ -59,6 +72,59 @@ def ni_valido(ni):
     if SEM is not None and not SEM.dv_documento(ni):
         return False, ni
     return True, ni
+
+# ---------------------------------------------------------------- de-para
+# `MAPEAR` (acima) já traduz a coluna da planilha para o campo da SPEC do CADURB.
+# As regras de `regras_semanticas.py` falam o vocabulário da spec; sem esta
+# tradução elas rodavam sobre chaves inexistentes e devolviam "tudo ausente" —
+# que foi por isso que ficaram desligadas do laudo até 19/09/2026.
+def para_spec(rows):
+    """Traduz as linhas do CSV para o vocabulário da spec.
+
+    Duas DERIVAÇÕES, e as duas vão declaradas no laudo porque mudam o resultado:
+
+    1. `temBairro` é obrigatório no leiaute e não existe na planilha. É derivado
+       da presença de bairro. Sem derivar, a R1 acusaria a base inteira por um
+       campo que o município nunca foi solicitado a ter.
+    2. `percTitularidade` é fração de 0 a 1 na spec; a planilha costuma vir em
+       porcentagem. Valor entre 1 e 100 é dividido por 100 — a mesma conversão
+       que a remessa faria.
+    """
+    saida, pct_convertido = [], 0
+    tl_convertido = tl_sem_codigo = 0
+    for r in rows:
+        d = {}
+        for origem, destino in MAPEAR.items():
+            v = (r.get(origem) or '').strip() if isinstance(r.get(origem), str) else r.get(origem)
+            if v not in (None, ''):
+                d[destino] = v
+        # tipoLogradouro: a planilha quase sempre traz o nome por extenso, e a
+        # spec exige o código da tabela 9.6. Converter é o que a remessa faria —
+        # deixar por extenso reprovaria TODAS as linhas por um defeito de formato,
+        # que é ruído e esconde os defeitos de conteúdo.
+        tl = d.get('tipoLogradouro')
+        if tl is not None and not str(tl).strip().isdigit():
+            cod = TL_NOME.get(_sem_acento(tl))
+            if cod is not None:
+                d['tipoLogradouro'] = cod
+                tl_convertido += 1
+            else:
+                tl_sem_codigo += 1
+        d['temBairro'] = 'S' if d.get('bairro') else 'N'
+        p = d.get('percTitularidade')
+        if p is not None:
+            try:
+                f = float(str(p).replace(',', '.'))
+                if 1 < f <= 100:
+                    f /= 100
+                    pct_convertido += 1
+                d['percTitularidade'] = f
+            except ValueError:
+                pass
+        saida.append(d)
+    return saida, {'pct': pct_convertido, 'tl_convertido': tl_convertido,
+                   'tl_sem_codigo': tl_sem_codigo}
+
 
 FAIXAS_CEP = []   # preenchido em main() com os prefixos do município
 
@@ -151,6 +217,16 @@ def main():
     FAIXAS_CEP = faixas_cep_do_municipio(ibge)
 
     rows = list(csv.DictReader(open(path, encoding='utf-8-sig', errors='replace'), delimiter=';'))
+
+    # --- as dez regras semânticas, agora chamadas de fato ---
+    # Até 19/09/2026 o módulo era importado e só emprestava o dígito verificador;
+    # `validar_base` nunca rodava, e o laudo prometia mais do que entregava.
+    sem = None
+    if SEM is not None and rows:
+        registros, conv = para_spec(rows)
+        sem = SEM.validar_base(registros, codigo_ibge=ibge,
+                               ctx={'faixas_cep': FAIXAS_CEP})
+        sem['_conv'] = conv
     falhas_por_regra = Counter(); avisos = 0; ok = 0; estrategicos = Counter()
     titularidade = defaultdict(float); inscricoes = Counter()
     for r in rows:
@@ -196,9 +272,39 @@ def main():
     linhas.append('- CEP conferido contra **%d prefixos** do município (CNEFE/IBGE)'
                   % len(FAIXAS_CEP) if FAIXAS_CEP else
                   '- CEP: prefixos do município **não disponíveis** — a checagem de faixa não foi aplicada')
+    ROT_MD = {
+        'CAMPO_NAO_INFORMADO_OU_NULO': 'campo obrigatório ausente',
+        'CAMPO_COM_VALOR_INVALIDO': 'valor fora do domínio ou duplicado',
+        'CAMPO_COM_PRRENCHIMENTO_INCOMPATIVEL': 'preenchimento incompatível entre campos',
+        'CAMPO_COM_DV_INVALIDO': 'CPF/CNPJ com dígito verificador inválido',
+        'CAMPO_COM_FORMATACAO_INVALIDA': 'formato inválido',
+        'CAMPO_COM_TAMANHO_INVALIDO': 'excede o tamanho da spec',
+    }
+    if sem:
+        linhas += ['', '## Regras semânticas (R1–R10, spec do CADURB)', '']
+        linhas.append(f"- aptos pelas regras semânticas: **{sem['aptos_a_transmissao']} de "
+                      f"{sem['imoveis_analisados']}** ({sem['percentual_apto']}%)")
+        if sem['por_tipo']:
+            linhas += [f'- {ROT_MD.get(k, k)}: **{v}**'
+                       for k, v in sorted(sem['por_tipo'].items(), key=lambda x: -x[1])]
+        else:
+            linhas.append('- nenhuma falha semântica')
+        if sem['top_impeditivas']:
+            linhas.append('- campos que mais bloqueiam: ' + ', '.join(f'`{c}`' for c in sem['top_impeditivas'][:6]))
+        linhas.append('')
+        c = sem['_conv']
+        linhas.append('> **O que a tradução fez**, porque muda o resultado e não pode ficar implícito:')
+        linhas.append('> `temBairro` derivado da presença de bairro — o leiaute exige, a planilha não tem.')
+        if c['pct']:
+            linhas.append(f"> {c['pct']} registro(s) com titularidade convertida de porcentagem para fração.")
+        if c['tl_convertido'] or c['tl_sem_codigo']:
+            linhas.append(f"> Tipo de logradouro veio **por extenso**: {c['tl_convertido']} convertido(s) "
+                          f"para o código da tabela 9.6"
+                          + (f", **{c['tl_sem_codigo']} sem correspondência** — estes precisam de decisão do município."
+                             if c['tl_sem_codigo'] else '.'))
     linhas += [
         '', '## Leitura', '',
-        f'Validação semântica: tabela oficial de Tipo de Logradouro ({len(TL_DOM)} códigos, manual CADURB v1.12) aplicada quando o campo é informado. Aptidão estimada para remessa: **{pct_ok:.1f}%**. Regras obrigatórias derivadas da spec'
+        f'Duas camadas rodam sobre a base: a de **completude** (obrigatórios, domínios, tabela de Tipo de Logradouro com {len(TL_DOM)} códigos do manual v1.12) e a de **regras semânticas** (R1–R10), que confere coerência territorial × predial, faixas, dígito verificador, unicidade de inscrição e soma de titularidade. Aptidão estimada para remessa: **{pct_ok:.1f}%**. Regras obrigatórias derivadas da spec'
         ' pública de homologação do CADURB (openapi-homologacao.json, 16/09/2026).'
         ' Com a credencial do convênio, esta mesma base pode ser revalidada no endpoint oficial'
         ' `POST /v1/validacao/{ibge}/ui` (modo --online deste validador).',
@@ -217,6 +323,46 @@ def main():
         f'<div class="hrow"><span class="hl">{k}</span><div class="hbar"><i style="width:{100*v/n:.0f}%;background:#2FA697"></i></div><span class="hv">{100*v/n:.1f}%</span></div>'
         for k, v in estrategicos.most_common())
     cor_pct = '#0D8478' if pct_ok >= 80 else ('#8F5A02' if pct_ok >= 40 else '#C03A24')
+
+    # as dez regras também no artefato que o cliente imprime — o laudo em HTML é
+    # o que vai anexado ao processo, e era justamente ele que prometia mais do
+    # que entregava
+    sem_html = ''
+    if sem:
+        c = sem['_conv']
+        # o enum do SERPRO traz "PRRENCHIMENTO" com o typo dele, e o código
+        # mantém fiel de propósito; o laudo é artefato de cliente e mostra o
+        # rótulo legível, não o identificador cru
+        ROTULO = {
+            'CAMPO_NAO_INFORMADO_OU_NULO': 'campo obrigatório ausente',
+            'CAMPO_COM_VALOR_INVALIDO': 'valor fora do domínio ou duplicado',
+            'CAMPO_COM_PRRENCHIMENTO_INCOMPATIVEL': 'preenchimento incompatível entre campos',
+            'CAMPO_COM_DV_INVALIDO': 'CPF/CNPJ com dígito verificador inválido',
+            'CAMPO_COM_FORMATACAO_INVALIDA': 'formato inválido',
+            'CAMPO_COM_TAMANHO_INVALIDO': 'excede o tamanho da spec',
+        }
+        tipos = ''.join(
+            f'<div class="hrow"><span class="hl">{ROTULO.get(k, k.replace("CAMPO_", "").replace("_", " ").lower())}</span>'
+            f'<div class="hbar"><i style="width:{100*v/max(sem["por_tipo"].values()):.0f}%;background:#C98518"></i></div>'
+            f'<span class="hv">{v}</span></div>'
+            for k, v in sorted(sem['por_tipo'].items(), key=lambda x: -x[1]))
+        traducao = ['<b>temBairro</b> derivado da presença de bairro — o leiaute exige, a planilha não tem']
+        if c['pct']:
+            traducao.append(f"{c['pct']} registro(s) com titularidade convertida de porcentagem para fração")
+        if c['tl_convertido'] or c['tl_sem_codigo']:
+            traducao.append(f"tipo de logradouro veio por extenso: {c['tl_convertido']} convertido(s) para o "
+                            f"código da tabela 9.6" +
+                            (f", <b>{c['tl_sem_codigo']} sem correspondência</b>" if c['tl_sem_codigo'] else ''))
+        sem_html = (
+            '<h2>Regras semânticas (R1–R10)</h2>'
+            f'<p style="font-size:13px;color:var(--slate);margin-bottom:8px">Camada distinta da '
+            f'completude: confere coerência territorial × predial, faixas numéricas, dígito verificador, '
+            f'unicidade de inscrição e soma de titularidade. '
+            f'<b>{sem["aptos_a_transmissao"]} de {sem["imoveis_analisados"]}</b> '
+            f'({sem["percentual_apto"]}%) passam por ela.</p>'
+            + (tipos or '<p class="ok">Nenhuma falha semântica.</p>')
+            + '<p style="font-size:12px;color:var(--slate);margin-top:10px"><b>O que a tradução fez:</b> '
+            + '; '.join(traducao) + '.</p>')
     html = f"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Laudo de Completude Cadastral — IBGE {ibge} · Vertical Data</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -250,6 +396,7 @@ h2{{font:700 16px Inter,sans-serif;margin:22px 0 8px}} p.ok{{color:var(--teal);f
 <div class="k"><div class="l">Inscrições duplicadas</div><div class="v">{len(dups)}</div></div></div>
 <h2>Falhas por regra (bloqueiam a remessa)</h2>{falhas_html}
 <h2>Cobertura de campos estratégicos</h2>{est_html}
+{sem_html}
 <h2>Consistência</h2>
 <div class="hrow"><span class="hl">Titularidade que não soma ~100%</span><div></div><span class="hv">{len(soma_errada)}</span></div>
 <div class="hrow"><span class="hl">Avisos não bloqueantes</span><div></div><span class="hv">{avisos}</span></div>

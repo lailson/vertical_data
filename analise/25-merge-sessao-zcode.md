@@ -531,14 +531,44 @@ acontecer no cliente"*. Aconteceu aqui, que é onde tinha de acontecer.
 - **O percentual de titularidade** era tratado como 0–100, e a spec usa fração
   0–1. O validador passou a aceitar as duas formas e a registrar qual veio.
 
-### 12.3 E o que ainda não é verdade
+### 12.3 E o que ainda não é verdade — RESOLVIDO em 19/09/2026
 
-O laudo continua **sem chamar** `regras_semanticas.validar_base`. O caminho está
-aberto (o módulo é importado e já serve o DV), mas as 10 regras — coerência
-territorial × predial, faixa de ano, unicidade de inscrição pela regra própria —
-seguem em módulo separado. **Enquanto não forem chamadas, o laudo é mais fraco do
-que a documentação do produto afirma.** Fica como o próximo item, e não como
-concluído.
+> O texto original desta seção: *"o laudo continua sem chamar
+> `regras_semanticas.validar_base`… enquanto não forem chamadas, o laudo é mais fraco do
+> que a documentação do produto afirma."*
+
+**Resolvido.** `validar_base` roda, e as dez regras aparecem em seção própria no laudo,
+em markdown e em HTML — o HTML é o que vai anexado ao processo, e era justamente ele que
+prometia mais do que entregava.
+
+**O que faltava não era a chamada, era a tradução.** As regras falam o vocabulário da
+spec do CADURB (`inscricaoImobiliaria`, `niTitular`, `percTitularidade`); a planilha do
+município fala o dela. Chamadas sem de-para, elas rodariam sobre chaves inexistentes e
+devolveriam "tudo ausente" — pior que não rodar.
+
+A camada de tradução faz **três coisas declaradas no próprio laudo**, porque mudam o
+resultado:
+
+1. **`temBairro` derivado** da presença de bairro. O leiaute exige, a planilha não tem;
+   sem derivar, a R1 reprovaria a base inteira por um campo que ninguém pediu ao município.
+2. **Titularidade convertida** de porcentagem para fração quando vem entre 1 e 100 — a
+   mesma conversão que a remessa faria.
+3. **Tipo de logradouro convertido de texto para código** da tabela 9.6. A planilha traz
+   "Rua", "Avenida", "Travessa"; a spec exige 250, 26, 273. Sem converter, **toda linha
+   reprovava por um defeito de formato**, e o ruído escondia os defeitos de conteúdo.
+
+**Três defeitos encontrados ao fazer isto**, e o primeiro é grave:
+
+- **`except Exception` escondia um `NameError` e zerava a tabela de domínios em
+  silêncio.** O laudo seguia aprovando tipo de logradouro sem conferir um só código.
+  O except agora é `(OSError, ValueError)` e avisa no stderr quando dispara.
+- Eu escrevi um `DE_PARA` **duplicado**: `MAPEAR` já existia e fazia o mesmo.
+- O enum do SERPRO traz `PRRENCHIMENTO` com o typo dele — mantido fiel no código, mas
+  vazava para a tela do cliente. Agora tem rótulo legível.
+
+**Resultado no arquivo de exemplo:** 0 de 5 aptos pelas regras semânticas, contra 3 de 5
+pela completude. As onze falhas foram auditadas uma a uma e **todas são reais** — o
+`exemplo_base.csv` é um fixture com defeito em cada linha, de propósito.
 
 ### 12.4 Tabela 9.13 contaminada
 

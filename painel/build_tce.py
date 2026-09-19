@@ -6,14 +6,22 @@ SICONFI e ficam sem IPTU, ITBI e RCL no painel — justamente os que mais precis
 do produto e os que menos se consegue qualificar antes de ligar. O TCE recebe
 prestação de contas por obrigação própria e **tem o dado deles**.
 
-**Duas decisões de método, e a primeira muda o número.**
+**Duas decisões de método, e a primeira foi corrigida depois de medida.**
 
-1. **IPTU e ITBI entram só pelo PRINCIPAL.** A API separa cada imposto em três
-   lançamentos — principal, dívida ativa, multas e juros. Somar os três infla o
-   valor contra o SICONFI, que no demonstrativo traz o imposto do exercício. A
-   dívida ativa fica em campo próprio, porque **também é informação comercial**:
-   município com dívida ativa alta e IPTU baixo tem cadastro velho, não ausência
-   de contribuinte.
+1. **IPTU e ITBI são o TOTAL do imposto: principal + dívida ativa + multas.**
+   A primeira versão deste script usava só o principal, com a justificativa de
+   que somar os três inflaria o valor contra o SICONFI. **Era o oposto da
+   verdade, e a medição mostrou isso ao centavo:** em Teresina, principal
+   R$ 130.272.799 + dívida R$ 36.048.317 = **R$ 166.321.115**, exatamente o
+   número do SICONFI. O demonstrativo do RREO traz o total arrecadado do imposto,
+   não o principal.
+
+   No conjunto, o acordo com o SICONFI dentro de 1% passou de **116 para 128**
+   dos 139 municípios comparáveis.
+
+   O principal e a dívida ficam **também** em campo próprio, porque a separação é
+   informação comercial: município com dívida ativa alta e principal baixo tem
+   **cadastro velho**, não ausência de contribuinte.
 2. **O elemento de serviços de terceiros PJ é `empenhada`, não saldo.** A API
    expõe empenhada, liquidada e paga; **não expõe a dotação autorizada**. Então
    isto mede o *tamanho* do elemento, nunca o saldo livre — que continua sendo
@@ -71,8 +79,9 @@ saida = {
     'url': 'https://sistemas.tce.pi.gov.br/api/portaldacidadania/docs/',
     'baixado_em': date.today().isoformat(),
     'exercicio': EX,
-    'nota_principal': ('IPTU e ITBI são o lançamento PRINCIPAL. Dívida ativa e multas '
-                       'ficam em campo próprio — somá-los infla o valor contra o SICONFI'),
+    'nota_principal': ('IPTU e ITBI são o TOTAL do imposto: principal + dívida ativa + '
+                       'multas. É assim que casa com o RREO do SICONFI — verificado ao '
+                       'centavo em Teresina. Principal e dívida ficam em campos próprios'),
     'nota_elemento': ('servicos_terceiros_pj é o valor EMPENHADO no elemento, não o saldo '
                       'livre: a API não expõe a dotação autorizada'),
     'municipios': {},
@@ -108,8 +117,11 @@ for f in arqs:
     saida['municipios'][cd] = {
         'nome': p['nome'], 'id_tce': p['id'],
         # ausência de lançamento é diferente de valor zero declarado
-        'iptu': round(v['iptu'], 2) if achou['iptu'] else None,
-        'itbi': round(v['itbi'], 2) if achou['itbi'] else None,
+        # o total é o que casa com o RREO; principal e dívida ficam ao lado
+        'iptu': round(v['iptu'] + v['iptu_divida'], 2) if achou['iptu'] else None,
+        'itbi': round(v['itbi'] + v['itbi_divida'], 2) if achou['itbi'] else None,
+        'iptu_principal': round(v['iptu'], 2) if achou['iptu'] else None,
+        'itbi_principal': round(v['itbi'], 2) if achou['itbi'] else None,
         'iptu_divida': round(v['iptu_divida'], 2) if achou['iptu'] else None,
         'itbi_divida': round(v['itbi_divida'], 2) if achou['itbi'] else None,
         'receita_total': round(total, 2),

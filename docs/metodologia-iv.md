@@ -370,13 +370,29 @@ parâmetro `pagina` — `limit`, `size` e `porPagina` são ignorados pelo servid
 declarado. `dados/baixar_tce.py` (educado: 0,3 s entre chamadas, três tentativas com
 espera crescente, cache para retomar) e `painel/build_tce.py`.
 
-### 12.1 A decisão que muda o número
+### 12.1 A decisão que muda o número — e que eu escrevi ao contrário primeiro
 
-IPTU e ITBI aparecem em **três lançamentos** — principal, dívida ativa, multas e juros.
-**Entra só o principal.** Somar os três infla o valor contra o SICONFI, que no
-demonstrativo traz o imposto do exercício. A dívida ativa fica em campo próprio porque
-também é informação comercial: **município com dívida ativa alta e IPTU baixo tem
-cadastro velho, não ausência de contribuinte.**
+IPTU e ITBI aparecem em **três lançamentos**: principal, dívida ativa, multas e juros.
+
+A primeira versão desta seção afirmava: *"entra só o principal; somar os três infla o
+valor contra o SICONFI"*. **Era o oposto da verdade**, e a medição mostrou ao centavo:
+
+```
+Teresina · principal    R$ 130.272.799
+           dívida+multa R$  36.048.317
+           soma         R$ 166.321.115  ← exatamente o número do SICONFI
+```
+
+O RREO traz o **total arrecadado do imposto**, não o principal. Confirmado também em
+Floriano e Bom Jesus, ao centavo. Corrigido: **`iptu` e `itbi` são o total**; principal e
+dívida ficam em campos próprios ao lado.
+
+A separação continua sendo informação comercial — **município com dívida ativa alta e
+principal baixo tem cadastro velho, não ausência de contribuinte** —, mas não é o número
+que se compara com o SICONFI.
+
+**Efeito da correção no acordo entre as fontes:** dentro de 1%, de **116 para 128** dos
+139 comparáveis.
 
 ### 12.2 Validação: duas fontes independentes, 83% de acordo exato
 
@@ -384,10 +400,10 @@ Comparando os **152** municípios que têm IPTU nas duas fontes:
 
 | | |
 |---|---|
-| razão TCE ÷ SICONFI, mediana | **1,000** |
-| dentro de ±1% | **116 de 139** (83%) |
-| dentro de ±10% | 120 de 139 (86%) |
-| divergem mais de 10% | 19 |
+| razão TCE ÷ SICONFI, mediana | **1,0000** |
+| dentro de ±1% | **128 de 139** (92%) |
+| dentro de ±10% | 131 de 139 (94%) |
+| divergem mais de 10% | 8 |
 
 São prestações de contas do **mesmo município a órgãos diferentes**. A concordância na
 mediana exata é a validação cruzada mais forte que este projeto conseguiu até agora.
@@ -447,3 +463,36 @@ inexistência a partir de busca incompleta"*, que a rodada 2 já registrou neste
 
 **Sujeira declarada:** 21 certames trazem `previsto` **negativo** na origem. Saem da
 estatística — por isso a mediana da dispensa sai de 23 valores, não 28.
+
+### 12.5 Pendências fiscais fechadas
+
+O `analise/25` §5 listava cinco itens abertos. A coleta do TCE fecha três:
+
+**§5.2 — validar os 6 números de IPTU/ITBI do deck.** Feito, contra fonte independente:
+
+| município | IPTU: SICONFI × TCE | ITBI: SICONFI × TCE |
+|---|---|---|
+| Teresina | **1,00×** | **1,00×** |
+| Cocal | **1,00×** | **1,00×** |
+| Floriano | **1,00×** | **1,00×** |
+| Corrente | **1,00×** | **1,00×** |
+| Bom Jesus | **1,00×** | **1,00×** |
+| Paulistana | **1,00×** | **1,00×** |
+| **Altos** | **5,35×** | **8,83×** |
+
+Seis dos sete batem **exatamente**. A razão ITBI/IPTU — o insight que sustenta a linha do
+deck — sobrevive nas duas fontes: Cocal 3,28 nas duas, Corrente 1,56 nas duas, Paulistana
+0,37 nas duas.
+
+**§5.4 — IPTU e RCL de Altos e Paulistana.** Fechado. **Paulistana bate em 1,00×** nos dois
+impostos. **Altos não bate, e não por dívida ativa** — a dívida dele é **zero** nas duas
+fontes, então a diferença é preenchimento parcial do demonstrativo ao SICONFI, como a
+sessão anterior suspeitara ao ver o retorno com apenas duas linhas. **Para Altos, o número
+do TCE é o que vale.**
+
+**§5.3 — composição urbana × rural do ITBI no sul.** *Não* fechado: a API do TCE traz o
+ITBI numa linha só, sem separar transmissão urbana de rural. Continua aberto, e continua
+valendo a regra de marcar os sete como **hipótese**, nunca como alvo.
+
+**Seguem abertos:** e-SIC à RFB (§5.1), composição do ITBI no sul (§5.3) e rodar o
+validador contra cadastro municipal real (§5.5).
