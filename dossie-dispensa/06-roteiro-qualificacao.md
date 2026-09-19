@@ -69,6 +69,23 @@ O elemento típico é **3.3.90.39**. O que se quer saber, em ordem:
 **Se a resposta for "só no orçamento do ano que vem":** isso **não é um não**. É um sim
 com data. Anote e volte em janeiro — e registre, porque muda a previsão inteira.
 
+### Porta 3-bis — a abertura que vale mais que a dispensa
+
+Se em algum momento ele perguntar **"e como vocês sabem se o nosso cadastro está bom?"**,
+essa é a melhor pergunta da ligação. A resposta não é uma promessa — é um pedido:
+
+> "Me manda 200 linhas do cadastro, sem nome e sem CPF, e eu devolvo em dois dias um laudo
+> dizendo o que passaria e o que a Receita recusaria."
+
+O texto pronto está em `entregaveis/pedido-amostra-cadastro.md`. **Duas coisas que não
+podem faltar no pedido:** que a inscrição pode vir mascarada **desde que duas linhas
+iguais continuem iguais** — sem isso a regra de duplicidade não roda, e é ela que acha o
+defeito mais comum —, e que **nome e documento ficam de fora**, para não levantar LGPD
+num favor de dez minutos.
+
+**E se a resposta for "nosso sistema não exporta":** isso é resposta, e das boas. Cadastro
+que não sai do sistema é remessa que não vai sair. Anote como sinal, não como recusa.
+
 ### Porta 4 — quem assina
 
 > "A dispensa é assinada pelo prefeito ou há delegação para a secretaria?"

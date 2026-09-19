@@ -997,7 +997,7 @@ function fichaE(){
   p.papel==='vitrine'?'<span class="tag pil">vitrine</span>':'',
   p.tenant_fox?'<span class="tag fox">host Foxinline</span>':'',
   rotRreo(p)!=='3 de 3'?`<span class="tag warn">RREO: ${rotRreo(p)}</span>`:'',
-  p.hipotese_itbi_rural?'<span class="tag warn">hipótese ITBI rural</span>':'',
+  p.hipotese_itbi_rural?'<span class="tag warn" title="ITBI alto por valor de transação, não por volume de imóvel rural. Conformidade sim; recuperação de IPTU não.">conformidade, não IPTU</span>':'',
   p.cib_ativo?'<span class="tag b">CIB ativo</span>':'',
  ].filter(Boolean).join(' ');
  const divPop=p.pop_csv&&p.pop&&Math.abs(p.pop-p.pop_csv)>0;
@@ -1244,7 +1244,7 @@ function paginaCarteira(){
   <select id="fFox"><option value="">tenant: indiferente</option><option value="0">sem host Foxinline</option><option value="1">com host Foxinline</option></select>
   <select id="fRreo"><option value="">RREO: indiferente</option><option value="nunca em 3 anos">nunca entregou (3 anos)</option><option value="falhou em 2025">falhou em 2025</option><option value="falhou antes de 2025">falhou antes de 2025</option><option value="3 de 3">3 de 3</option></select>
   <select id="fBai"><option value="">bairros: indiferente</option><option value="1">com bairros no Censo</option><option value="0">sem bairros</option></select>
-  <select id="fPapel"><option value="">papel: indiferente</option><option value="piloto">piloto</option><option value="alvo_itbi">alvo ITBI</option><option value="hip">hipótese ITBI rural</option></select>
+  <select id="fPapel"><option value="">papel: indiferente</option><option value="piloto">piloto</option><option value="alvo_itbi">alvo ITBI</option><option value="hip">conformidade, não IPTU</option></select>
   <input id="fQ" placeholder="buscar município…" style="min-width:180px">
   <button class="btn" id="expC">Exportar CSV</button>
   <span id="cCount" style="font-family:var(--f-mono);font-size:11.5px;color:var(--mut)"></span>
@@ -1302,7 +1302,7 @@ function renderCarteira(){
    p.papel==='vitrine'?'<span class="tag pil">vitrine</span>':'',
    p.tenant_fox?'<span class="tag fox">Fox</span>':'',
    rotRreo(p)==='nunca em 3 anos'?'<span class="tag warn">sem RREO 3a</span>':rotRreo(p)==='falhou em 2025'?'<span class="tag warn">RREO 25</span>':rotRreo(p)==='falhou antes de 2025'?'<span class="tag">RREO 2/3</span>':'',
-   p.hipotese_itbi_rural?'<span class="tag warn">ITBI rural?</span>':'',
+   p.hipotese_itbi_rural?'<span class="tag warn">conformidade, não IPTU</span>':'',
    p.cib_ativo?'<span class="tag b">CIB</span>':''].filter(Boolean).join(' ');
   const seg=p.segmento==='A'?'<span class="tag a">A</span>':p.segmento==='fronteira'?'<span class="tag f">fr</span>'
    :p.segmento==='B'?'<span class="tag b">B</span>':'<span class="tag warn">—</span>';
@@ -1873,8 +1873,11 @@ function paginaMetodologia(){
     <li><b>IPTU e ITBI vêm do portal SICONFI</b> (classificação RREO), nunca da soma crua da API MSC — que devolve três valores divergentes e <b>ITBI = 0</b> em municípios com cartório ativo. Não misturar portal e API na mesma tabela.</li>
     <li><b>Tenant Foxinline</b> vem de Certificate Transparency: evidência <b>forte para presença, fraca para ausência</b>. E há uma cegueira estrutural — <code>cerurb.prourb.foxinline.com</code> é host único, então municípios do programa estadual não aparecem.</li>
     <li><b>CIB transmitido</b>: a lista de inscrições ativas da RFB (set/2026) traz 188 municípios no Brasil e, no Piauí, <b>só Teresina</b> (363.805). A formulação segura para o deck é "menos de 4% dos 5.570 municípios até set/2026".</li>
-    <li><b>O arquivo <code>adesoes.xls</code> da RFB não é uma lista de adesões.</b> A aba chama-se TOM e traz os 5.570 municípios do país — é tabela de referência. Não serve para afirmar quem aderiu ao convênio; isso continua dependendo do e-SIC à Receita.</li>
-    <li><b>Hipótese ITBI rural:</b> os sete municípios do sul com ITBI alto e IPTU quase nulo têm receita provavelmente ligada a <b>terra rural</b> — cujo CIB é alimentado pelo INCRA via SNCR, não pelo município. Estão marcados como hipótese e <b>não</b> como alvo.</li>
+    <li><b>O arquivo <code>adesoes.xls</code> da RFB não é uma lista de adesões</b> — a aba chama-se TOM e traz os 5.570 municípios do país, é tabela de referência. Verificado em 19/09: a RFB <b>não publica</b> lista de adesões em lugar nenhum.
+     Mas o denominador que sustenta a venda não depende disso: <b>transmitir implica ter aderido</b>, e a lista de inscrições ativas dá 188 municípios no país. Quem <b>não</b> transmitiu é exato — <b>5.382 de 5.570</b>, e no Piauí 223 de 224. A lista de adesões daria <b>segmentação</b> (separar "assinou e parou" de "nem assinou"), não denominador.</li>
+    <li><b>Os sete do sul: a hipótese caiu, e a conclusão inverteu.</b> Sete municípios do MATOPIBA arrecadam ITBI alto com IPTU quase nulo — Santa Filomena, R$ 780 de IPTU no ano e R$ 2,87 mi de ITBI. Supunha-se receita de <b>terra rural</b>, e por isso eram marcados como hipótese, não alvo.
+     Medido contra o CNEFE: eles têm <b>9,4% de endereços agropecuários contra 13,0% de mediana estadual</b> — são <b>menos</b> agrícolas, não mais. O que os distingue é o <b>ITBI por endereço, 36× o resto</b>: não é volume de imóvel rural, é valor por transação.
+     E o IPTU quase nulo é real — R$ 780 e R$ 200 <b>idênticos nas duas fontes independentes</b> (SICONFI e TCE-PI). Com RCL de R$ 33 a 82 mi, <b>são bons alvos de conformidade e péssimos de recuperação fiscal</b>. A marcação continua; o que ela quer dizer mudou: <b>nunca abrir a conversa por IPTU</b>.</li>
     <li><b>CNEFE é cadastro de endereços, não de imóveis.</b> Traz o que o Censo enumerou — com coordenada, tipo e nome de logradouro, CEP e número —, mas <b>não</b> tem inscrição imobiliária, titular nem geometria de lote: mede a distância até o cadastro do município, não o substitui. O corte por bairro é feito por <b>geometria</b>, não por código de setor: o CNEFE referencia setores de <i>coleta</i> e os agregados do Censo usam setores de <i>divulgação</i>, e juntar pelos códigos perderia 10,4% dos endereços do Piauí. Aferição: em Teresina, as 363.805 inscrições CIB ativas equivalem a <b>97,9%</b> dos 371.548 endereços que o Censo enumerou dentro da malha de bairros.</li>
     <li><b>A situação do RREO é lida do tripé de entregas, não da coluna de sinal.</b> O <code>qualificacao-pi.csv</code> só nomeia duas falhas (<code>NUNCA_3ANOS</code> e <code>FALHOU_2025</code>) e deixa o campo vazio para todo o resto — inclusive para <b>82 municípios que entregaram 2025 mas faltaram em 2023 ou 2024</b>. Ler o vazio como "em dia" pintava esses 82 de verde. A classificação exibida (3 de 3 · falhou antes de 2025 · falhou em 2025 · nunca em 3 anos) vem de <code>rreo2023/2024/2025</code>.</li>
     <li><b>72 municípios não entregaram RREO 2025.</b> Para eles o campo fiscal é <b>ausente</b>, não zero — aparecem em cinza no mapa e com travessão na tabela. Outros 13 reportaram <b>IPTU igual a zero</b>, que é dado, não falta de dado. Somar os dois grupos como "arrecada nada" seria erro de leitura.</li>

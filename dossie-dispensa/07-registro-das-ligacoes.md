@@ -29,6 +29,7 @@ detalhe que vira variável é o que se perde em vinte minutos.
 | `porta3_saldo` | `sim` · `nao` · `suplementar` · `nao_sabe` | **a variável que interessa** |
 | `porta3_elemento` | texto livre | qual elemento citaram, se citaram |
 | `prazo_dispensa_dias` | inteiro | quanto consome da janela |
+| `amostra` | `pediu` · `prometeu` · `recebeu` · `nao_exporta` · `nao_pedi` | **`nao_exporta` é o achado mais valioso desta coluna**: cadastro que não sai do sistema é remessa que não vai sair |
 | `porta4_assina` | `prefeito` · `secretario` · `nao_sabe` | sem isto não há proposta |
 | `resultado` | `avancar` · `voltar_em_janeiro` · `nao` · `sem_contato` | desfecho |
 | `proximo_passo`, `data_retorno` | texto, data | operacional |
