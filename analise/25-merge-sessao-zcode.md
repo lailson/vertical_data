@@ -128,6 +128,23 @@ do `teresina_full.geojson` da sessão ZCode: 11 campos × 123 bairros,
 
 ## 5. O que continua aberto
 
+> **ATUALIZADO EM 19/09/2026.** Dos cinco itens, **dois fecharam** com a coleta do TCE-PI
+> (§5.2 e §5.4 — ver `docs/metodologia-iv.md` §12.5) e os **três restantes foram
+> trabalhados** em `analise/30-pendencias-trabalhadas.md`:
+>
+> - **§5.3 resolvida, e ela inverteu a recomendação.** Os sete do sul não são mais
+>   agrícolas que o resto (9,4% de endereços agropecuários contra 13,0% de mediana); o que
+>   os distingue é ITBI por endereço **36× maior**. Têm RCL de R$ 33 a 82 mi e cadastro
+>   urbano comprovadamente inexistente nas duas fontes. **São bons alvos de conformidade,
+>   péssimos de recuperação fiscal** — a marcação fica, o significado muda.
+> - **§5.5 baixou de risco alto para parcial declarado.** O validador rodou em 32.046
+>   endereços reais do CNEFE em 1,1 s, converteu 32.046 de 32.046 tipos de logradouro e
+>   não errou um CEP — e achou um defeito novo: **7.058 endereços do PI (0,37%) têm nome
+>   de localidade acima do limite de 30 caracteres da spec.**
+> - **§5.1 rebaixada a refinamento de segmentação.** A RFB não publica lista de adesões
+>   (verificado). Mas transmitir implica ter aderido, e `inscricoes.csv` dá **188
+>   municípios** — o denominador que sustenta a venda (5.382 sem transmitir) já é exato.
+
 1. **e-SIC nº 2 à RFB** — ressuscitado pelo item 3.1. Sem ele, o denominador do
    mercado (quem aderiu) permanece desconhecido.
 2. **Validar manualmente os 6 números de IPTU/ITBI no portal SICONFI** antes do
