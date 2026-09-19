@@ -34,6 +34,9 @@ cne = json.load(open(os.path.join(D, 'cnefe.json'), encoding='utf-8'))['municipi
 # TCE-PI: tem o fiscal dos 72 que o SICONFI não tem, e o elemento 3.3.90.39
 _tce = os.path.join(D, 'tce.json')
 tce = json.load(open(_tce, encoding='utf-8'))['municipios'] if os.path.exists(_tce) else {}
+# mural de licitações: quem tem certame MARCADO tem máquina de compra viva
+_lic = os.path.join(D, 'tce_licitacoes.json')
+lic = json.load(open(_lic, encoding='utf-8'))['municipios'] if os.path.exists(_lic) else {}
 alvo = [x for x in mun if SEG in ('*', x.get('segmento') or '')] if SEG != '*' else mun
 
 # quintis de volume, para o terceiro fator do índice
@@ -94,6 +97,24 @@ def ficha(x):
                        f'<b>pergunte qual está certa</b>, é boa abertura de conversa.</div>')
     pj = T.get('terceiros_pj') or {}
     emp = pj.get('empenhada')
+    L = lic.get(x['cd']) or {}
+    # certame marcado é a evidência mais próxima de "há processo de compra andando"
+    if L.get('certames'):
+        d = L.get('dispensas') or 0
+        frase = (f"<b>{L['certames']} certame(s) marcado(s)</b> no mural do TCE"
+                 + (f", sendo <b>{d} aviso(s) de dispensa</b>" if d else '')
+                 + (f" — o maior por <b>{RS(L['dispensa_max'])}</b>" if L.get('dispensa_max') else '')
+                 + '.')
+        extra = ('Ele já usa dispensa e sabe conduzi-la.' if d else
+                 'Ainda não há dispensa marcada — vale perguntar se costumam usar o instrumento.')
+        certame = (f'<div class="certame"><b>A máquina de compra está andando.</b> {frase} '
+                   f'{extra}<br><span class="miudo">Modalidades vistas: '
+                   f'{e(", ".join(L.get("modalidades") or []) or "—")}. '
+                   f'É calendário do que vem, não do que já foi assinado.</span></div>')
+    else:
+        certame = ('<div class="miudo" style="margin-bottom:10px">Nenhum certame marcado no '
+                   'mural do TCE nesta janela — não quer dizer que não contrate, quer dizer '
+                   'que não há nada agendado agora.</div>')
     zerado = ''
     if iptu is not None and itbi is not None and (iptu < 1000 or itbi < 1000):
         quais = ' e '.join(n for n, v in (('IPTU', iptu), ('ITBI', itbi)) if v < 1000)
@@ -134,6 +155,7 @@ def ficha(x):
   Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>{100*65492.11/emp:.2f}%</b>
   disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
   empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>'''}
+ {certame}
  {diverge}
 
  {zerado}
@@ -172,6 +194,7 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
 .aviso{background:#FDF3E7;border-left:3px solid #8F5A02;padding:9px 11px;font-size:12px;margin-bottom:10px}
 .forte{background:#FBEDEA;border-left:3px solid #C03A24;padding:9px 11px;font-size:12px;margin-bottom:10px}
 .ancora{background:#EEF6FC;border-left:3px solid #12689F;padding:9px 11px;font-size:12px;margin-bottom:10px}
+.certame{background:#F2FBF9;border-left:3px solid #12B0A0;padding:9px 11px;font-size:12px;margin-bottom:10px}
 .miudo{color:var(--fraca);font-size:11px}
 .anota{border:1px dashed var(--linha);border-radius:8px;padding:22px 11px 30px;font-size:11px;color:var(--fraca)}
 @media print{body{background:#fff}.ficha{border:none;margin:0;padding:0 0 12px}.capa{page-break-after:always}}
@@ -192,6 +215,11 @@ saida = f"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
  <p><b>Ordem:</b> índice declarado de três fatores — entregou RREO 2025 (peso 3), sem incumbente
   detectado (peso 2), quintil de volume (peso 1). A RCL ficou fora de propósito: foi medida e não
   discrimina. <b>O índice não prevê dotação</b> — ordena quem atender primeiro, não quem compra.</p>
+ <p><b>Mural de licitações.</b> 136 dos 224 municípios têm certame marcado, e há
+  <b>28 avisos de dispensa</b> no estado, mediana de R$ 49.989 — <b>22 de 23</b> dentro do
+  limite de 2026. A dispensa é instrumento vivo e na faixa deste produto.
+  <b>Nenhum</b> dos 267 certames cita cadastro imobiliário, geoprocessamento ou PGV: ninguém
+  tem certame do ramo agendado nesta janela — o que <i>não</i> quer dizer que ninguém venda.</p>
  <p><b>Novo nesta versão:</b> os municípios sem RREO 2025 deixaram de vir em branco — o
   <b>TCE-PI</b> publica a prestação de contas deles, e a ficha diz qual fonte está usando.
   Onde as duas existem e divergem mais de 10%, as duas aparecem.</p>

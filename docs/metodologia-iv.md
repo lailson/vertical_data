@@ -415,5 +415,35 @@ autorizada**. Logo isto mede o *tamanho do elemento*, nunca o *saldo livre*. A p
 continua sendo pergunta de telefone — mas passou a ser pergunta informada: *"vocês
 empenharam R$ X aqui; o que proponho é Y% disso"*.
 
-**Ainda aberto:** `/licitacoes/:id` responderia o item 1 do e-SIC — quem já vende cadastro
-imobiliário no estado, para quem e por quanto. Não foi coletado ainda.
+### 12.4 Mural de licitações — o que ele responde e o que não
+
+`dados/baixar_tce_licitacoes.py` + `painel/build_tce_licitacoes.py`.
+Coleta: **224 de 224**, zero falhas. **267 certames em 136 municípios.**
+
+**Não é o que o e-SIC pedia.** `/licitacoes/:id` devolve as **datas com certame marcado**,
+e `/licitacoes/:id/:esfera/:data` os certames daquele dia — com `objeto` em texto
+completo, `modalidade`, valor previsto e link para o mural. É **calendário do que vem**,
+não arquivo do que foi assinado. O item 1 do e-SIC (quem já vendeu, para quem, por quanto)
+continua de pé, e foi reescrito em versão enxuta.
+
+**Mas responde algo mais útil para uma janela de 60 dias: quem está comprando agora.**
+
+| | |
+|---|---|
+| municípios com certame marcado | **136 de 224** |
+| avisos de dispensa | **28**, em 21 municípios |
+| valor mediano da dispensa | **R$ 49.989** |
+| dentro do limite de 2026 (R$ 65.492,11) | **22 de 23** |
+
+A dispensa é **instrumento vivo no estado e na faixa exata deste produto**. Município que
+já publicou aviso sabe conduzir o rito — o que muda a porta 4 do roteiro.
+
+**O achado negativo, e ele precisa da ressalva colada.** **Nenhum** dos 267 certames cita
+cadastro imobiliário, cadastro técnico, geoprocessamento, planta genérica,
+georreferenciamento ou Sinter. Isso significa **"ninguém tem certame do ramo agendado
+nesta janela"** — e **não** "ninguém vende cadastro no Piauí". A janela do mural tem cerca
+de duas semanas; ler o zero como ausência de concorrência seria o erro de *"inferir
+inexistência a partir de busca incompleta"*, que a rodada 2 já registrou neste projeto.
+
+**Sujeira declarada:** 21 certames trazem `previsto` **negativo** na origem. Saem da
+estatística — por isso a mediana da dispensa sai de 23 valores, não 28.
