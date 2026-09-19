@@ -613,7 +613,7 @@ function mostrarCsv(nome,texto,motivo){
 const cs=v=>v==null?'':String(v).replace(/;/g,',');
 
 /* ============================================================ estado global */
-let META, CNEFE=null, GD=null, TAR=null, BDGD=null, MUNF=[], MUN={}, SELMUN='2211001', SELM=null, KE='segmento';
+let META, CNEFE=null, GD=null, TAR=null, BDGD=null, TCE=null, MUNF=[], MUN={}, SELMUN='2211001', SELM=null, KE='segmento';
 let BAIRROS={}, FEATS=[], SELB=null, KT='renda_med';
 let mapE=null, layE=null, mapT=null, layT=null, layFcu=null, fcuOn=true;
 let hlPil=true, hlFox=false;
@@ -649,6 +649,10 @@ const IE={
  gd_n:{l:'Conexões de GD',full:'Empreendimentos de micro e minigeração conectados (ANEEL, município é o menor recorte)',val:p=>p.gd_n,fmt:N,dir:1,mag:1,gd:1},
  gd_mw:{l:'Potência instalada',full:'Potência instalada de geração distribuída, em MW (ANEEL)',val:p=>p.gd_mw,fmt:MW,dir:1,mag:1,gd:1},
  uc_sem_gd:{l:'UC sem geração',full:'Unidades consumidoras PJ de média/alta tensão sem geração própria (BDGD) — mercado de minigeração',val:p=>p.uc_sem_gd,fmt:N,dir:1,mag:1,gd:1},
+ fonte_fiscal:{l:'Fonte do dado fiscal',full:'De onde vêm IPTU e ITBI: demonstrativo ao SICONFI ou prestação de contas ao TCE-PI',cat:1,
+   cat_ord:['SICONFI/RREO','TCE-PI','sem dado'],
+   val:p=>p.fonte_fiscal||'sem dado',fmt:v=>v},
+ tce_pj:{l:'Empenho em serviços PJ',full:'Empenhado no elemento 3.3.90.39 (Outros Serviços de Terceiros — PJ), TCE-PI. É o tamanho do elemento, não o saldo livre',val:p=>p.tce_pj,fmt:MI,dir:1,mag:1},
  bairros:{l:'Bairros no Censo',full:'Bairros oficiais na malha CD2022 — define se o painel territorial funciona',val:p=>p.bairros,fmt:N,dir:1,censo:1,mag:1},
 };
 /* indicadores do mapa municipal ------------------------------------------ */
@@ -665,14 +669,15 @@ const IT={
 
 /* ============================================================ carga */
 async function carregar(){
- const [meta,mun,cne,gd,tar,bd]=await Promise.all([
+ const [meta,mun,cne,gd,tar,bd,tc]=await Promise.all([
    fetch('dados/meta.json').then(r=>r.json()),
    fetch('dados/municipios.json').then(r=>r.json()),
    fetch('dados/cnefe.json').then(r=>r.json()).catch(()=>null),
    fetch('dados/aneel.json').then(r=>r.json()).catch(()=>null),
    fetch('dados/tarifas.json').then(r=>r.json()).catch(()=>null),
-   fetch('dados/bdgd.json').then(r=>r.json()).catch(()=>null)]);
- META=meta; CNEFE=cne; GD=gd; TAR=tar; BDGD=bd;
+   fetch('dados/bdgd.json').then(r=>r.json()).catch(()=>null),
+   fetch('dados/tce.json').then(r=>r.json()).catch(()=>null)]);
+ META=meta; CNEFE=cne; GD=gd; TAR=tar; BDGD=bd; TCE=tc;
  MUNF=mun.features.map(f=>({p:f.properties,geo:f.geometry}));
  /* o CNEFE entra como propriedade do município: é volume de cadastro, que é a
     unidade em que a remessa ao CADURB é medida e precificada */
@@ -688,6 +693,20 @@ async function carregar(){
     MINIgeração — comércio e indústria —, não o residencial. */
  if(BDGD) MUNF.forEach(f=>{const b=BDGD.municipios[f.p.cd]; if(b) Object.assign(f.p,{
    uc_mt:b.uc, uc_carga:b.carga_kw, uc_com_gd:b.com_gd, uc_sem_gd:b.sem_gd})});
+ /* TCE-PI: prestação de contas ao Tribunal. Tem os 72 que faltam no SICONFI.
+    As duas NÃO se sobrepõem em silêncio — o SICONFI continua sendo `iptu`, e o
+    TCE entra como campo próprio. Onde só o TCE existe, ele preenche e a origem
+    fica registrada, para nenhuma tela afirmar SICONFI onde não há. */
+ if(TCE) MUNF.forEach(f=>{const t=TCE.municipios[f.p.cd]; if(!t) return;
+   f.p.tce_iptu=t.iptu; f.p.tce_itbi=t.itbi; f.p.tce_divida=t.iptu_divida;
+   f.p.tce_pj=(t.terceiros_pj||{}).empenhada;
+   if(f.p.iptu==null&&t.iptu!=null){f.p.iptu=t.iptu; f.p.fonte_fiscal='TCE-PI'}
+   if(f.p.itbi==null&&t.itbi!=null) f.p.itbi=t.itbi;
+   if(f.p.fonte_fiscal==null&&f.p.iptu!=null) f.p.fonte_fiscal='SICONFI/RREO';
+   /* divergência material entre as duas prestações do MESMO município */
+   if(t.iptu!=null&&f.p.fonte_fiscal==='SICONFI/RREO'&&f.p.iptu>0){
+     const r=t.iptu/f.p.iptu; if(r<0.9||r>1.1) f.p.tce_diverge=r;
+   }});
  MUNF.forEach(f=>MUN[f.p.cd]=f);
  $('#stamp').textContent='dados de '+META.gerado_em+' · série local, sem servidor';
  aplicarTema(lerTema(),false);
