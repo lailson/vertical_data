@@ -31,6 +31,9 @@ if '--todos' in sys.argv:
 
 mun = [f['properties'] for f in json.load(open(os.path.join(D, 'municipios.json'), encoding='utf-8'))['features']]
 cne = json.load(open(os.path.join(D, 'cnefe.json'), encoding='utf-8'))['municipios']
+# TCE-PI: tem o fiscal dos 72 que o SICONFI não tem, e o elemento 3.3.90.39
+_tce = os.path.join(D, 'tce.json')
+tce = json.load(open(_tce, encoding='utf-8'))['municipios'] if os.path.exists(_tce) else {}
 alvo = [x for x in mun if SEG in ('*', x.get('segmento') or '')] if SEG != '*' else mun
 
 # quintis de volume, para o terceiro fator do índice
@@ -61,6 +64,9 @@ N_ = lambda v: '—' if v is None else f'{v:,.0f}'.replace(',', '.')
 RS = lambda v: '—' if v is None else ('R$ ' + (f'{v/1e6:,.2f} mi' if v >= 1e6 else f'{v:,.0f}')).replace(',', '.')
 e = html.escape
 
+EXFISC = '2025'
+
+
 def ficha(x):
     c = cne.get(x['cd']) or {}
     r = x['rreo']
@@ -71,12 +77,28 @@ def ficha(x):
     # IPTU ou ITBI reportado como zero (ou quase) NÃO é dado faltando — é dado, e é
     # o argumento mais forte que existe: quem arrecada R$ 0 de imposto sobre imóvel
     # não tem cadastro. Sem esta nota o interlocutor lê como erro da planilha.
-    iptu, itbi = x.get('iptu'), x.get('itbi')
+    T = tce.get(x['cd']) or {}
+    # SICONFI e TCE são duas prestações de contas do MESMO município a órgãos
+    # diferentes. Nenhuma é autoritativa a priori: quando divergem, mostra as
+    # duas. Escolher em silêncio seria inventar hierarquia que não existe.
+    iptu = x.get('iptu') if x.get('iptu') is not None else T.get('iptu')
+    itbi = x.get('itbi') if x.get('itbi') is not None else T.get('itbi')
+    origem_fiscal = 'SICONFI/RREO' if x.get('iptu') is not None else 'TCE-PI'
+    diverge = ''
+    if x.get('iptu') is not None and T.get('iptu') is not None and x['iptu'] > 0:
+        r = T['iptu'] / x['iptu']
+        if not (0.9 <= r <= 1.1):
+            diverge = (f'<div class="aviso"><b>As duas fontes divergem.</b> IPTU 2025: '
+                       f'SICONFI {RS(x["iptu"])} · TCE-PI {RS(T["iptu"])} ({r:.2f}×). '
+                       f'São prestações do mesmo município a órgãos diferentes — '
+                       f'<b>pergunte qual está certa</b>, é boa abertura de conversa.</div>')
+    pj = T.get('terceiros_pj') or {}
+    emp = pj.get('empenhada')
     zerado = ''
-    if not sem_fiscal and iptu is not None and itbi is not None and (iptu < 1000 or itbi < 1000):
+    if iptu is not None and itbi is not None and (iptu < 1000 or itbi < 1000):
         quais = ' e '.join(n for n, v in (('IPTU', iptu), ('ITBI', itbi)) if v < 1000)
         zerado = (f'<div class="forte">O município <b>declarou {quais} praticamente zerado em '
-                  f'2025</b> — e isso é declaração ao SICONFI, não ausência de dado. '
+                  f'2025</b> — e isso é declaração a {origem_fiscal}, não ausência de dado. '
                   f'É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que '
                   f'não está cadastrado.</b></div>')
     return f"""
@@ -98,18 +120,27 @@ def ficha(x):
  <table>
   <tr><td class="k">População / domicílios</td><td>{N_(x.get('pop'))} · {N_(x.get('dom'))}</td>
       <td class="k">Domicílios em casa</td><td>{N_(c.get('casa'))}</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>{RS(x.get('iptu'))}</td>
-      <td class="k">ITBI 2025</td><td>{RS(x.get('itbi'))}</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>{RS(iptu)}</td>
+      <td class="k">ITBI 2025</td><td>{RS(itbi)}</td></tr>
   <tr><td class="k">RCL 2025</td><td>{RS(x.get('rcl'))}</td>
       <td class="k">Contrato / RCL</td><td>{'—' if not x.get('rcl') else f"{100*65492.11/x['rcl']:.3f}".replace('.', ',') + '%'}</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>{sinal}</td>
       <td class="k">CIB transmitido</td><td>{N_(x.get('cib_ativo') or 0)}</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>{origem_fiscal}</td>
+      <td class="k">Dívida ativa de IPTU</td><td>{RS(T.get('iptu_divida'))}</td></tr>
  </table>
+ {'' if emp is None else f'''<div class="ancora"><b>Âncora da porta 3.</b> Em {EXFISC} este
+  município <b>empenhou {RS(emp)}</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>{100*65492.11/emp:.2f}%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>'''}
+ {diverge}
 
  {zerado}
- {'<div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. '
-  'Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. '
-  'A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>' if sem_fiscal else ''}
+ {f'<div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da '
+  f'prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro '
+  f'Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o '
+  f'produto resolve.</div>' if sem_fiscal else ''}
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -140,6 +171,8 @@ td{padding:5px 6px;border-bottom:1px solid var(--linha);font-variant-numeric:tab
 td.k{color:var(--fraca);font-size:11px;width:24%}
 .aviso{background:#FDF3E7;border-left:3px solid #8F5A02;padding:9px 11px;font-size:12px;margin-bottom:10px}
 .forte{background:#FBEDEA;border-left:3px solid #C03A24;padding:9px 11px;font-size:12px;margin-bottom:10px}
+.ancora{background:#EEF6FC;border-left:3px solid #12689F;padding:9px 11px;font-size:12px;margin-bottom:10px}
+.miudo{color:var(--fraca);font-size:11px}
 .anota{border:1px dashed var(--linha);border-radius:8px;padding:22px 11px 30px;font-size:11px;color:var(--fraca)}
 @media print{body{background:#fff}.ficha{border:none;margin:0;padding:0 0 12px}.capa{page-break-after:always}}
 """
@@ -159,8 +192,11 @@ saida = f"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
  <p><b>Ordem:</b> índice declarado de três fatores — entregou RREO 2025 (peso 3), sem incumbente
   detectado (peso 2), quintil de volume (peso 1). A RCL ficou fora de propósito: foi medida e não
   discrimina. <b>O índice não prevê dotação</b> — ordena quem atender primeiro, não quem compra.</p>
+ <p><b>Novo nesta versão:</b> os municípios sem RREO 2025 deixaram de vir em branco — o
+  <b>TCE-PI</b> publica a prestação de contas deles, e a ficha diz qual fonte está usando.
+  Onde as duas existem e divergem mais de 10%, as duas aparecem.</p>
  <p style="color:var(--fraca)">Fontes: IBGE Censo 2022 e CNEFE · SICONFI/RREO 2023–2025 ·
-  RFB/Sinter set/2026 · Certificate Transparency.</p>
+  TCE-PI, Portal da Cidadania, exercício 2025 · RFB/Sinter set/2026 · Certificate Transparency.</p>
 </div>
 <div class="capa"><h1>Fila 1 — gestão viva</h1>
  <div class="sub">{len(vivos)} municípios que entregaram o RREO 2025</div>

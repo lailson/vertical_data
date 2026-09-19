@@ -352,3 +352,68 @@ não menos.
 
 **Padrão a guardar:** as três leituras erradas ou incompletas eram todas *plausíveis*. O
 que separou foi medir o denominador que faltava, não argumentar melhor.
+
+---
+
+## 12. TCE-PI — a fonte que fecha o ponto cego (18/09/2026)
+
+O `esic-4-TCE-pi.md` trazia uma nota de rodapé: *"o TCE-PI tem API documentada — vale
+tentar a consulta direta antes de protocolar; o pedido formal é o plano B."* O plano B
+virou desnecessário.
+
+**A API** (`sistemas.tce.pi.gov.br/api/portaldacidadania`) não pede chave e expõe
+`/prefeituras` (224, com `codIBGE`), `/receitas/:id/:exercicio`,
+`/despesas/:id/:exercicio/porElemento` e `/licitacoes/:id`. Paginação de 10 em 10 pelo
+parâmetro `pagina` — `limit`, `size` e `porPagina` são ignorados pelo servidor.
+
+**Coleta:** 224 de 224, zero falhas, nenhum arquivo com menos linhas que o total
+declarado. `dados/baixar_tce.py` (educado: 0,3 s entre chamadas, três tentativas com
+espera crescente, cache para retomar) e `painel/build_tce.py`.
+
+### 12.1 A decisão que muda o número
+
+IPTU e ITBI aparecem em **três lançamentos** — principal, dívida ativa, multas e juros.
+**Entra só o principal.** Somar os três infla o valor contra o SICONFI, que no
+demonstrativo traz o imposto do exercício. A dívida ativa fica em campo próprio porque
+também é informação comercial: **município com dívida ativa alta e IPTU baixo tem
+cadastro velho, não ausência de contribuinte.**
+
+### 12.2 Validação: duas fontes independentes, 83% de acordo exato
+
+Comparando os **152** municípios que têm IPTU nas duas fontes:
+
+| | |
+|---|---|
+| razão TCE ÷ SICONFI, mediana | **1,000** |
+| dentro de ±1% | **116 de 139** (83%) |
+| dentro de ±10% | 120 de 139 (86%) |
+| divergem mais de 10% | 19 |
+
+São prestações de contas do **mesmo município a órgãos diferentes**. A concordância na
+mediana exata é a validação cruzada mais forte que este projeto conseguiu até agora.
+
+**E a divergência confirma uma suspeita antiga.** O e-SIC ao TCE existia, entre outras
+coisas, para checar **Altos**, cujo retorno no SICONFI viera com apenas duas linhas —
+sugerindo preenchimento parcial. Confirmado: SICONFI **R$ 245.127**, TCE **R$ 1.310.555**
+(5,35×). O demonstrativo estava incompleto, como se previu.
+
+**Regra para as divergências:** nenhuma fonte é autoritativa a priori. Onde as duas
+existem e divergem mais de 10%, **as duas aparecem** na ficha, com a diferença declarada.
+Escolher uma em silêncio seria inventar hierarquia que não existe.
+
+### 12.3 O que se ganhou
+
+**72 municípios deixaram de vir em branco.** IPTU mediano deles: **R$ 17.084**; apenas um
+declara zero.
+
+E um achado que não se procurava: `/despesas/.../porElemento` traz **"Outros Serviços de
+Terceiros – Pessoa Jurídica"** — o elemento **3.3.90.39**, exatamente o que o roteiro de
+qualificação pergunta na porta 3.
+
+**O limite honesto:** a API expõe `empenhada`, `liquidada` e `paga`, **não a dotação
+autorizada**. Logo isto mede o *tamanho do elemento*, nunca o *saldo livre*. A porta 3
+continua sendo pergunta de telefone — mas passou a ser pergunta informada: *"vocês
+empenharam R$ X aqui; o que proponho é Y% disso"*.
+
+**Ainda aberto:** `/licitacoes/:id` responderia o item 1 do e-SIC — quem já vende cadastro
+imobiliário no estado, para quem e por quanto. Não foi coletado ainda.

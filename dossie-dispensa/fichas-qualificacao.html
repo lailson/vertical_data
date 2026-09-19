@@ -26,6 +26,8 @@ td{padding:5px 6px;border-bottom:1px solid var(--linha);font-variant-numeric:tab
 td.k{color:var(--fraca);font-size:11px;width:24%}
 .aviso{background:#FDF3E7;border-left:3px solid #8F5A02;padding:9px 11px;font-size:12px;margin-bottom:10px}
 .forte{background:#FBEDEA;border-left:3px solid #C03A24;padding:9px 11px;font-size:12px;margin-bottom:10px}
+.ancora{background:#EEF6FC;border-left:3px solid #12689F;padding:9px 11px;font-size:12px;margin-bottom:10px}
+.miudo{color:var(--fraca);font-size:11px}
 .anota{border:1px dashed var(--linha);border-radius:8px;padding:22px 11px 30px;font-size:11px;color:var(--fraca)}
 @media print{body{background:#fff}.ficha{border:none;margin:0;padding:0 0 12px}.capa{page-break-after:always}}
 </style></head><body>
@@ -40,8 +42,11 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <p><b>Ordem:</b> índice declarado de três fatores — entregou RREO 2025 (peso 3), sem incumbente
   detectado (peso 2), quintil de volume (peso 1). A RCL ficou fora de propósito: foi medida e não
   discrimina. <b>O índice não prevê dotação</b> — ordena quem atender primeiro, não quem compra.</p>
+ <p><b>Novo nesta versão:</b> os municípios sem RREO 2025 deixaram de vir em branco — o
+  <b>TCE-PI</b> publica a prestação de contas deles, e a ficha diz qual fonte está usando.
+  Onde as duas existem e divergem mais de 10%, as duas aparecem.</p>
  <p style="color:var(--fraca)">Fontes: IBGE Censo 2022 e CNEFE · SICONFI/RREO 2023–2025 ·
-  RFB/Sinter set/2026 · Certificate Transparency.</p>
+  TCE-PI, Portal da Cidadania, exercício 2025 · RFB/Sinter set/2026 · Certificate Transparency.</p>
 </div>
 <div class="capa"><h1>Fila 1 — gestão viva</h1>
  <div class="sub">40 municípios que entregaram o RREO 2025</div>
@@ -73,7 +78,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,045%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 23.07 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.28%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -105,7 +118,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,060%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 16.74 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.39%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -137,9 +158,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,063%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 27.72 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.24%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
- <div class="forte">O município <b>declarou IPTU praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou IPTU praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -169,9 +198,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,114%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 14.75 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.44%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
- <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -201,7 +238,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,094%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 11.82 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.55%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -233,7 +278,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,147%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 8.12 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.81%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -265,7 +318,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,080%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 14.26 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.46%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -297,7 +358,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,106%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 11.897</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 13.74 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.48%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ <div class="aviso"><b>As duas fontes divergem.</b> IPTU 2025: SICONFI R$ 55.383 · TCE-PI R$ 43.485 (0.79×). São prestações do mesmo município a órgãos diferentes — <b>pergunte qual está certa</b>, é boa abertura de conversa.</div>
 
  
  
@@ -329,7 +398,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,176%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 9.25 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.71%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -361,7 +438,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,103%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 12.91 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.51%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -393,7 +478,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,118%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 8.34 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.79%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -425,7 +518,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,133%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 13.70 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.48%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -457,7 +558,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,109%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 6.33 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>1.03%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -489,7 +598,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,100%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 13.72 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.48%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -521,7 +638,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,163%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 8.12 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.81%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -553,7 +678,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,141%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 7.17 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.91%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -585,7 +718,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,146%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 11.47 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.57%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -617,7 +758,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,113%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 9.01 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.73%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -649,9 +798,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,123%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 9.42 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.70%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
- <div class="forte">O município <b>declarou ITBI praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou ITBI praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -681,7 +838,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,586%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 20.00 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.33%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ <div class="aviso"><b>As duas fontes divergem.</b> IPTU 2025: SICONFI R$ 22.047 · TCE-PI R$ 624.514 (28.33×). São prestações do mesmo município a órgãos diferentes — <b>pergunte qual está certa</b>, é boa abertura de conversa.</div>
 
  
  
@@ -713,7 +878,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,137%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 41</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 7.18 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.91%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ <div class="aviso"><b>As duas fontes divergem.</b> IPTU 2025: SICONFI R$ 53.596 · TCE-PI R$ 2.955 (0.06×). São prestações do mesmo município a órgãos diferentes — <b>pergunte qual está certa</b>, é boa abertura de conversa.</div>
 
  
  
@@ -745,9 +918,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,077%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 12.55 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.52%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
- <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -777,7 +958,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,085%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 16.42 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.40%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -809,7 +998,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,132%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 12.48 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.52%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -841,7 +1038,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,142%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 6.30 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>1.04%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -873,7 +1078,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,160%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 11.17 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.59%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -905,9 +1118,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,856%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 12.21 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.54%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
- <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -937,7 +1158,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,185%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 6.50 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>1.01%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -969,9 +1198,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,160%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 38</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 10.66 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.61%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ <div class="aviso"><b>As duas fontes divergem.</b> IPTU 2025: SICONFI R$ 38 · TCE-PI R$ 9.450 (249.01×). São prestações do mesmo município a órgãos diferentes — <b>pergunte qual está certa</b>, é boa abertura de conversa.</div>
 
- <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -1001,7 +1238,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,188%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 9.71 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.67%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1033,7 +1278,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,107%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 3.45 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>1.90%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1065,7 +1318,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,163%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 5.77 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>1.14%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1097,7 +1358,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,151%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 8.01 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.82%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1129,7 +1398,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,159%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 7.82 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.84%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1161,7 +1438,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,166%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 8.12 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.81%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1193,9 +1478,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,151%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 3.96 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>1.65%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
- <div class="forte">O município <b>declarou ITBI praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou ITBI praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -1225,7 +1518,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,144%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 10.19 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.64%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1257,7 +1558,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,151%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 8.19 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.80%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1289,7 +1598,15 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,164%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 4.16 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>1.57%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
  
@@ -1321,9 +1638,17 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
       <td class="k">Contrato / RCL</td><td>0,142%</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✓ ✓</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>SICONFI/RREO</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 6.93 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.94%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
- <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração ao SICONFI, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
+ <div class="forte">O município <b>declarou IPTU e ITBI praticamente zerado em 2025</b> — e isso é declaração a SICONFI/RREO, não ausência de dado. É o argumento mais direto da conversa: <b>não se cobra sobre imóvel que não está cadastrado.</b></div>
  
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
@@ -1356,16 +1681,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>46.119 · 14.050</td>
       <td class="k">Domicílios em casa</td><td>17.448</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 150.947</td>
+      <td class="k">ITBI 2025</td><td>R$ 203.694</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 272.838</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 29.32 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.22%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1388,16 +1721,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>30.641 · 9.387</td>
       <td class="k">Domicílios em casa</td><td>15.107</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 954.648</td>
+      <td class="k">ITBI 2025</td><td>R$ 388.423</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 53.45 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.12%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1420,16 +1761,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>28.846 · 10.018</td>
       <td class="k">Domicílios em casa</td><td>13.251</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 1.04 mi</td>
+      <td class="k">ITBI 2025</td><td>R$ 381.829</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✓ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 25.62 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.26%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1452,16 +1801,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>25.375 · 7.890</td>
       <td class="k">Domicílios em casa</td><td>9.460</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 144.280</td>
+      <td class="k">ITBI 2025</td><td>R$ 68.380</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 20.60 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.32%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1484,16 +1841,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>21.421 · 7.165</td>
       <td class="k">Domicílios em casa</td><td>9.467</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 782.748</td>
+      <td class="k">ITBI 2025</td><td>R$ 201.497</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 254.084</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 26.11 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.25%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1516,16 +1881,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>25.203 · 7.639</td>
       <td class="k">Domicílios em casa</td><td>9.995</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 1.36 mi</td>
+      <td class="k">ITBI 2025</td><td>R$ 4.75 mi</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 72.80 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.09%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1548,16 +1921,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>19.654 · 6.185</td>
       <td class="k">Domicílios em casa</td><td>7.525</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 197.739</td>
+      <td class="k">ITBI 2025</td><td>R$ 275.465</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✗ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 26.87 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.24%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1580,16 +1961,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>16.352 · 5.460</td>
       <td class="k">Domicílios em casa</td><td>8.094</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 5.223</td>
+      <td class="k">ITBI 2025</td><td>R$ 884.728</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 20.75 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.32%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1612,16 +2001,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>17.573 · 5.880</td>
       <td class="k">Domicílios em casa</td><td>7.489</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 764.928</td>
+      <td class="k">ITBI 2025</td><td>R$ 444.075</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✗ ✗ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 26.39 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.25%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
@@ -1644,16 +2041,24 @@ td.k{color:var(--fraca);font-size:11px;width:24%}
  <table>
   <tr><td class="k">População / domicílios</td><td>13.479 · 4.665</td>
       <td class="k">Domicílios em casa</td><td>6.048</td></tr>
-  <tr><td class="k">IPTU 2025</td><td>—</td>
-      <td class="k">ITBI 2025</td><td>—</td></tr>
+  <tr><td class="k">IPTU 2025</td><td>R$ 389.433</td>
+      <td class="k">ITBI 2025</td><td>R$ 46.454</td></tr>
   <tr><td class="k">RCL 2025</td><td>—</td>
       <td class="k">Contrato / RCL</td><td>—</td></tr>
   <tr><td class="k">RREO 23 · 24 · 25</td><td>✓ ✓ ✗</td>
       <td class="k">CIB transmitido</td><td>0</td></tr>
+  <tr><td class="k">Fonte fiscal</td><td>TCE-PI</td>
+      <td class="k">Dívida ativa de IPTU</td><td>R$ 0</td></tr>
  </table>
+ <div class="ancora"><b>Âncora da porta 3.</b> Em 2025 este
+  município <b>empenhou R$ 7.96 mi</b> no elemento <i>Outros Serviços de Terceiros – Pessoa
+  Jurídica</i> (3.3.90.39). Um contrato no limite de dispensa é <b>0.82%</b>
+  disso.<br><span class="miudo">É o tamanho do elemento, não o saldo livre — o TCE publica
+  empenhada, liquidada e paga, não a dotação autorizada. O saldo continua sendo a pergunta.</span></div>
+ 
 
  
- <div class="aviso">Não entregou o RREO 2025 — <b>sem número fiscal nesta base</b>. Comece pela porta 1 e pergunte quem responde pela contabilidade hoje. A ausência do demonstrativo é o mesmo sintoma que o produto resolve.</div>
+ <div class="aviso"><b>Não entregou o RREO 2025 ao SICONFI</b> — os números acima vêm da prestação de contas ao <b>TCE-PI</b>. Isso é argumento, não lacuna: ele deve ao Tesouro Nacional um demonstrativo que já entregou ao Tribunal. A ausência é o mesmo sintoma que o produto resolve.</div>
 
  <div class="anota"><b>Anotar:</b> com quem falei · há saldo? · precisa suplementar? ·
   prazo da dispensa · quem assina · próximo passo e data</div>
